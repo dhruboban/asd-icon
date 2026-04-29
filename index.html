@@ -1,0 +1,1035 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ASD ICON • Premium Network</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --green: #006633;
+            --red: #E31D2B;
+            --blue: #002266;
+            --gold: #fbbf24;
+            --cyan: #00d2ff;
+            --header-h: 56px;
+            --tabs-h: 40px;
+            --bottom-h: 60px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body {
+            height: 100%; width: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0a;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+        }
+        
+        .app-wrapper {
+            width: 100%; max-width: 480px; height: 100vh; height: 100dvh;
+            margin: 0 auto; display: flex; flex-direction: column;
+            background: #f8fafc; position: relative; overflow: hidden;
+        }
+        
+        .hidden { display: none !important; }
+        
+        .header {
+            height: var(--header-h); min-height: var(--header-h);
+            padding: 0 12px; display: flex; align-items: center;
+            justify-content: space-between; background: #fff;
+            border-bottom: 1px solid #e2e8f0; flex-shrink: 0; z-index: 100;
+        }
+        
+        .header-brand { display: flex; align-items: center; gap: 8px; }
+        .header-logo {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, #002266, #003399);
+            border-radius: 8px; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 15px; font-weight: 900;
+        }
+        .header-title { font-size: 16px; font-weight: 900; font-style: italic; color: #002266; }
+        .header-subtitle { font-size: 7px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .header-user { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .header-balance { text-align: right; }
+        .header-balance span { font-size: 7px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
+        .header-balance p { font-size: 13px; font-weight: 900; color: #006633; font-family: monospace; }
+        .header-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #e2e8f0; object-fit: cover; }
+        
+        .top-nav {
+            height: var(--tabs-h); min-height: var(--tabs-h);
+            display: flex; background: white; border-bottom: 1px solid #e2e8f0;
+            flex-shrink: 0; z-index: 99;
+        }
+        
+        .top-nav button {
+            flex: 1; border: none; background: none;
+            font-size: 10px; font-weight: 700; color: #94a3b8;
+            cursor: pointer; transition: all 0.2s; position: relative;
+        }
+        
+        .top-nav button.active { color: #002266; }
+        .top-nav button.active::after {
+            content: ''; position: absolute; bottom: 0; left: 25%; right: 25%;
+            height: 3px; background: #002266; border-radius: 2px;
+        }
+        
+        .content-area {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .section-page { display: none; min-height: 100%; }
+        .section-page.active { display: block; }
+        
+        .bottom-nav {
+            height: var(--bottom-h); min-height: var(--bottom-h);
+            display: flex; align-items: center; justify-content: space-around;
+            background: white; border-top: 1px solid #e2e8f0;
+            flex-shrink: 0; z-index: 100;
+        }
+        
+        .bn-item {
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            cursor: pointer; color: #94a3b8; font-size: 8px; font-weight: 700;
+            border: none; background: none; padding: 4px 8px; transition: all 0.2s;
+        }
+        
+        .bn-item.active { color: #006633; }
+        .bn-item i { font-size: 17px; }
+        
+        .card-white {
+            background: white; border-radius: 14px; padding: 12px;
+            border: 1px solid #e2e8f0; margin-bottom: 8px;
+        }
+        
+        .card-dark {
+            background: rgba(20,20,50,0.95); border-radius: 14px; padding: 12px;
+            border: 1px solid rgba(255,255,255,0.08); margin-bottom: 8px; color: #e2e8f0;
+        }
+        
+        .badge { font-size: 7px; font-weight: 900; padding: 2px 7px; border-radius: 8px; text-transform: uppercase; }
+        .badge-active { background: #dcfce7; color: #166534; }
+        .badge-expired { background: #fee2e2; color: #991b1b; }
+        
+        .btn {
+            padding: 8px 14px; border: none; border-radius: 8px;
+            font-weight: 700; font-size: 11px; cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-green { background: #006633; color: white; }
+        .btn-red { background: #E31D2B; color: white; }
+        .btn-blue { background: #002266; color: white; }
+        .btn-gold { background: #fbbf24; color: #1e293b; }
+        .btn-cyan { background: linear-gradient(135deg, #00d2ff, #0099cc); color: white; }
+        .btn-buy { background: #10B981; color: white; flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 11px; border: none; cursor: pointer; }
+        .btn-sell { background: #EF4444; color: white; flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 11px; border: none; cursor: pointer; }
+        
+        .input {
+            width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0;
+            border-radius: 8px; font-size: 12px; outline: none; background: #f8fafc;
+        }
+        .input:focus { border-color: #006633; }
+        
+        .input-dark {
+            width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            color: white; font-size: 12px; outline: none;
+        }
+        .input-dark:focus { border-color: #fbbf24; }
+        
+        .prog-bar { height: 8px; background: #e2e8f0; border-radius: 8px; overflow: hidden; display: flex; margin: 6px 0; }
+        .prog-buy { background: linear-gradient(90deg, #00c853, #69f0ae); transition: width 0.5s; }
+        .prog-sell { background: linear-gradient(90deg, #ff1744, #ff5252); transition: width 0.5s; }
+        
+        .price-box {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #f1f5f9; border-radius: 8px; padding: 8px 10px; margin: 6px 0;
+        }
+        .price-num { font-size: 20px; font-weight: 900; font-family: monospace; }
+        
+        .vote-subnav { display: flex; background: #f8fafc; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 30; }
+        .vote-subnav button {
+            flex: 1; padding: 8px; border: none; background: none;
+            font-size: 10px; font-weight: 700; color: #94a3b8; cursor: pointer;
+        }
+        .vote-subnav button.active { color: #002266; background: white; border-bottom: 2px solid #002266; }
+        
+        .vote-panel { display: none; }
+        .vote-panel.active { display: block; }
+        
+        .vt-card {
+            background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+            padding: 12px; margin-bottom: 8px;
+        }
+        
+        #toast-container {
+            position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; display: flex; flex-direction: column; gap: 5px;
+            pointer-events: none; width: 90%; max-width: 360px;
+        }
+        
+        .toast {
+            padding: 8px 16px; border-radius: 8px; color: white;
+            font-weight: 700; font-size: 11px; text-align: center;
+            animation: slideDown 0.3s ease-out; pointer-events: auto;
+        }
+        
+        .toast-success { background: #10B981; }
+        .toast-error { background: #EF4444; }
+        .toast-info { background: #3B82F6; }
+        
+        @keyframes slideDown { from { transform: translateY(-40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .ani-in { animation: fadeIn 0.3s ease-out; }
+        
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px); z-index: 2000;
+            display: flex; align-items: center; justify-content: center; padding: 16px;
+        }
+        
+        .modal-box {
+            background: white; border-radius: 16px; padding: 16px;
+            width: 100%; max-width: 340px; max-height: 80vh; overflow-y: auto;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-dark {
+            background: #0a0e27; color: white; border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .modal-close { background: none; border: none; font-size: 20px; color: #94a3b8; cursor: pointer; }
+        
+        .shop-bg {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100%; color: white; padding: 12px;
+        }
+        
+        .pressure-bar {
+            height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; display: flex; flex: 1;
+        }
+        .pressure-buy { background: #10B981; transition: width 0.5s; }
+        .pressure-sell { background: #EF4444; transition: width 0.5s; }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+    
+    <!-- ========== AUTH SCREEN ========== -->
+    <div id="auth-screen" class="app-wrapper" style="align-items:center;justify-content:center;background:linear-gradient(135deg,#006633,#004422);">
+        <div style="background:white;border-radius:20px;padding:22px;width:90%;max-width:320px;animation:fadeIn 0.4s ease-out;">
+            <div style="text-align:center;margin-bottom:14px;">
+                <div style="width:44px;height:44px;background:linear-gradient(135deg,#002266,#003399);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;color:white;font-size:20px;font-weight:900;">A</div>
+                <h1 style="font-size:18px;font-weight:900;color:#1e293b;">ASD ICON</h1>
+                <p style="font-size:9px;color:#94a3b8;letter-spacing:2px;">Premium Network</p>
+            </div>
+            
+            <div id="login-form" style="display:flex;flex-direction:column;gap:8px;">
+                <input type="email" id="login-email" placeholder="Email" class="input">
+                <input type="password" id="login-pass" placeholder="Password" class="input">
+                <button id="login-btn" class="btn btn-red" style="width:100%;padding:10px;justify-content:center;">Sign In</button>
+                <p style="font-size:9px;text-align:center;color:#94a3b8;">
+                    <span id="show-reg" style="color:#3B82F6;font-weight:700;cursor:pointer;">Register</span> |
+                    <span id="forgot-pass" style="color:#3B82F6;font-weight:700;cursor:pointer;">Forgot?</span>
+                </p>
+            </div>
+            
+            <div id="register-form" class="hidden" style="display:flex;flex-direction:column;gap:8px;">
+                <input type="email" id="reg-email" placeholder="Email" class="input">
+                <input type="password" id="reg-pass" placeholder="Password (6+)" class="input">
+                <input type="password" id="reg-confirm" placeholder="Confirm" class="input">
+                <input type="text" id="reg-ref" placeholder="Referral Code (optional)" class="input">
+                <button id="register-btn" class="btn btn-green" style="width:100%;padding:10px;justify-content:center;">Create Account</button>
+                <p style="font-size:9px;text-align:center;color:#94a3b8;">
+                    <span id="show-login" style="color:#3B82F6;font-weight:700;cursor:pointer;">Back to Login</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ========== MAIN APP ========== -->
+    <div id="main-app" class="app-wrapper hidden">
+        
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-brand">
+                <div class="header-logo">A</div>
+                <div>
+                    <div class="header-title">ASD ICON</div>
+                    <div class="header-subtitle">Premium Network</div>
+                </div>
+            </div>
+            <div class="header-user" onclick="openProfile()">
+                <div class="header-balance">
+                    <span>Balance</span>
+                    <p id="hdr-bal">0.00</p>
+                </div>
+                <img id="hdr-av" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="header-avatar" alt="av">
+            </div>
+        </header>
+        
+        <!-- TOP NAV -->
+        <nav class="top-nav">
+            <button class="active" data-page="business">📋 Business</button>
+            <button data-page="vote">📊 Vote</button>
+            <button data-page="shop">🛒 Shop</button>
+        </nav>
+        
+        <!-- CONTENT -->
+        <div class="content-area" id="main-content">
+            
+            <!-- BUSINESS -->
+            <div id="page-business" class="section-page active">
+                <div style="padding:6px 10px;">
+                    <input type="text" id="biz-search" placeholder="🔍 Search..." class="input" style="font-size:11px;">
+                </div>
+                <div id="posts-container" style="padding:4px 10px 70px;"></div>
+                <button id="fab-create" style="position:fixed;bottom:75px;right:16px;width:44px;height:44px;background:#002266;border:none;border-radius:50%;color:white;font-size:18px;cursor:pointer;z-index:50;box-shadow:0 4px 16px rgba(0,0,0,0.3);">+</button>
+            </div>
+            
+            <!-- VOTE (FULL WHITE PAGE) -->
+            <div id="page-vote" class="section-page" style="background:#ffffff;">
+                <div class="vote-subnav">
+                    <button class="active" data-vtab="market">Market</button>
+                    <button data-vtab="trades">My Trades</button>
+                    <button data-vtab="create">Create Poll</button>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:4px 10px;font-size:8px;font-weight:700;background:#f1f5f9;color:#64748b;">
+                    <span>Vol: <span id="vt-vol">0</span></span>
+                    <span>Active: <span id="vt-act">0</span></span>
+                    <span>Bal: <span id="vt-bal">0</span></span>
+                </div>
+                <div style="padding:8px;">
+                    <div id="vpanel-market" class="vote-panel active"><div id="vpolls"></div></div>
+                    <div id="vpanel-trades" class="vote-panel"><div id="vtrades"></div></div>
+                    <div id="vpanel-create" class="vote-panel">
+                        <div class="vt-card">
+                            <h4 style="font-weight:900;font-size:14px;color:#002266;margin-bottom:8px;">Create Trading Poll</h4>
+                            <div style="display:flex;flex-direction:column;gap:6px;">
+                                <input type="text" id="vp-title" placeholder="Title" class="input">
+                                <textarea id="vp-desc" rows="2" placeholder="Description" class="input"></textarea>
+                                <input type="text" id="vp-loc" placeholder="Location" class="input" value="Global">
+                                <select id="vp-dur" class="input">
+                                    <option value="1">1 Day</option><option value="3">3 Days</option>
+                                    <option value="7">7 Days</option><option value="30">30 Days</option>
+                                </select>
+                                <div style="background:#fef3c7;padding:6px;border-radius:6px;text-align:center;font-size:9px;font-weight:700;color:#92400e;">Fee: 10 Dh | Min: 100 Dh</div>
+                                <button id="vp-create-btn" class="btn btn-blue" style="width:100%;justify-content:center;">Create (10 Dh)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SHOP -->
+            <div id="page-shop" class="section-page">
+                <div class="shop-bg">
+                    <div style="display:flex;background:rgba(255,255,255,0.05);border-radius:16px;padding:2px;margin-bottom:10px;">
+                        <button id="shop-tab-buy" style="flex:1;padding:8px;border:none;border-radius:14px;font-size:10px;font-weight:700;cursor:pointer;background:#fbbf24;color:#1e293b;">Buy Coins</button>
+                        <button id="shop-tab-withdraw" style="flex:1;padding:8px;border:none;border-radius:14px;font-size:10px;font-weight:700;cursor:pointer;background:transparent;color:#94a3b8;">Withdraw</button>
+                    </div>
+                    
+                    <div id="shop-buy-panel">
+                        <div style="text-align:center;margin-bottom:8px;">
+                            <h2 style="font-size:18px;font-weight:900;"><span style="color:#fbbf24;">STAR</span> SHOP</h2>
+                            <p style="font-size:9px;color:#94a3b8;">Buy with LTC • Min $1</p>
+                        </div>
+                        
+                        <div class="card-dark" style="margin-bottom:8px;">
+                            <span style="font-size:9px;color:#94a3b8;">Platform LTC Address</span>
+                            <div style="background:rgba(0,0,0,0.3);padding:6px;border-radius:6px;margin-top:4px;">
+                                <p id="plat-ltc" style="font-size:9px;font-family:monospace;color:#fbbf24;word-break:break-all;">Loading...</p>
+                            </div>
+                            <button id="copy-ltc" style="font-size:8px;color:#94a3b8;background:none;border:none;cursor:pointer;margin-top:4px;">Copy</button>
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+                            <div class="card-dark" style="cursor:pointer;text-align:center;" data-amt="100" data-price="20">
+                                <p style="font-size:14px;font-weight:900;color:#fbbf24;">100 STAR</p><p style="font-size:8px;color:#94a3b8;">$20</p>
+                            </div>
+                            <div class="card-dark" style="cursor:pointer;text-align:center;" data-amt="500" data-price="100">
+                                <p style="font-size:14px;font-weight:900;color:#fbbf24;">500 STAR</p><p style="font-size:8px;color:#94a3b8;">$100</p>
+                            </div>
+                            <div class="card-dark" style="cursor:pointer;text-align:center;" data-amt="2000" data-price="400">
+                                <p style="font-size:14px;font-weight:900;color:#fbbf24;">2K STAR</p><p style="font-size:8px;color:#94a3b8;">$400</p>
+                            </div>
+                            <div class="card-dark" style="cursor:pointer;text-align:center;" data-amt="5000" data-price="1000">
+                                <p style="font-size:14px;font-weight:900;color:#fbbf24;">5K STAR</p><p style="font-size:8px;color:#94a3b8;">$1K</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-dark">
+                            <h5 style="font-size:11px;font-weight:900;margin-bottom:4px;">Cart</h5>
+                            <div id="cart-items"></div>
+                            <div style="border-top:1px solid rgba(255,255,255,0.1);margin:4px 0;"></div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                                <span style="font-size:9px;color:#94a3b8;">Total:</span>
+                                <span id="cart-total" style="font-size:14px;font-weight:900;color:#10B981;">$0.00</span>
+                            </div>
+                            <input type="text" id="ltc-txid" placeholder="LTC TxID" class="input-dark" style="margin-bottom:4px;font-size:10px;">
+                            <button id="checkout-btn" class="btn btn-gold" style="width:100%;justify-content:center;">Submit Buy Request</button>
+                            <p style="font-size:7px;color:#64748b;text-align:center;margin-top:4px;">Admin approval required</p>
+                        </div>
+                    </div>
+                    
+                    <div id="shop-withdraw-panel" class="hidden">
+                        <div style="text-align:center;margin-bottom:8px;">
+                            <h2 style="font-size:18px;font-weight:900;color:white;">Withdraw</h2>
+                            <p style="font-size:9px;color:#94a3b8;">Min 1000 STAR to LTC</p>
+                        </div>
+                        <div class="card-dark" style="margin-bottom:8px;">
+                            <p style="font-size:9px;color:#94a3b8;">Your Balance</p>
+                            <p id="w-bal" style="font-size:22px;font-weight:900;color:#fbbf24;">0.00</p>
+                        </div>
+                        <div class="card-dark">
+                            <input type="text" id="w-ltc-addr" placeholder="Your LTC Address" class="input-dark" style="margin-bottom:4px;font-size:10px;">
+                            <input type="number" id="w-amt" placeholder="Amount (min 1000)" class="input-dark" style="margin-bottom:4px;font-size:10px;" min="1000">
+                            <button id="withdraw-btn" class="btn btn-green" style="width:100%;justify-content:center;">Submit Withdraw</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- BOTTOM NAV -->
+        <nav class="bottom-nav">
+            <button class="bn-item active" data-bnav="business"><i class="fas fa-home"></i><span>Home</span></button>
+            <button class="bn-item" data-bnav="vote"><i class="fas fa-chart-bar"></i><span>Vote</span></button>
+            <button class="bn-item" data-bnav="shop"><i class="fas fa-coins"></i><span>Shop</span></button>
+            <button class="bn-item" data-bnav="about"><i class="fas fa-info-circle"></i><span>About</span></button>
+            <button class="bn-item" data-bnav="profile"><i class="fas fa-user"></i><span>Profile</span></button>
+        </nav>
+    </div>
+    
+    <!-- ========== MODALS ========== -->
+    <!-- Post Detail Modal -->
+    <div id="modal-post" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <h4 id="mpd-title" style="font-weight:900;font-size:14px;"></h4>
+                <button class="modal-close" onclick="closeModal('modal-post')">&times;</button>
+            </div>
+            <p id="mpd-body" style="font-size:11px;color:#64748b;margin-bottom:8px;"></p>
+            <div style="background:#f8fafc;padding:8px;border-radius:8px;margin-bottom:8px;">
+                <p style="font-size:8px;color:#94a3b8;">Contact:</p>
+                <p id="mpd-wa" style="font-size:12px;font-weight:900;color:#006633;"></p>
+            </div>
+            <button id="mpd-wa-btn" class="btn btn-green" style="width:100%;justify-content:center;"><i class="fab fa-whatsapp"></i> Chat</button>
+        </div>
+    </div>
+    
+    <!-- Vote Detail Modal -->
+    <div id="modal-vote" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <h4 id="mvd-title" style="font-weight:900;font-size:13px;"></h4>
+                <button class="modal-close" onclick="closeModal('modal-vote')">&times;</button>
+            </div>
+            <p id="mvd-desc" style="font-size:10px;color:#64748b;margin-bottom:4px;"></p>
+            
+            <!-- ✅ PRESSURE LABEL -->
+            <div id="mvd-pressure-label" style="text-align:center;font-size:10px;font-weight:900;padding:4px 8px;border-radius:6px;margin-bottom:6px;"></div>
+            
+            <div class="price-box">
+                <span style="font-size:9px;color:#64748b;">Price:</span>
+                <span class="price-num" id="mvd-price" style="color:#fbbf24;">100</span>
+                <span id="mvd-change" style="font-size:9px;font-weight:700;">+0%</span>
+            </div>
+            
+            <div class="prog-bar">
+                <div class="prog-buy" id="mvd-buy-bar" style="width:50%"></div>
+                <div class="prog-sell" id="mvd-sell-bar" style="width:50%"></div>
+            </div>
+            
+            <div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700;margin:4px 0;">
+                <span style="color:#10B981;">Buy <span id="mvd-bp">50%</span></span>
+                <span style="color:#EF4444;">Sell <span id="mvd-sp">50%</span></span>
+            </div>
+            
+            <!-- ✅ PRESSURE METER -->
+            <div style="display:flex;align-items:center;gap:4px;margin:4px 0;background:#f1f5f9;padding:4px 8px;border-radius:4px;">
+                <span style="font-size:7px;font-weight:700;color:#64748b;">Pressure:</span>
+                <div class="pressure-bar">
+                    <div class="pressure-buy" id="mvd-pbuy-bar" style="width:50%"></div>
+                    <div class="pressure-sell" id="mvd-psell-bar" style="width:50%"></div>
+                </div>
+                <span id="mvd-pressure-val" style="font-size:8px;font-weight:900;">50%</span>
+            </div>
+            
+            <div style="display:flex;gap:6px;margin:6px 0;">
+                <button id="mv-buy" class="btn-buy">BUY</button>
+                <button id="mv-sell" class="btn-sell">SELL</button>
+            </div>
+            
+            <input type="number" id="mv-amount" placeholder="Amount (Dh)" class="input" style="margin-bottom:4px;font-size:12px;" min="10">
+            <button id="mv-submit" class="btn btn-blue" style="width:100%;justify-content:center;">Place Trade</button>
+        </div>
+    </div>
+    
+    <!-- Profile Modal -->
+    <div id="modal-profile" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <h4 style="font-weight:900;">Profile</h4>
+                <button class="modal-close" onclick="closeModal('modal-profile')">&times;</button>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <img id="prof-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:56px;height:56px;border-radius:50%;border:2px solid #e2e8f0;object-fit:cover;">
+                <label class="btn btn-outline" style="font-size:10px;cursor:pointer;border:2px solid #e2e8f0;background:white;">Change Photo
+                    <input type="file" id="prof-photo" class="hidden" accept="image/*">
+                </label>
+                <input type="text" id="prof-name" placeholder="Your Name" class="input">
+                <textarea id="prof-bio" rows="2" placeholder="About you..." class="input"></textarea>
+                <p id="prof-ref" style="font-size:9px;color:#64748b;"></p>
+                <button id="prof-save" class="btn btn-green" style="width:100%;justify-content:center;">Save</button>
+                <button id="prof-logout" class="btn btn-red" style="width:100%;justify-content:center;">Logout</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create Post Modal -->
+    <div id="modal-create" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <h4 style="font-weight:900;">Create Post</h4>
+                <button class="modal-close" onclick="closeModal('modal-create')">&times;</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <input type="text" id="cp-title" placeholder="Business Title" class="input">
+                <input type="tel" id="cp-wa" placeholder="WhatsApp (01xxxxxxxxx)" class="input">
+                <input type="text" id="cp-loc" placeholder="Location" class="input">
+                <textarea id="cp-det" rows="2" placeholder="Details..." class="input"></textarea>
+                <select id="cp-dur" class="input">
+                    <option value="4">4 Hours</option><option value="12">12 Hours</option>
+                    <option value="24">1 Day</option><option value="168">7 Days</option>
+                </select>
+                <button id="cp-pub" class="btn btn-green" style="width:100%;justify-content:center;">Publish</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- About Modal -->
+    <div id="modal-about" class="modal-overlay hidden">
+        <div class="modal-box" style="max-height:75vh;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <h4 style="font-weight:900;">About ASD ICON</h4>
+                <button class="modal-close" onclick="closeModal('modal-about')">&times;</button>
+            </div>
+            <div style="font-size:10px;color:#334155;display:flex;flex-direction:column;gap:8px;">
+                <div style="background:#f8fafc;border-radius:10px;padding:10px;">
+                    <h5 style="font-weight:900;color:#002266;">🚀 What is ASD ICON?</h5>
+                    <p style="margin-top:4px;">Premium business networking and trading platform with Forex-style prediction markets.</p>
+                </div>
+                <div style="background:#f8fafc;border-radius:10px;padding:10px;">
+                    <h5 style="font-weight:900;color:#002266;">📊 Features</h5>
+                    <p style="margin-top:4px;">✅ Business Partners ✅ Forex Trading ✅ Real-time Prices ✅ LTC Payments ✅ Referral Rewards</p>
+                </div>
+                <div style="background:#fef3c7;border-radius:10px;padding:10px;">
+                    <h5 style="font-weight:900;color:#92400e;">📧 Support</h5>
+                    <p style="margin-top:4px;font-weight:700;">dhrubo1200@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== FIREBASE ==========
+        const fb = {
+            apiKey: "AIzaSyB31gEKElLRlKVynHsEn3PU0F7bv1AHso8",
+            authDomain: "vote-trading.firebaseapp.com",
+            projectId: "vote-trading",
+            storageBucket: "vote-trading.firebasestorage.app",
+            messagingSenderId: "25813578973",
+            appId: "1:25813578973:web:b2297633811dd633be5734"
+        };
+        firebase.initializeApp(fb);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // ========== STATE ==========
+        let user = null, bal = 0, stars = 0, page = 'business', vtab = 'market';
+        let cart = [], tSide = null, tPollId = null;
+        
+        // ========== TOAST ==========
+        function toast(m, t = 'success') {
+            const c = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            el.className = `toast toast-${t}`; el.textContent = m;
+            c.appendChild(el);
+            setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.4s'; setTimeout(() => el.remove(), 400); }, 2500);
+        }
+        
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        
+        function tAgo(ts) {
+            if (!ts) return '';
+            const s = Math.floor((Date.now() - ts) / 1000);
+            if (s < 60) return 'Now';
+            if (s < 3600) return Math.floor(s/60) + 'm';
+            if (s < 86400) return Math.floor(s/3600) + 'h';
+            return Math.floor(s/86400) + 'd';
+        }
+        
+        function tLeft(ts) {
+            if (!ts) return '--';
+            const r = ts - Date.now();
+            if (r <= 0) return 'Ended';
+            const d = Math.floor(r/86400000), h = Math.floor((r%86400000)/3600000);
+            return d > 0 ? `${d}d ${h}h` : `${h}h`;
+        }
+        
+        // ========== AUTH ==========
+        auth.onAuthStateChanged(async (u) => {
+            if (u) {
+                const d = await db.collection('users').doc(u.uid).get();
+                if (d.exists) {
+                    user = { uid: u.uid, ...d.data() };
+                } else {
+                    user = {
+                        uid: u.uid, email: u.email, displayName: u.email.split('@')[0],
+                        photoURL: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                        bio: 'Member', balance: 100, stars: 0,
+                        referralCode: u.email.split('@')[0].toUpperCase() + '-' + Math.random().toString(36).substr(2,6).toUpperCase(),
+                        referralBalance: 0, totalReferrals: 0, role: 'user'
+                    };
+                    await db.collection('users').doc(u.uid).set(user);
+                }
+                bal = user.balance || 0; stars = user.stars || 0;
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                updateUI(); loadPosts(); loadPolls(); loadLTC();
+            } else {
+                user = null;
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('main-app').classList.add('hidden');
+            }
+        });
+        
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const e = document.getElementById('login-email').value.trim(), p = document.getElementById('login-pass').value;
+            if (!e || !p) return toast('Fill all fields', 'error');
+            auth.signInWithEmailAndPassword(e, p).catch(err => toast(err.message, 'error'));
+        });
+        
+        document.getElementById('register-btn').addEventListener('click', () => {
+            const e = document.getElementById('reg-email').value.trim(), p = document.getElementById('reg-pass').value, c = document.getElementById('reg-confirm').value;
+            if (!e || !p) return toast('Fill all fields', 'error');
+            if (p.length < 6) return toast('Min 6 chars', 'error');
+            if (p !== c) return toast('Passwords mismatch', 'error');
+            auth.createUserWithEmailAndPassword(e, p).then(() => { toast('Account created!', 'success'); document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); }).catch(err => toast(err.message, 'error'));
+        });
+        
+        document.getElementById('forgot-pass').addEventListener('click', () => {
+            const e = prompt('Enter your email:');
+            if (e) auth.sendPasswordResetEmail(e).then(() => toast('Email sent!')).catch(err => toast(err.message, 'error'));
+        });
+        
+        document.getElementById('show-reg').addEventListener('click', () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); });
+        document.getElementById('show-login').addEventListener('click', () => { document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); });
+        
+        // ========== UI ==========
+        function updateUI() {
+            if (!user) return;
+            document.getElementById('hdr-bal').innerText = bal.toFixed(2);
+            document.getElementById('hdr-av').src = user.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            document.getElementById('vt-bal').innerText = bal.toFixed(2);
+        }
+        
+        // ========== NAVIGATION ==========
+        function goPage(p) {
+            document.querySelectorAll('.section-page').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.top-nav button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(`page-${p}`).classList.add('active');
+            document.querySelector(`.top-nav button[data-page="${p}"]`)?.classList.add('active');
+            document.querySelector(`.bn-item[data-bnav="${p}"]`)?.classList.add('active');
+            if (p === 'vote') loadPolls();
+            if (p === 'shop') { loadLTC(); updateWUI(); }
+            if (p === 'about') document.getElementById('modal-about').classList.remove('hidden');
+            page = p;
+        }
+        
+        document.querySelectorAll('.top-nav button').forEach(b => b.addEventListener('click', () => goPage(b.dataset.page)));
+        document.querySelectorAll('.bn-item').forEach(b => {
+            b.addEventListener('click', () => {
+                const n = b.dataset.bnav;
+                if (n === 'profile') openProf();
+                else if (n === 'about') document.getElementById('modal-about').classList.remove('hidden');
+                else goPage(n);
+            });
+        });
+        
+        // ========== BUSINESS ==========
+        function loadPosts() {
+            db.collection('posts').where('approved', '==', true).orderBy('createdAt', 'desc').onSnapshot(snap => {
+                let posts = [];
+                snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
+                const q = (document.getElementById('biz-search')?.value || '').toLowerCase();
+                if (q) posts = posts.filter(p => (p.title||'').toLowerCase().includes(q) || (p.location||'').toLowerCase().includes(q) || (p.details||'').toLowerCase().includes(q));
+                const c = document.getElementById('posts-container');
+                if (!posts.length) { c.innerHTML = '<div style="text-align:center;padding:30px;color:#94a3b8;">No posts</div>'; return; }
+                c.innerHTML = posts.map(p => {
+                    const ago = tAgo(p.createdAt?.toMillis());
+                    const exp = p.expireAt?.toMillis() < Date.now();
+                    return `<div class="card-white ani-in" onclick="openPD('${p.id}')" style="cursor:pointer;">
+                        <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;font-weight:700;color:#64748b;">${p.userName||'User'}</span><span class="badge ${exp?'badge-expired':'badge-active'}">${exp?'Expired':'Active'}</span></div>
+                        <h5 style="font-weight:900;font-size:12px;margin:3px 0;">${p.title}</h5>
+                        <div style="display:flex;gap:3px;margin-bottom:2px;"><span style="font-size:7px;background:#f1f5f9;padding:1px 5px;border-radius:4px;">📍${p.location}</span><span style="font-size:7px;background:#f0fdf4;padding:1px 5px;border-radius:4px;color:#006633;">📞${p.whatsapp}</span></div>
+                        <p style="font-size:10px;color:#64748b;">${(p.details||'').substr(0,80)}...</p>
+                        <p style="font-size:7px;color:#94a3b8;">${ago}</p>
+                    </div>`;
+                }).join('');
+            });
+        }
+        
+        window.openPD = async function(id) {
+            const d = await db.collection('posts').doc(id).get();
+            if (!d.exists) return;
+            const p = d.data();
+            document.getElementById('mpd-title').innerText = p.title;
+            document.getElementById('mpd-body').innerText = p.details;
+            document.getElementById('mpd-wa').innerText = p.whatsapp;
+            document.getElementById('modal-post').classList.remove('hidden');
+        };
+        
+        document.getElementById('mpd-wa-btn').addEventListener('click', () => {
+            let n = (document.getElementById('mpd-wa').innerText || '').replace(/\D/g,'');
+            if (n.startsWith('0')) n = '880' + n.substring(1);
+            if (n) window.open('https://wa.me/' + n, '_blank');
+        });
+        
+        document.getElementById('fab-create').addEventListener('click', () => document.getElementById('modal-create').classList.remove('hidden'));
+        
+        document.getElementById('cp-pub').addEventListener('click', async () => {
+            const t = document.getElementById('cp-title').value.trim(), w = document.getElementById('cp-wa').value.trim();
+            const l = document.getElementById('cp-loc').value.trim() || 'Bangladesh', d = document.getElementById('cp-det').value.trim();
+            const dur = parseInt(document.getElementById('cp-dur').value);
+            if (!t || !w || !d) return toast('Fill all fields', 'error');
+            if (!/^01\d{9}$/.test(w)) return toast('Valid WhatsApp required', 'error');
+            await db.collection('posts').add({ userId: user.uid, userName: user.displayName, userPhoto: user.photoURL, title: t, whatsapp: w, location: l, details: d, duration: dur, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(), expireAt: new Date(Date.now() + dur * 3600000) });
+            toast('Post submitted!', 'success');
+            closeModal('modal-create');
+        });
+        
+        document.getElementById('biz-search').addEventListener('keyup', loadPosts);
+        
+        // ========== VOTE ==========
+        document.querySelectorAll('.vote-subnav button').forEach(b => {
+            b.addEventListener('click', () => {
+                document.querySelectorAll('.vote-panel').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.vote-subnav button').forEach(x => x.classList.remove('active'));
+                document.getElementById(`vpanel-${b.dataset.vtab}`).classList.add('active');
+                b.classList.add('active');
+                vtab = b.dataset.vtab;
+                if (vtab === 'market') loadPolls();
+                if (vtab === 'trades') loadTrades();
+            });
+        });
+        
+        function calcPr(poll) {
+            const ba = poll.buyAmount || 0, sa = poll.sellAmount || 0, tot = ba + sa;
+            if (tot === 0) return { price: 100, chg: 0, buyP: 50, sellP: 50 };
+            const net = ba - sa;
+            const price = Math.max(1, Math.min(500, 100 * (1 + net / (tot + 1))));
+            return { 
+                price, 
+                chg: ((price - 100) / 100) * 100,
+                buyP: Math.round((ba / tot) * 100),
+                sellP: Math.round((sa / tot) * 100)
+            };
+        }
+        
+        function loadPolls() {
+            db.collection('votePolls').where('status', '==', 'active').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                const polls = [];
+                snap.forEach(d => polls.push({ id: d.id, ...d.data() }));
+                document.getElementById('vt-act').innerText = polls.length;
+                let tv = 0; polls.forEach(p => tv += (p.buyAmount||0) + (p.sellAmount||0));
+                document.getElementById('vt-vol').innerText = tv.toFixed(0);
+                const c = document.getElementById('vpolls');
+                if (!polls.length) { c.innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;">No active polls</div>'; return; }
+                c.innerHTML = polls.map(p => {
+                    const pr = calcPr(p);
+                    const tot = (p.buyAmount||0) + (p.sellAmount||0);
+                    const bp = pr.buyP;
+                    const isUp = pr.chg >= 0;
+                    
+                    // ✅ Pressure Label
+                    let plabel = '', pcolor = '';
+                    if (bp >= 70) { plabel = 'Strong Buy 📈'; pcolor = '#065f46'; }
+                    else if (bp >= 55) { plabel = 'Buying ⬆️'; pcolor = '#10B981'; }
+                    else if (bp >= 45) { plabel = 'Neutral ➡️'; pcolor = '#fbbf24'; }
+                    else if (bp >= 30) { plabel = 'Selling ⬇️'; pcolor = '#EF4444'; }
+                    else { plabel = 'Strong Sell 📉'; pcolor = '#991b1b'; }
+                    
+                    return `<div class="vt-card ani-in" onclick="openVD('${p.id}')" style="cursor:pointer;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:2px;">
+                            <h5 style="font-weight:900;font-size:11px;">${p.title}</h5>
+                            <span class="badge" style="background:${pcolor}20;color:${pcolor};">${plabel}</span>
+                        </div>
+                        <p style="font-size:8px;color:#94a3b8;">${p.location||'Global'} • ${tLeft(p.expireAt?.toMillis())}</p>
+                        
+                        <div class="price-box">
+                            <span style="font-size:8px;color:#94a3b8;">Price:</span>
+                            <span style="font-size:17px;font-weight:900;color:${isUp?'#10B981':'#EF4444'};">${pr.price.toFixed(2)}</span>
+                            <span style="font-size:9px;font-weight:700;color:${isUp?'#10B981':'#EF4444'};">${isUp?'+':''}${pr.chg.toFixed(1)}%</span>
+                        </div>
+                        
+                        <div class="prog-bar"><div class="prog-buy" style="width:${bp}%;"></div><div class="prog-sell" style="width:${100-bp}%;"></div></div>
+                        
+                        <div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700;margin:3px 0;">
+                            <span style="color:#10B981;">Buy ${bp}%</span>
+                            <span style="color:#EF4444;">Sell ${100-bp}%</span>
+                            <span style="color:#64748b;">Vol: ${tot.toFixed(0)}</span>
+                        </div>
+                        
+                        <!-- ✅ PRESSURE METER -->
+                        <div style="display:flex;align-items:center;gap:3px;background:#f1f5f9;padding:4px 6px;border-radius:4px;">
+                            <span style="font-size:6px;font-weight:700;color:#64748b;">PRESSURE</span>
+                            <div class="pressure-bar"><div class="pressure-buy" style="width:${bp}%;"></div><div class="pressure-sell" style="width:${100-bp}%;"></div></div>
+                            <span style="font-size:7px;font-weight:900;color:${bp>=50?'#10B981':'#EF4444'};">${bp}% ${bp>=50?'BUY':'SELL'}</span>
+                        </div>
+                    </div>`;
+                }).join('');
+            });
+        }
+        
+        window.openVD = async function(id) {
+            tPollId = id;
+            const d = await db.collection('votePolls').doc(id).get();
+            if (!d.exists) return;
+            const p = d.data();
+            const pr = calcPr(p);
+            const bp = pr.buyP;
+            
+            // ✅ Pressure Label
+            let plabel = '', pcolor = '';
+            if (bp >= 70) { plabel = 'STRONG BUY PRESSURE 📈'; pcolor = '#065f46'; }
+            else if (bp >= 55) { plabel = 'BUYING PRESSURE ⬆️'; pcolor = '#10B981'; }
+            else if (bp >= 45) { plabel = 'NEUTRAL ➡️'; pcolor = '#fbbf24'; }
+            else if (bp >= 30) { plabel = 'SELLING PRESSURE ⬇️'; pcolor = '#EF4444'; }
+            else { plabel = 'STRONG SELL PRESSURE 📉'; pcolor = '#991b1b'; }
+            
+            document.getElementById('mvd-title').innerText = p.title;
+            document.getElementById('mvd-desc').innerText = p.description || '';
+            
+            // ✅ Pressure Label Show
+            const plEl = document.getElementById('mvd-pressure-label');
+            plEl.innerText = plabel;
+            plEl.style.color = pcolor;
+            plEl.style.background = pcolor + '15';
+            
+            document.getElementById('mvd-price').innerText = pr.price.toFixed(2);
+            document.getElementById('mvd-price').style.color = pr.chg >= 0 ? '#10B981' : '#EF4444';
+            document.getElementById('mvd-change').innerText = (pr.chg >= 0 ? '+' : '') + pr.chg.toFixed(1) + '%';
+            document.getElementById('mvd-change').style.color = pr.chg >= 0 ? '#10B981' : '#EF4444';
+            document.getElementById('mvd-buy-bar').style.width = bp + '%';
+            document.getElementById('mvd-sell-bar').style.width = (100-bp) + '%';
+            document.getElementById('mvd-bp').innerText = bp + '%';
+            document.getElementById('mvd-sp').innerText = (100-bp) + '%';
+            document.getElementById('mvd-pbuy-bar').style.width = bp + '%';
+            document.getElementById('mvd-psell-bar').style.width = (100-bp) + '%';
+            document.getElementById('mvd-pressure-val').innerText = bp + '% ' + (bp >= 50 ? 'BUY' : 'SELL');
+            document.getElementById('mvd-pressure-val').style.color = bp >= 50 ? '#10B981' : '#EF4444';
+            
+            tSide = null;
+            document.getElementById('mv-amount').value = '';
+            document.getElementById('modal-vote').classList.remove('hidden');
+        };
+        
+        document.getElementById('mv-buy').addEventListener('click', function() { tSide = 'buy'; this.style.opacity = '0.6'; document.getElementById('mv-sell').style.opacity = '1'; });
+        document.getElementById('mv-sell').addEventListener('click', function() { tSide = 'sell'; this.style.opacity = '0.6'; document.getElementById('mv-buy').style.opacity = '1'; });
+        
+        document.getElementById('mv-submit').addEventListener('click', async () => {
+            if (!tSide) return toast('Select BUY or SELL', 'error');
+            const amt = parseFloat(document.getElementById('mv-amount').value);
+            if (!amt || amt < 10) return toast('Min 10 Dh', 'error');
+            if (amt > bal) return toast('Insufficient balance', 'error');
+            
+            const ref = db.collection('votePolls').doc(tPollId);
+            const doc = await ref.get();
+            if (!doc.exists || doc.data().status !== 'active') return toast('Poll ended', 'error');
+            
+            const com = amt * 0.07, creatorCut = amt * 0.02, net = amt - com;
+            const pollData = doc.data();
+            
+            await db.collection('users').doc(user.uid).update({ balance: firebase.firestore.FieldValue.increment(-amt) });
+            const fld = tSide === 'buy' ? 'buyAmount' : 'sellAmount';
+            const vf = tSide === 'buy' ? 'buyVoters' : 'sellVoters';
+            await ref.update({ [fld]: firebase.firestore.FieldValue.increment(net), [vf]: firebase.firestore.FieldValue.arrayUnion(user.uid), totalCommission: firebase.firestore.FieldValue.increment(amt * 0.05), creatorEarnings: firebase.firestore.FieldValue.increment(creatorCut) });
+            
+            if (pollData.creatorId && pollData.creatorId !== user.uid) {
+                await db.collection('users').doc(pollData.creatorId).update({ balance: firebase.firestore.FieldValue.increment(creatorCut) });
+            }
+            
+            await db.collection('trades').add({ pollId: tPollId, userId: user.uid, side: tSide, amount: amt, netAmount: net, commission: com, entryPrice: calcPr(doc.data()).price, entryBuyPressure: calcPr(doc.data()).buyP, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            
+            bal -= amt;
+            updateUI();
+            closeModal('modal-vote');
+            toast(`${tSide.toUpperCase()} placed!`, 'success');
+            loadPolls();
+        });
+        
+        async function loadTrades() {
+            const c = document.getElementById('vtrades');
+            c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:15px;">Loading...</p>';
+            const snap = await db.collection('trades').where('userId', '==', user.uid).orderBy('createdAt', 'desc').get();
+            const trades = [];
+            snap.forEach(d => trades.push({ id: d.id, ...d.data() }));
+            if (!trades.length) { c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:15px;">No trades</p>'; return; }
+            
+            const pIds = [...new Set(trades.map(t => t.pollId))];
+            const pDocs = await Promise.all(pIds.map(id => db.collection('votePolls').doc(id).get()));
+            const polls = {};
+            pDocs.forEach(d => { if (d.exists) polls[d.id] = d.data(); });
+            
+            c.innerHTML = trades.map(t => {
+                const p = polls[t.pollId] || {}, pr = calcPr(p);
+                const prof = t.side === 'buy' ? (pr.price - t.entryPrice) * (t.netAmount / t.entryPrice) : (t.entryPrice - pr.price) * (t.netAmount / t.entryPrice);
+                return `<div class="vt-card ani-in">
+                    <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;font-weight:700;">${p.title||'Unknown'}</span><span style="font-size:8px;font-weight:900;color:${t.side==='buy'?'#10B981':'#EF4444'};">${t.side.toUpperCase()}</span></div>
+                    <div style="display:flex;justify-content:space-between;font-size:8px;margin-top:2px;color:#64748b;"><span>Entry: ${t.entryPrice?.toFixed(2)}</span><span>Now: ${pr.price.toFixed(2)}</span><span style="font-weight:700;color:${prof>=0?'#10B981':'#EF4444'};">${prof>=0?'+':''}${prof.toFixed(2)}</span></div>
+                </div>`;
+            }).join('');
+        }
+        
+        document.getElementById('vp-create-btn').addEventListener('click', async () => {
+            const t = document.getElementById('vp-title').value.trim(), d = document.getElementById('vp-desc').value.trim();
+            const l = document.getElementById('vp-loc').value.trim() || 'Global', dur = parseInt(document.getElementById('vp-dur').value);
+            if (!t) return toast('Enter title', 'error');
+            if (bal < 110) return toast('Need 110 Dh', 'error');
+            
+            await db.collection('users').doc(user.uid).update({ balance: firebase.firestore.FieldValue.increment(-10) });
+            await db.collection('votePolls').add({ title: t, description: d, location: l, duration: dur, creatorId: user.uid, creatorName: user.displayName, buyAmount: 0, sellAmount: 0, buyVoters: [], sellVoters: [], totalCommission: 0, creatorEarnings: 0, status: 'active', createdAt: firebase.firestore.FieldValue.serverTimestamp(), expireAt: new Date(Date.now() + dur * 86400000) });
+            bal -= 10; updateUI();
+            toast('Poll created!', 'success');
+            document.querySelector('.vote-subnav button[data-vtab="market"]').click();
+        });
+        
+        // ========== SHOP ==========
+        document.getElementById('shop-tab-buy').addEventListener('click', () => {
+            document.getElementById('shop-buy-panel').classList.remove('hidden');
+            document.getElementById('shop-withdraw-panel').classList.add('hidden');
+            document.getElementById('shop-tab-buy').style.background = '#fbbf24';
+            document.getElementById('shop-tab-buy').style.color = '#1e293b';
+            document.getElementById('shop-tab-withdraw').style.background = 'transparent';
+            document.getElementById('shop-tab-withdraw').style.color = '#94a3b8';
+        });
+        
+        document.getElementById('shop-tab-withdraw').addEventListener('click', () => {
+            document.getElementById('shop-buy-panel').classList.add('hidden');
+            document.getElementById('shop-withdraw-panel').classList.remove('hidden');
+            document.getElementById('shop-tab-withdraw').style.background = '#fbbf24';
+            document.getElementById('shop-tab-withdraw').style.color = '#1e293b';
+            document.getElementById('shop-tab-buy').style.background = 'transparent';
+            document.getElementById('shop-tab-buy').style.color = '#94a3b8';
+            updateWUI();
+        });
+        
+        async function loadLTC() {
+            const d = await db.collection('adminSettings').doc('ltc_wallet').get();
+            if (d.exists) document.getElementById('plat-ltc').innerText = d.data().address || 'Not set';
+        }
+        
+        function updateWUI() { document.getElementById('w-bal').innerText = (stars||0).toFixed(2); }
+        
+        document.getElementById('copy-ltc').addEventListener('click', () => { navigator.clipboard?.writeText(document.getElementById('plat-ltc').innerText); toast('Copied!'); });
+        
+        document.querySelectorAll('[data-amt]').forEach(el => {
+            el.addEventListener('click', function() {
+                const a = parseInt(this.dataset.amt), p = parseFloat(this.dataset.price);
+                const ex = cart.find(i => i.amt === a);
+                if (ex) ex.qty++; else cart.push({ amt: a, price: p, qty: 1 });
+                rCart(); toast(`${a} STAR added!`);
+            });
+        });
+        
+        function rCart() {
+            const c = document.getElementById('cart-items');
+            if (!cart.length) { c.innerHTML = '<p style="font-size:9px;color:#94a3b8;text-align:center;padding:6px;">Empty</p>'; document.getElementById('cart-total').innerText = '$0.00'; return; }
+            let total = 0;
+            c.innerHTML = cart.map((i, idx) => {
+                const st = i.amt * i.qty * (i.price / i.amt); total += st;
+                return `<div style="display:flex;justify-content:space-between;font-size:9px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span>${i.amt} x${i.qty}</span><span style="color:#fbbf24;">$${st.toFixed(2)}</span><button onclick="rmCart(${idx})" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:10px;">x</button></div>`;
+            }).join('');
+            document.getElementById('cart-total').innerText = '$' + total.toFixed(2);
+        }
+        
+        window.rmCart = function(i) { cart.splice(i, 1); rCart(); };
+        
+        document.getElementById('checkout-btn').addEventListener('click', async () => {
+            if (!cart.length) return toast('Cart empty', 'error');
+            const tx = document.getElementById('ltc-txid').value.trim();
+            if (!tx) return toast('Enter TxID', 'error');
+            let ts = 0, tu = 0; cart.forEach(i => { ts += i.amt * i.qty; tu += i.amt * i.qty * (i.price / i.amt); });
+            if (tu < 1) return toast('Min $1', 'error');
+            await db.collection('buyRequests').add({ userId: user.uid, userEmail: user.email, amountStars: ts, amountUSD: tu, amountLTC: (tu/65).toFixed(6), txHash: tx, status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            toast('Submitted!', 'success'); cart = []; document.getElementById('ltc-txid').value = ''; rCart();
+        });
+        
+        document.getElementById('withdraw-btn').addEventListener('click', async () => {
+            const addr = document.getElementById('w-ltc-addr').value.trim(), amt = parseInt(document.getElementById('w-amt').value);
+            if (!addr) return toast('Enter LTC address', 'error');
+            if (!amt || amt < 1000) return toast('Min 1000', 'error');
+            if (amt > (stars||0)) return toast('Insufficient', 'error');
+            await db.collection('transactions').add({ userId: user.uid, userEmail: user.email, type: 'withdraw', amountStars: amt, ltcAddress: addr, status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            stars -= amt; toast('Submitted!', 'success'); updateWUI();
+        });
+        
+        // ========== PROFILE ==========
+        function openProf() {
+            document.getElementById('prof-name').value = user?.displayName || '';
+            document.getElementById('prof-bio').value = user?.bio || '';
+            document.getElementById('prof-img').src = user?.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            document.getElementById('prof-ref').innerText = 'Referral: ' + (user?.referralCode || 'N/A');
+            document.getElementById('modal-profile').classList.remove('hidden');
+        }
+        
+        document.getElementById('prof-save').addEventListener('click', async () => {
+            const name = document.getElementById('prof-name').value.trim();
+            if (!name) return toast('Name required', 'error');
+            const upd = { displayName: name, bio: document.getElementById('prof-bio').value.trim() };
+            
+            const file = document.getElementById('prof-photo').files[0];
+            if (file) {
+                if (file.size > 1 * 1024 * 1024) return toast('Max 1MB', 'error');
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    upd.photoURL = ev.target.result;
+                    await db.collection('users').doc(user.uid).update(upd);
+                    user.displayName = name; user.photoURL = upd.photoURL;
+                    updateUI(); closeModal('modal-profile'); toast('Updated!');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                await db.collection('users').doc(user.uid).update(upd);
+                user.displayName = name; updateUI(); closeModal('modal-profile'); toast('Updated!');
+            }
+        });
+        
+        document.getElementById('prof-photo').addEventListener('change', function(e) {
+            const f = e.target.files[0];
+            if (f) { const r = new FileReader(); r.onload = ev => document.getElementById('prof-img').src = ev.target.result; r.readAsDataURL(f); }
+        });
+        
+        document.getElementById('prof-logout').addEventListener('click', () => { auth.signOut(); closeModal('modal-profile'); });
+        
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') ['modal-post','modal-vote','modal-profile','modal-create','modal-about'].forEach(id => closeModal(id)); });
+    </script>
+</body>
+</html>
+[]
