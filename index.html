@@ -1,1035 +1,672 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ASD ICON • Premium Network</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --green: #006633;
-            --red: #E31D2B;
-            --blue: #002266;
-            --gold: #fbbf24;
-            --cyan: #00d2ff;
-            --header-h: 56px;
-            --tabs-h: 40px;
-            --bottom-h: 60px;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        html, body {
-            height: 100%; width: 100%;
-            overflow: hidden;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: #0a0a0a;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-        }
-        
-        .app-wrapper {
-            width: 100%; max-width: 480px; height: 100vh; height: 100dvh;
-            margin: 0 auto; display: flex; flex-direction: column;
-            background: #f8fafc; position: relative; overflow: hidden;
-        }
-        
-        .hidden { display: none !important; }
-        
-        .header {
-            height: var(--header-h); min-height: var(--header-h);
-            padding: 0 12px; display: flex; align-items: center;
-            justify-content: space-between; background: #fff;
-            border-bottom: 1px solid #e2e8f0; flex-shrink: 0; z-index: 100;
-        }
-        
-        .header-brand { display: flex; align-items: center; gap: 8px; }
-        .header-logo {
-            width: 32px; height: 32px;
-            background: linear-gradient(135deg, #002266, #003399);
-            border-radius: 8px; display: flex; align-items: center;
-            justify-content: center; color: white; font-size: 15px; font-weight: 900;
-        }
-        .header-title { font-size: 16px; font-weight: 900; font-style: italic; color: #002266; }
-        .header-subtitle { font-size: 7px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
-        
-        .header-user { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-        .header-balance { text-align: right; }
-        .header-balance span { font-size: 7px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
-        .header-balance p { font-size: 13px; font-weight: 900; color: #006633; font-family: monospace; }
-        .header-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #e2e8f0; object-fit: cover; }
-        
-        .top-nav {
-            height: var(--tabs-h); min-height: var(--tabs-h);
-            display: flex; background: white; border-bottom: 1px solid #e2e8f0;
-            flex-shrink: 0; z-index: 99;
-        }
-        
-        .top-nav button {
-            flex: 1; border: none; background: none;
-            font-size: 10px; font-weight: 700; color: #94a3b8;
-            cursor: pointer; transition: all 0.2s; position: relative;
-        }
-        
-        .top-nav button.active { color: #002266; }
-        .top-nav button.active::after {
-            content: ''; position: absolute; bottom: 0; left: 25%; right: 25%;
-            height: 3px; background: #002266; border-radius: 2px;
-        }
-        
-        .content-area {
-            flex: 1; overflow-y: auto; overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .section-page { display: none; min-height: 100%; }
-        .section-page.active { display: block; }
-        
-        .bottom-nav {
-            height: var(--bottom-h); min-height: var(--bottom-h);
-            display: flex; align-items: center; justify-content: space-around;
-            background: white; border-top: 1px solid #e2e8f0;
-            flex-shrink: 0; z-index: 100;
-        }
-        
-        .bn-item {
-            display: flex; flex-direction: column; align-items: center; gap: 2px;
-            cursor: pointer; color: #94a3b8; font-size: 8px; font-weight: 700;
-            border: none; background: none; padding: 4px 8px; transition: all 0.2s;
-        }
-        
-        .bn-item.active { color: #006633; }
-        .bn-item i { font-size: 17px; }
-        
-        .card-white {
-            background: white; border-radius: 14px; padding: 12px;
-            border: 1px solid #e2e8f0; margin-bottom: 8px;
-        }
-        
-        .card-dark {
-            background: rgba(20,20,50,0.95); border-radius: 14px; padding: 12px;
-            border: 1px solid rgba(255,255,255,0.08); margin-bottom: 8px; color: #e2e8f0;
-        }
-        
-        .badge { font-size: 7px; font-weight: 900; padding: 2px 7px; border-radius: 8px; text-transform: uppercase; }
-        .badge-active { background: #dcfce7; color: #166534; }
-        .badge-expired { background: #fee2e2; color: #991b1b; }
-        
-        .btn {
-            padding: 8px 14px; border: none; border-radius: 8px;
-            font-weight: 700; font-size: 11px; cursor: pointer; transition: all 0.2s;
-            display: inline-flex; align-items: center; gap: 4px;
-        }
-        .btn:active { transform: scale(0.97); }
-        .btn-green { background: #006633; color: white; }
-        .btn-red { background: #E31D2B; color: white; }
-        .btn-blue { background: #002266; color: white; }
-        .btn-gold { background: #fbbf24; color: #1e293b; }
-        .btn-cyan { background: linear-gradient(135deg, #00d2ff, #0099cc); color: white; }
-        .btn-buy { background: #10B981; color: white; flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 11px; border: none; cursor: pointer; }
-        .btn-sell { background: #EF4444; color: white; flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 11px; border: none; cursor: pointer; }
-        
-        .input {
-            width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0;
-            border-radius: 8px; font-size: 12px; outline: none; background: #f8fafc;
-        }
-        .input:focus { border-color: #006633; }
-        
-        .input-dark {
-            width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
-            color: white; font-size: 12px; outline: none;
-        }
-        .input-dark:focus { border-color: #fbbf24; }
-        
-        .prog-bar { height: 8px; background: #e2e8f0; border-radius: 8px; overflow: hidden; display: flex; margin: 6px 0; }
-        .prog-buy { background: linear-gradient(90deg, #00c853, #69f0ae); transition: width 0.5s; }
-        .prog-sell { background: linear-gradient(90deg, #ff1744, #ff5252); transition: width 0.5s; }
-        
-        .price-box {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #f1f5f9; border-radius: 8px; padding: 8px 10px; margin: 6px 0;
-        }
-        .price-num { font-size: 20px; font-weight: 900; font-family: monospace; }
-        
-        .vote-subnav { display: flex; background: #f8fafc; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 30; }
-        .vote-subnav button {
-            flex: 1; padding: 8px; border: none; background: none;
-            font-size: 10px; font-weight: 700; color: #94a3b8; cursor: pointer;
-        }
-        .vote-subnav button.active { color: #002266; background: white; border-bottom: 2px solid #002266; }
-        
-        .vote-panel { display: none; }
-        .vote-panel.active { display: block; }
-        
-        .vt-card {
-            background: white; border: 1px solid #e2e8f0; border-radius: 12px;
-            padding: 12px; margin-bottom: 8px;
-        }
-        
-        #toast-container {
-            position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
-            z-index: 9999; display: flex; flex-direction: column; gap: 5px;
-            pointer-events: none; width: 90%; max-width: 360px;
-        }
-        
-        .toast {
-            padding: 8px 16px; border-radius: 8px; color: white;
-            font-weight: 700; font-size: 11px; text-align: center;
-            animation: slideDown 0.3s ease-out; pointer-events: auto;
-        }
-        
-        .toast-success { background: #10B981; }
-        .toast-error { background: #EF4444; }
-        .toast-info { background: #3B82F6; }
-        
-        @keyframes slideDown { from { transform: translateY(-40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .ani-in { animation: fadeIn 0.3s ease-out; }
-        
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px); z-index: 2000;
-            display: flex; align-items: center; justify-content: center; padding: 16px;
-        }
-        
-        .modal-box {
-            background: white; border-radius: 16px; padding: 16px;
-            width: 100%; max-width: 340px; max-height: 80vh; overflow-y: auto;
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        .modal-dark {
-            background: #0a0e27; color: white; border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .modal-close { background: none; border: none; font-size: 20px; color: #94a3b8; cursor: pointer; }
-        
-        .shop-bg {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            min-height: 100%; color: white; padding: 12px;
-        }
-        
-        .pressure-bar {
-            height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; display: flex; flex: 1;
-        }
-        .pressure-buy { background: #10B981; transition: width 0.5s; }
-        .pressure-sell { background: #EF4444; transition: width 0.5s; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Business Partner BD • premium network</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Outfit:wght@300;600;900&family=JetBrains+Mono:wght@700&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Roboto', sans-serif; background-color: #f1f5f9; overflow-x: hidden; }
+    .hidden { display: none !important; }
+    .brand-green { background-color: #006633; }
+    .brand-green-text { color: #006633; }
+    .brand-red { background-color: #E31D2B; }
+    .brand-blue-text { color: #002266; }
+    .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    .post-card { background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 15px; transition: all 0.3s; text-align: left; }
+    .animate-feed { animation: fadeIn 0.4s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .ts-body { font-family: 'Outfit', sans-serif; background-color: #06090f; color: #f0f0f0; min-height: 100vh; position: relative; }
+    .mono-ts { font-family: 'JetBrains Mono', monospace; }
+    .glass-ts { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
+    .tab-active-ts { color: #00d2ff; border-bottom: 3px solid #00d2ff; }
+    .fab-container { position: fixed; bottom: 100px; left: 24px; z-index: 1000; }
+    .fab-button { width: 56px; height: 56px; background-color: #002266; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.3s; }
+    .fab-button.active { transform: rotate(45deg); background-color: #E31D2B; }
+    .fab-options { position: absolute; bottom: 70px; left: 0; display: flex; flex-direction: column; gap: 10px; pointer-events: none; opacity: 0; transition: all 0.3s; transform: translateY(20px); }
+    .fab-options.show { pointer-events: auto; opacity: 1; transform: translateY(0); }
+    .fab-option-item { background: white; padding: 12px 18px; border-radius: 15px; display: flex; align-items: center; gap: 10px; cursor: pointer; white-space: nowrap; border: 1px solid #eee; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .fab-option-item i { color: #006633; width: 20px; text-align: center; }
+    .fab-option-item span { font-size: 13px; font-weight: bold; color: #002266; }
+    #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+    .toast { pointer-events: auto; padding: 12px 24px; border-radius: 12px; color: white; font-weight: bold; animation: slideIn 0.3s ease-out; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 8px; }
+    .toast-success { background: #10B981; }
+    .toast-error { background: #EF4444; }
+    .toast-warning { background: #F59E0B; }
+    .toast-info { background: #3B82F6; }
+    @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .marquee-container { background: #ffffff; padding: 10px 0; overflow: hidden; border-bottom: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; }
+    .marquee-content { display: flex; animation: marquee 20s linear infinite; white-space: nowrap; }
+    .marquee-content span { display: inline-block; padding: 0 20px; font-size: 12px; font-weight: 700; color: #006633; }
+    .marquee-content i { margin: 0 8px; color: #E31D2B; font-size: 8px; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .status-badge { font-size: 9px; font-weight: 900; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+    .active-badge { background: #dcfce7; color: #166534; }
+    .expired-badge { background: #fee2e2; color: #991b1b; }
+    .scroll-container-ts { white-space: nowrap; display: inline-block; animation: scroll-left-ts 20s linear infinite; }
+    @keyframes scroll-left-ts { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+    .result-count { font-size: 10px; font-weight: bold; color: #64748b; padding: 8px 16px; background: #f8fafc; border-radius: 20px; }
+    .vote-card { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 20px; border: 1px solid #2a2a4a; margin-bottom: 16px; }
+    .vote-progress { height: 8px; background: #2a2a4a; border-radius: 10px; overflow: hidden; }
+    .vote-progress-bar { height: 100%; transition: width 0.3s; }
+    .details-modal { max-width: 400px; max-height: 80vh; overflow-y: auto; }
+    .star-shop-page { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; color: white; }
+    .coin-stats-card { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); border-radius: 24px; padding: 24px; color: #1e293b; }
+    .calculator-input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 16px; color: white; font-size: 18px; font-weight: bold; }
+    .calculator-input:focus { outline: none; border-color: #fbbf24; }
+    .cart-item { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); }
+    .wallet-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 20px; padding: 20px; border: 1px solid #334155; }
+    .payment-option { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 16px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.2s; }
+    .payment-option:hover, .payment-option.active { border-color: #fbbf24; background: rgba(251, 191, 36, 0.1); }
+    .admin-badge { background: #8B5CF6; color: white; font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 20px; }
+    .reaction-btn { transition: all 0.2s; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 20px; border: 1px solid #e2e8f0; background: white; font-size: 11px; font-weight: 700; color: #64748b; }
+    .reaction-btn.liked { background: #fee2e2; color: #E31D2B; border-color: #fecaca; }
+    .reaction-btn i { font-size: 14px; }
+    .pending-approval { opacity: 0.7; border-left: 4px solid #F59E0B; }
+    .auth-input { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px 16px; font-size: 14px; font-weight: 500; outline: none; width: 100%; transition: border-color 0.2s; }
+    .auth-input:focus { border-color: #006633; }
+    .auth-btn { border-radius: 16px; font-weight: 700; letter-spacing: 0.5px; }
+  </style>
 </head>
-<body>
-    <div id="toast-container"></div>
-    
-    <!-- ========== AUTH SCREEN ========== -->
-    <div id="auth-screen" class="app-wrapper" style="align-items:center;justify-content:center;background:linear-gradient(135deg,#006633,#004422);">
-        <div style="background:white;border-radius:20px;padding:22px;width:90%;max-width:320px;animation:fadeIn 0.4s ease-out;">
-            <div style="text-align:center;margin-bottom:14px;">
-                <div style="width:44px;height:44px;background:linear-gradient(135deg,#002266,#003399);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;color:white;font-size:20px;font-weight:900;">A</div>
-                <h1 style="font-size:18px;font-weight:900;color:#1e293b;">ASD ICON</h1>
-                <p style="font-size:9px;color:#94a3b8;letter-spacing:2px;">Premium Network</p>
-            </div>
-            
-            <div id="login-form" style="display:flex;flex-direction:column;gap:8px;">
-                <input type="email" id="login-email" placeholder="Email" class="input">
-                <input type="password" id="login-pass" placeholder="Password" class="input">
-                <button id="login-btn" class="btn btn-red" style="width:100%;padding:10px;justify-content:center;">Sign In</button>
-                <p style="font-size:9px;text-align:center;color:#94a3b8;">
-                    <span id="show-reg" style="color:#3B82F6;font-weight:700;cursor:pointer;">Register</span> |
-                    <span id="forgot-pass" style="color:#3B82F6;font-weight:700;cursor:pointer;">Forgot?</span>
-                </p>
-            </div>
-            
-            <div id="register-form" class="hidden" style="display:flex;flex-direction:column;gap:8px;">
-                <input type="email" id="reg-email" placeholder="Email" class="input">
-                <input type="password" id="reg-pass" placeholder="Password (6+)" class="input">
-                <input type="password" id="reg-confirm" placeholder="Confirm" class="input">
-                <input type="text" id="reg-ref" placeholder="Referral Code (optional)" class="input">
-                <button id="register-btn" class="btn btn-green" style="width:100%;padding:10px;justify-content:center;">Create Account</button>
-                <p style="font-size:9px;text-align:center;color:#94a3b8;">
-                    <span id="show-login" style="color:#3B82F6;font-weight:700;cursor:pointer;">Back to Login</span>
-                </p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- ========== MAIN APP ========== -->
-    <div id="main-app" class="app-wrapper hidden">
-        
-        <!-- HEADER -->
-        <header class="header">
-            <div class="header-brand">
-                <div class="header-logo">A</div>
-                <div>
-                    <div class="header-title">ASD ICON</div>
-                    <div class="header-subtitle">Premium Network</div>
-                </div>
-            </div>
-            <div class="header-user" onclick="openProfile()">
-                <div class="header-balance">
-                    <span>Balance</span>
-                    <p id="hdr-bal">0.00</p>
-                </div>
-                <img id="hdr-av" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="header-avatar" alt="av">
-            </div>
-        </header>
-        
-        <!-- TOP NAV -->
-        <nav class="top-nav">
-            <button class="active" data-page="business">📋 Business</button>
-            <button data-page="vote">📊 Vote</button>
-            <button data-page="shop">🛒 Shop</button>
-        </nav>
-        
-        <!-- CONTENT -->
-        <div class="content-area" id="main-content">
-            
-            <!-- BUSINESS -->
-            <div id="page-business" class="section-page active">
-                <div style="padding:6px 10px;">
-                    <input type="text" id="biz-search" placeholder="🔍 Search..." class="input" style="font-size:11px;">
-                </div>
-                <div id="posts-container" style="padding:4px 10px 70px;"></div>
-                <button id="fab-create" style="position:fixed;bottom:75px;right:16px;width:44px;height:44px;background:#002266;border:none;border-radius:50%;color:white;font-size:18px;cursor:pointer;z-index:50;box-shadow:0 4px 16px rgba(0,0,0,0.3);">+</button>
-            </div>
-            
-            <!-- VOTE (FULL WHITE PAGE) -->
-            <div id="page-vote" class="section-page" style="background:#ffffff;">
-                <div class="vote-subnav">
-                    <button class="active" data-vtab="market">Market</button>
-                    <button data-vtab="trades">My Trades</button>
-                    <button data-vtab="create">Create Poll</button>
-                </div>
-                <div style="display:flex;justify-content:space-between;padding:4px 10px;font-size:8px;font-weight:700;background:#f1f5f9;color:#64748b;">
-                    <span>Vol: <span id="vt-vol">0</span></span>
-                    <span>Active: <span id="vt-act">0</span></span>
-                    <span>Bal: <span id="vt-bal">0</span></span>
-                </div>
-                <div style="padding:8px;">
-                    <div id="vpanel-market" class="vote-panel active"><div id="vpolls"></div></div>
-                    <div id="vpanel-trades" class="vote-panel"><div id="vtrades"></div></div>
-                    <div id="vpanel-create" class="vote-panel">
-                        <div class="vt-card">
-                            <h4 style="font-weight:900;font-size:14px;color:#002266;margin-bottom:8px;">Create Trading Poll</h4>
-                            <div style="display:flex;flex-direction:column;gap:6px;">
-                                <input type="text" id="vp-title" placeholder="Title" class="input">
-                                <textarea id="vp-desc" rows="2" placeholder="Description" class="input"></textarea>
-                                <input type="text" id="vp-loc" placeholder="Location" class="input" value="Global">
-                                <select id="vp-dur" class="input">
-                                    <option value="1">1 Day</option><option value="3">3 Days</option>
-                                    <option value="7">7 Days</option><option value="30">30 Days</option>
-                                </select>
-                                <div style="background:#fef3c7;padding:6px;border-radius:6px;text-align:center;font-size:9px;font-weight:700;color:#92400e;">Fee: 10 Dh | Min: 100 Dh</div>
-                                <button id="vp-create-btn" class="btn btn-blue" style="width:100%;justify-content:center;">Create (10 Dh)</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- SHOP -->
-            <div id="page-shop" class="section-page">
-                <div class="shop-bg">
-                    <div style="display:flex;background:rgba(255,255,255,0.05);border-radius:16px;padding:2px;margin-bottom:10px;">
-                        <button id="shop-tab-buy" style="flex:1;padding:8px;border:none;border-radius:14px;font-size:10px;font-weight:700;cursor:pointer;background:#fbbf24;color:#1e293b;">Buy Coins</button>
-                        <button id="shop-tab-withdraw" style="flex:1;padding:8px;border:none;border-radius:14px;font-size:10px;font-weight:700;cursor:pointer;background:transparent;color:#94a3b8;">Withdraw</button>
-                    </div>
-                    
-                    <div id="shop-buy-panel">
-                        <div style="text-align:center;margin-bottom:8px;">
-                            <h2 style="font-size:18px;font-weight:900;"><span style="color:#fbbf24;">STAR</span> SHOP</h2>
-                            <p style="font-size:9px;color:#94a3b8;">Buy with LTC • Min $1</p>
-                        </div>
-                        
-                        <div class="card-dark" style="margin-bottom:8px;">
-                            <span style="font-size:9px;color:#94a3b8;">Platform LTC Address</span>
-                            <div style="background:rgba(0,0,0,0.3);padding:6px;border-radius:6px;margin-top:4px;">
-                                <p id="plat-ltc" style="font-size:9px;font-family:monospace;color:#fbbf24;word-break:break-all;">Loading...</p>
-                            </div>
-                            <button id="copy-ltc" style="font-size:8px;color:#94a3b8;background:none;border:none;cursor:pointer;margin-top:4px;">Copy</button>
-                        </div>
-                        
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
-                            <div class="card-dark" style="cursor:pointer;text-align:center;" data-amt="100" data-price="20">
-                                <p style="font-size:14px;font-weight:900;color:#fbbf24;">100 STAR</p><p style="font-size:8px;color:#94a3b8;">$20</p>
-                            </div>
-                            <div class="card-dark" style="cursor:pointer;text-align:center;" data-amt="500" data-price="100">
-                                <p style="font-size:14px;font-weight:900;color:#fbbf24;">500 STAR</p><p style="font-size:8px;color:#94a3b8;">$100</p>
-                            </div>
-                            <div class="card-dark" style="cursor:pointer;text-align:center;" data-amt="2000" data-price="400">
-                                <p style="font-size:14px;font-weight:900;color:#fbbf24;">2K STAR</p><p style="font-size:8px;color:#94a3b8;">$400</p>
-                            </div>
-                            <div class="card-dark" style="cursor:pointer;text-align:center;" data-amt="5000" data-price="1000">
-                                <p style="font-size:14px;font-weight:900;color:#fbbf24;">5K STAR</p><p style="font-size:8px;color:#94a3b8;">$1K</p>
-                            </div>
-                        </div>
-                        
-                        <div class="card-dark">
-                            <h5 style="font-size:11px;font-weight:900;margin-bottom:4px;">Cart</h5>
-                            <div id="cart-items"></div>
-                            <div style="border-top:1px solid rgba(255,255,255,0.1);margin:4px 0;"></div>
-                            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                                <span style="font-size:9px;color:#94a3b8;">Total:</span>
-                                <span id="cart-total" style="font-size:14px;font-weight:900;color:#10B981;">$0.00</span>
-                            </div>
-                            <input type="text" id="ltc-txid" placeholder="LTC TxID" class="input-dark" style="margin-bottom:4px;font-size:10px;">
-                            <button id="checkout-btn" class="btn btn-gold" style="width:100%;justify-content:center;">Submit Buy Request</button>
-                            <p style="font-size:7px;color:#64748b;text-align:center;margin-top:4px;">Admin approval required</p>
-                        </div>
-                    </div>
-                    
-                    <div id="shop-withdraw-panel" class="hidden">
-                        <div style="text-align:center;margin-bottom:8px;">
-                            <h2 style="font-size:18px;font-weight:900;color:white;">Withdraw</h2>
-                            <p style="font-size:9px;color:#94a3b8;">Min 1000 STAR to LTC</p>
-                        </div>
-                        <div class="card-dark" style="margin-bottom:8px;">
-                            <p style="font-size:9px;color:#94a3b8;">Your Balance</p>
-                            <p id="w-bal" style="font-size:22px;font-weight:900;color:#fbbf24;">0.00</p>
-                        </div>
-                        <div class="card-dark">
-                            <input type="text" id="w-ltc-addr" placeholder="Your LTC Address" class="input-dark" style="margin-bottom:4px;font-size:10px;">
-                            <input type="number" id="w-amt" placeholder="Amount (min 1000)" class="input-dark" style="margin-bottom:4px;font-size:10px;" min="1000">
-                            <button id="withdraw-btn" class="btn btn-green" style="width:100%;justify-content:center;">Submit Withdraw</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- BOTTOM NAV -->
-        <nav class="bottom-nav">
-            <button class="bn-item active" data-bnav="business"><i class="fas fa-home"></i><span>Home</span></button>
-            <button class="bn-item" data-bnav="vote"><i class="fas fa-chart-bar"></i><span>Vote</span></button>
-            <button class="bn-item" data-bnav="shop"><i class="fas fa-coins"></i><span>Shop</span></button>
-            <button class="bn-item" data-bnav="about"><i class="fas fa-info-circle"></i><span>About</span></button>
-            <button class="bn-item" data-bnav="profile"><i class="fas fa-user"></i><span>Profile</span></button>
-        </nav>
-    </div>
-    
-    <!-- ========== MODALS ========== -->
-    <!-- Post Detail Modal -->
-    <div id="modal-post" class="modal-overlay hidden">
-        <div class="modal-box">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                <h4 id="mpd-title" style="font-weight:900;font-size:14px;"></h4>
-                <button class="modal-close" onclick="closeModal('modal-post')">&times;</button>
-            </div>
-            <p id="mpd-body" style="font-size:11px;color:#64748b;margin-bottom:8px;"></p>
-            <div style="background:#f8fafc;padding:8px;border-radius:8px;margin-bottom:8px;">
-                <p style="font-size:8px;color:#94a3b8;">Contact:</p>
-                <p id="mpd-wa" style="font-size:12px;font-weight:900;color:#006633;"></p>
-            </div>
-            <button id="mpd-wa-btn" class="btn btn-green" style="width:100%;justify-content:center;"><i class="fab fa-whatsapp"></i> Chat</button>
-        </div>
-    </div>
-    
-    <!-- Vote Detail Modal -->
-    <div id="modal-vote" class="modal-overlay hidden">
-        <div class="modal-box">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                <h4 id="mvd-title" style="font-weight:900;font-size:13px;"></h4>
-                <button class="modal-close" onclick="closeModal('modal-vote')">&times;</button>
-            </div>
-            <p id="mvd-desc" style="font-size:10px;color:#64748b;margin-bottom:4px;"></p>
-            
-            <!-- ✅ PRESSURE LABEL -->
-            <div id="mvd-pressure-label" style="text-align:center;font-size:10px;font-weight:900;padding:4px 8px;border-radius:6px;margin-bottom:6px;"></div>
-            
-            <div class="price-box">
-                <span style="font-size:9px;color:#64748b;">Price:</span>
-                <span class="price-num" id="mvd-price" style="color:#fbbf24;">100</span>
-                <span id="mvd-change" style="font-size:9px;font-weight:700;">+0%</span>
-            </div>
-            
-            <div class="prog-bar">
-                <div class="prog-buy" id="mvd-buy-bar" style="width:50%"></div>
-                <div class="prog-sell" id="mvd-sell-bar" style="width:50%"></div>
-            </div>
-            
-            <div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700;margin:4px 0;">
-                <span style="color:#10B981;">Buy <span id="mvd-bp">50%</span></span>
-                <span style="color:#EF4444;">Sell <span id="mvd-sp">50%</span></span>
-            </div>
-            
-            <!-- ✅ PRESSURE METER -->
-            <div style="display:flex;align-items:center;gap:4px;margin:4px 0;background:#f1f5f9;padding:4px 8px;border-radius:4px;">
-                <span style="font-size:7px;font-weight:700;color:#64748b;">Pressure:</span>
-                <div class="pressure-bar">
-                    <div class="pressure-buy" id="mvd-pbuy-bar" style="width:50%"></div>
-                    <div class="pressure-sell" id="mvd-psell-bar" style="width:50%"></div>
-                </div>
-                <span id="mvd-pressure-val" style="font-size:8px;font-weight:900;">50%</span>
-            </div>
-            
-            <div style="display:flex;gap:6px;margin:6px 0;">
-                <button id="mv-buy" class="btn-buy">BUY</button>
-                <button id="mv-sell" class="btn-sell">SELL</button>
-            </div>
-            
-            <input type="number" id="mv-amount" placeholder="Amount (Dh)" class="input" style="margin-bottom:4px;font-size:12px;" min="10">
-            <button id="mv-submit" class="btn btn-blue" style="width:100%;justify-content:center;">Place Trade</button>
-        </div>
-    </div>
-    
-    <!-- Profile Modal -->
-    <div id="modal-profile" class="modal-overlay hidden">
-        <div class="modal-box">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                <h4 style="font-weight:900;">Profile</h4>
-                <button class="modal-close" onclick="closeModal('modal-profile')">&times;</button>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-                <img id="prof-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:56px;height:56px;border-radius:50%;border:2px solid #e2e8f0;object-fit:cover;">
-                <label class="btn btn-outline" style="font-size:10px;cursor:pointer;border:2px solid #e2e8f0;background:white;">Change Photo
-                    <input type="file" id="prof-photo" class="hidden" accept="image/*">
-                </label>
-                <input type="text" id="prof-name" placeholder="Your Name" class="input">
-                <textarea id="prof-bio" rows="2" placeholder="About you..." class="input"></textarea>
-                <p id="prof-ref" style="font-size:9px;color:#64748b;"></p>
-                <button id="prof-save" class="btn btn-green" style="width:100%;justify-content:center;">Save</button>
-                <button id="prof-logout" class="btn btn-red" style="width:100%;justify-content:center;">Logout</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Create Post Modal -->
-    <div id="modal-create" class="modal-overlay hidden">
-        <div class="modal-box">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                <h4 style="font-weight:900;">Create Post</h4>
-                <button class="modal-close" onclick="closeModal('modal-create')">&times;</button>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-                <input type="text" id="cp-title" placeholder="Business Title" class="input">
-                <input type="tel" id="cp-wa" placeholder="WhatsApp (01xxxxxxxxx)" class="input">
-                <input type="text" id="cp-loc" placeholder="Location" class="input">
-                <textarea id="cp-det" rows="2" placeholder="Details..." class="input"></textarea>
-                <select id="cp-dur" class="input">
-                    <option value="4">4 Hours</option><option value="12">12 Hours</option>
-                    <option value="24">1 Day</option><option value="168">7 Days</option>
-                </select>
-                <button id="cp-pub" class="btn btn-green" style="width:100%;justify-content:center;">Publish</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- About Modal -->
-    <div id="modal-about" class="modal-overlay hidden">
-        <div class="modal-box" style="max-height:75vh;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                <h4 style="font-weight:900;">About ASD ICON</h4>
-                <button class="modal-close" onclick="closeModal('modal-about')">&times;</button>
-            </div>
-            <div style="font-size:10px;color:#334155;display:flex;flex-direction:column;gap:8px;">
-                <div style="background:#f8fafc;border-radius:10px;padding:10px;">
-                    <h5 style="font-weight:900;color:#002266;">🚀 What is ASD ICON?</h5>
-                    <p style="margin-top:4px;">Premium business networking and trading platform with Forex-style prediction markets.</p>
-                </div>
-                <div style="background:#f8fafc;border-radius:10px;padding:10px;">
-                    <h5 style="font-weight:900;color:#002266;">📊 Features</h5>
-                    <p style="margin-top:4px;">✅ Business Partners ✅ Forex Trading ✅ Real-time Prices ✅ LTC Payments ✅ Referral Rewards</p>
-                </div>
-                <div style="background:#fef3c7;border-radius:10px;padding:10px;">
-                    <h5 style="font-weight:900;color:#92400e;">📧 Support</h5>
-                    <p style="margin-top:4px;font-weight:700;">dhrubo1200@gmail.com</p>
-                </div>
-            </div>
-        </div>
-    </div>
+<body class="no-scrollbar">
+<div id="toast-container"></div>
 
-    <script>
-        // ========== FIREBASE ==========
-        const fb = {
-            apiKey: "AIzaSyB31gEKElLRlKVynHsEn3PU0F7bv1AHso8",
-            authDomain: "vote-trading.firebaseapp.com",
-            projectId: "vote-trading",
-            storageBucket: "vote-trading.firebasestorage.app",
-            messagingSenderId: "25813578973",
-            appId: "1:25813578973:web:b2297633811dd633be5734"
-        };
-        firebase.initializeApp(fb);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        // ========== STATE ==========
-        let user = null, bal = 0, stars = 0, page = 'business', vtab = 'market';
-        let cart = [], tSide = null, tPollId = null;
-        
-        // ========== TOAST ==========
-        function toast(m, t = 'success') {
-            const c = document.getElementById('toast-container');
-            const el = document.createElement('div');
-            el.className = `toast toast-${t}`; el.textContent = m;
-            c.appendChild(el);
-            setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.4s'; setTimeout(() => el.remove(), 400); }, 2500);
-        }
-        
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        
-        function tAgo(ts) {
-            if (!ts) return '';
-            const s = Math.floor((Date.now() - ts) / 1000);
-            if (s < 60) return 'Now';
-            if (s < 3600) return Math.floor(s/60) + 'm';
-            if (s < 86400) return Math.floor(s/3600) + 'h';
-            return Math.floor(s/86400) + 'd';
-        }
-        
-        function tLeft(ts) {
-            if (!ts) return '--';
-            const r = ts - Date.now();
-            if (r <= 0) return 'Ended';
-            const d = Math.floor(r/86400000), h = Math.floor((r%86400000)/3600000);
-            return d > 0 ? `${d}d ${h}h` : `${h}h`;
-        }
-        
-        // ========== AUTH ==========
-        auth.onAuthStateChanged(async (u) => {
-            if (u) {
-                const d = await db.collection('users').doc(u.uid).get();
-                if (d.exists) {
-                    user = { uid: u.uid, ...d.data() };
-                } else {
-                    user = {
-                        uid: u.uid, email: u.email, displayName: u.email.split('@')[0],
-                        photoURL: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
-                        bio: 'Member', balance: 100, stars: 0,
-                        referralCode: u.email.split('@')[0].toUpperCase() + '-' + Math.random().toString(36).substr(2,6).toUpperCase(),
-                        referralBalance: 0, totalReferrals: 0, role: 'user'
-                    };
-                    await db.collection('users').doc(u.uid).set(user);
-                }
-                bal = user.balance || 0; stars = user.stars || 0;
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                updateUI(); loadPosts(); loadPolls(); loadLTC();
-            } else {
-                user = null;
-                document.getElementById('auth-screen').classList.remove('hidden');
-                document.getElementById('main-app').classList.add('hidden');
-            }
-        });
-        
-        document.getElementById('login-btn').addEventListener('click', () => {
-            const e = document.getElementById('login-email').value.trim(), p = document.getElementById('login-pass').value;
-            if (!e || !p) return toast('Fill all fields', 'error');
-            auth.signInWithEmailAndPassword(e, p).catch(err => toast(err.message, 'error'));
-        });
-        
-        document.getElementById('register-btn').addEventListener('click', () => {
-            const e = document.getElementById('reg-email').value.trim(), p = document.getElementById('reg-pass').value, c = document.getElementById('reg-confirm').value;
-            if (!e || !p) return toast('Fill all fields', 'error');
-            if (p.length < 6) return toast('Min 6 chars', 'error');
-            if (p !== c) return toast('Passwords mismatch', 'error');
-            auth.createUserWithEmailAndPassword(e, p).then(() => { toast('Account created!', 'success'); document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); }).catch(err => toast(err.message, 'error'));
-        });
-        
-        document.getElementById('forgot-pass').addEventListener('click', () => {
-            const e = prompt('Enter your email:');
-            if (e) auth.sendPasswordResetEmail(e).then(() => toast('Email sent!')).catch(err => toast(err.message, 'error'));
-        });
-        
-        document.getElementById('show-reg').addEventListener('click', () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); });
-        document.getElementById('show-login').addEventListener('click', () => { document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); });
-        
-        // ========== UI ==========
-        function updateUI() {
-            if (!user) return;
-            document.getElementById('hdr-bal').innerText = bal.toFixed(2);
-            document.getElementById('hdr-av').src = user.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-            document.getElementById('vt-bal').innerText = bal.toFixed(2);
-        }
-        
-        // ========== NAVIGATION ==========
-        function goPage(p) {
-            document.querySelectorAll('.section-page').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.top-nav button').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
-            document.getElementById(`page-${p}`).classList.add('active');
-            document.querySelector(`.top-nav button[data-page="${p}"]`)?.classList.add('active');
-            document.querySelector(`.bn-item[data-bnav="${p}"]`)?.classList.add('active');
-            if (p === 'vote') loadPolls();
-            if (p === 'shop') { loadLTC(); updateWUI(); }
-            if (p === 'about') document.getElementById('modal-about').classList.remove('hidden');
-            page = p;
-        }
-        
-        document.querySelectorAll('.top-nav button').forEach(b => b.addEventListener('click', () => goPage(b.dataset.page)));
-        document.querySelectorAll('.bn-item').forEach(b => {
-            b.addEventListener('click', () => {
-                const n = b.dataset.bnav;
-                if (n === 'profile') openProf();
-                else if (n === 'about') document.getElementById('modal-about').classList.remove('hidden');
-                else goPage(n);
-            });
-        });
-        
-        // ========== BUSINESS ==========
-        function loadPosts() {
-            db.collection('posts').where('approved', '==', true).orderBy('createdAt', 'desc').onSnapshot(snap => {
-                let posts = [];
-                snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
-                const q = (document.getElementById('biz-search')?.value || '').toLowerCase();
-                if (q) posts = posts.filter(p => (p.title||'').toLowerCase().includes(q) || (p.location||'').toLowerCase().includes(q) || (p.details||'').toLowerCase().includes(q));
-                const c = document.getElementById('posts-container');
-                if (!posts.length) { c.innerHTML = '<div style="text-align:center;padding:30px;color:#94a3b8;">No posts</div>'; return; }
-                c.innerHTML = posts.map(p => {
-                    const ago = tAgo(p.createdAt?.toMillis());
-                    const exp = p.expireAt?.toMillis() < Date.now();
-                    return `<div class="card-white ani-in" onclick="openPD('${p.id}')" style="cursor:pointer;">
-                        <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;font-weight:700;color:#64748b;">${p.userName||'User'}</span><span class="badge ${exp?'badge-expired':'badge-active'}">${exp?'Expired':'Active'}</span></div>
-                        <h5 style="font-weight:900;font-size:12px;margin:3px 0;">${p.title}</h5>
-                        <div style="display:flex;gap:3px;margin-bottom:2px;"><span style="font-size:7px;background:#f1f5f9;padding:1px 5px;border-radius:4px;">📍${p.location}</span><span style="font-size:7px;background:#f0fdf4;padding:1px 5px;border-radius:4px;color:#006633;">📞${p.whatsapp}</span></div>
-                        <p style="font-size:10px;color:#64748b;">${(p.details||'').substr(0,80)}...</p>
-                        <p style="font-size:7px;color:#94a3b8;">${ago}</p>
-                    </div>`;
-                }).join('');
-            });
-        }
-        
-        window.openPD = async function(id) {
-            const d = await db.collection('posts').doc(id).get();
-            if (!d.exists) return;
-            const p = d.data();
-            document.getElementById('mpd-title').innerText = p.title;
-            document.getElementById('mpd-body').innerText = p.details;
-            document.getElementById('mpd-wa').innerText = p.whatsapp;
-            document.getElementById('modal-post').classList.remove('hidden');
-        };
-        
-        document.getElementById('mpd-wa-btn').addEventListener('click', () => {
-            let n = (document.getElementById('mpd-wa').innerText || '').replace(/\D/g,'');
-            if (n.startsWith('0')) n = '880' + n.substring(1);
-            if (n) window.open('https://wa.me/' + n, '_blank');
-        });
-        
-        document.getElementById('fab-create').addEventListener('click', () => document.getElementById('modal-create').classList.remove('hidden'));
-        
-        document.getElementById('cp-pub').addEventListener('click', async () => {
-            const t = document.getElementById('cp-title').value.trim(), w = document.getElementById('cp-wa').value.trim();
-            const l = document.getElementById('cp-loc').value.trim() || 'Bangladesh', d = document.getElementById('cp-det').value.trim();
-            const dur = parseInt(document.getElementById('cp-dur').value);
-            if (!t || !w || !d) return toast('Fill all fields', 'error');
-            if (!/^01\d{9}$/.test(w)) return toast('Valid WhatsApp required', 'error');
-            await db.collection('posts').add({ userId: user.uid, userName: user.displayName, userPhoto: user.photoURL, title: t, whatsapp: w, location: l, details: d, duration: dur, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(), expireAt: new Date(Date.now() + dur * 3600000) });
-            toast('Post submitted!', 'success');
-            closeModal('modal-create');
-        });
-        
-        document.getElementById('biz-search').addEventListener('keyup', loadPosts);
-        
-        // ========== VOTE ==========
-        document.querySelectorAll('.vote-subnav button').forEach(b => {
-            b.addEventListener('click', () => {
-                document.querySelectorAll('.vote-panel').forEach(p => p.classList.remove('active'));
-                document.querySelectorAll('.vote-subnav button').forEach(x => x.classList.remove('active'));
-                document.getElementById(`vpanel-${b.dataset.vtab}`).classList.add('active');
-                b.classList.add('active');
-                vtab = b.dataset.vtab;
-                if (vtab === 'market') loadPolls();
-                if (vtab === 'trades') loadTrades();
-            });
-        });
-        
-        function calcPr(poll) {
-            const ba = poll.buyAmount || 0, sa = poll.sellAmount || 0, tot = ba + sa;
-            if (tot === 0) return { price: 100, chg: 0, buyP: 50, sellP: 50 };
-            const net = ba - sa;
-            const price = Math.max(1, Math.min(500, 100 * (1 + net / (tot + 1))));
-            return { 
-                price, 
-                chg: ((price - 100) / 100) * 100,
-                buyP: Math.round((ba / tot) * 100),
-                sellP: Math.round((sa / tot) * 100)
-            };
-        }
-        
-        function loadPolls() {
-            db.collection('votePolls').where('status', '==', 'active').orderBy('createdAt', 'desc').onSnapshot(snap => {
-                const polls = [];
-                snap.forEach(d => polls.push({ id: d.id, ...d.data() }));
-                document.getElementById('vt-act').innerText = polls.length;
-                let tv = 0; polls.forEach(p => tv += (p.buyAmount||0) + (p.sellAmount||0));
-                document.getElementById('vt-vol').innerText = tv.toFixed(0);
-                const c = document.getElementById('vpolls');
-                if (!polls.length) { c.innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;">No active polls</div>'; return; }
-                c.innerHTML = polls.map(p => {
-                    const pr = calcPr(p);
-                    const tot = (p.buyAmount||0) + (p.sellAmount||0);
-                    const bp = pr.buyP;
-                    const isUp = pr.chg >= 0;
-                    
-                    // ✅ Pressure Label
-                    let plabel = '', pcolor = '';
-                    if (bp >= 70) { plabel = 'Strong Buy 📈'; pcolor = '#065f46'; }
-                    else if (bp >= 55) { plabel = 'Buying ⬆️'; pcolor = '#10B981'; }
-                    else if (bp >= 45) { plabel = 'Neutral ➡️'; pcolor = '#fbbf24'; }
-                    else if (bp >= 30) { plabel = 'Selling ⬇️'; pcolor = '#EF4444'; }
-                    else { plabel = 'Strong Sell 📉'; pcolor = '#991b1b'; }
-                    
-                    return `<div class="vt-card ani-in" onclick="openVD('${p.id}')" style="cursor:pointer;">
-                        <div style="display:flex;justify-content:space-between;margin-bottom:2px;">
-                            <h5 style="font-weight:900;font-size:11px;">${p.title}</h5>
-                            <span class="badge" style="background:${pcolor}20;color:${pcolor};">${plabel}</span>
-                        </div>
-                        <p style="font-size:8px;color:#94a3b8;">${p.location||'Global'} • ${tLeft(p.expireAt?.toMillis())}</p>
-                        
-                        <div class="price-box">
-                            <span style="font-size:8px;color:#94a3b8;">Price:</span>
-                            <span style="font-size:17px;font-weight:900;color:${isUp?'#10B981':'#EF4444'};">${pr.price.toFixed(2)}</span>
-                            <span style="font-size:9px;font-weight:700;color:${isUp?'#10B981':'#EF4444'};">${isUp?'+':''}${pr.chg.toFixed(1)}%</span>
-                        </div>
-                        
-                        <div class="prog-bar"><div class="prog-buy" style="width:${bp}%;"></div><div class="prog-sell" style="width:${100-bp}%;"></div></div>
-                        
-                        <div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700;margin:3px 0;">
-                            <span style="color:#10B981;">Buy ${bp}%</span>
-                            <span style="color:#EF4444;">Sell ${100-bp}%</span>
-                            <span style="color:#64748b;">Vol: ${tot.toFixed(0)}</span>
-                        </div>
-                        
-                        <!-- ✅ PRESSURE METER -->
-                        <div style="display:flex;align-items:center;gap:3px;background:#f1f5f9;padding:4px 6px;border-radius:4px;">
-                            <span style="font-size:6px;font-weight:700;color:#64748b;">PRESSURE</span>
-                            <div class="pressure-bar"><div class="pressure-buy" style="width:${bp}%;"></div><div class="pressure-sell" style="width:${100-bp}%;"></div></div>
-                            <span style="font-size:7px;font-weight:900;color:${bp>=50?'#10B981':'#EF4444'};">${bp}% ${bp>=50?'BUY':'SELL'}</span>
-                        </div>
-                    </div>`;
-                }).join('');
-            });
-        }
-        
-        window.openVD = async function(id) {
-            tPollId = id;
-            const d = await db.collection('votePolls').doc(id).get();
-            if (!d.exists) return;
-            const p = d.data();
-            const pr = calcPr(p);
-            const bp = pr.buyP;
-            
-            // ✅ Pressure Label
-            let plabel = '', pcolor = '';
-            if (bp >= 70) { plabel = 'STRONG BUY PRESSURE 📈'; pcolor = '#065f46'; }
-            else if (bp >= 55) { plabel = 'BUYING PRESSURE ⬆️'; pcolor = '#10B981'; }
-            else if (bp >= 45) { plabel = 'NEUTRAL ➡️'; pcolor = '#fbbf24'; }
-            else if (bp >= 30) { plabel = 'SELLING PRESSURE ⬇️'; pcolor = '#EF4444'; }
-            else { plabel = 'STRONG SELL PRESSURE 📉'; pcolor = '#991b1b'; }
-            
-            document.getElementById('mvd-title').innerText = p.title;
-            document.getElementById('mvd-desc').innerText = p.description || '';
-            
-            // ✅ Pressure Label Show
-            const plEl = document.getElementById('mvd-pressure-label');
-            plEl.innerText = plabel;
-            plEl.style.color = pcolor;
-            plEl.style.background = pcolor + '15';
-            
-            document.getElementById('mvd-price').innerText = pr.price.toFixed(2);
-            document.getElementById('mvd-price').style.color = pr.chg >= 0 ? '#10B981' : '#EF4444';
-            document.getElementById('mvd-change').innerText = (pr.chg >= 0 ? '+' : '') + pr.chg.toFixed(1) + '%';
-            document.getElementById('mvd-change').style.color = pr.chg >= 0 ? '#10B981' : '#EF4444';
-            document.getElementById('mvd-buy-bar').style.width = bp + '%';
-            document.getElementById('mvd-sell-bar').style.width = (100-bp) + '%';
-            document.getElementById('mvd-bp').innerText = bp + '%';
-            document.getElementById('mvd-sp').innerText = (100-bp) + '%';
-            document.getElementById('mvd-pbuy-bar').style.width = bp + '%';
-            document.getElementById('mvd-psell-bar').style.width = (100-bp) + '%';
-            document.getElementById('mvd-pressure-val').innerText = bp + '% ' + (bp >= 50 ? 'BUY' : 'SELL');
-            document.getElementById('mvd-pressure-val').style.color = bp >= 50 ? '#10B981' : '#EF4444';
-            
-            tSide = null;
-            document.getElementById('mv-amount').value = '';
-            document.getElementById('modal-vote').classList.remove('hidden');
-        };
-        
-        document.getElementById('mv-buy').addEventListener('click', function() { tSide = 'buy'; this.style.opacity = '0.6'; document.getElementById('mv-sell').style.opacity = '1'; });
-        document.getElementById('mv-sell').addEventListener('click', function() { tSide = 'sell'; this.style.opacity = '0.6'; document.getElementById('mv-buy').style.opacity = '1'; });
-        
-        document.getElementById('mv-submit').addEventListener('click', async () => {
-            if (!tSide) return toast('Select BUY or SELL', 'error');
-            const amt = parseFloat(document.getElementById('mv-amount').value);
-            if (!amt || amt < 10) return toast('Min 10 Dh', 'error');
-            if (amt > bal) return toast('Insufficient balance', 'error');
-            
-            const ref = db.collection('votePolls').doc(tPollId);
-            const doc = await ref.get();
-            if (!doc.exists || doc.data().status !== 'active') return toast('Poll ended', 'error');
-            
-            const com = amt * 0.07, creatorCut = amt * 0.02, net = amt - com;
-            const pollData = doc.data();
-            
-            await db.collection('users').doc(user.uid).update({ balance: firebase.firestore.FieldValue.increment(-amt) });
-            const fld = tSide === 'buy' ? 'buyAmount' : 'sellAmount';
-            const vf = tSide === 'buy' ? 'buyVoters' : 'sellVoters';
-            await ref.update({ [fld]: firebase.firestore.FieldValue.increment(net), [vf]: firebase.firestore.FieldValue.arrayUnion(user.uid), totalCommission: firebase.firestore.FieldValue.increment(amt * 0.05), creatorEarnings: firebase.firestore.FieldValue.increment(creatorCut) });
-            
-            if (pollData.creatorId && pollData.creatorId !== user.uid) {
-                await db.collection('users').doc(pollData.creatorId).update({ balance: firebase.firestore.FieldValue.increment(creatorCut) });
-            }
-            
-            await db.collection('trades').add({ pollId: tPollId, userId: user.uid, side: tSide, amount: amt, netAmount: net, commission: com, entryPrice: calcPr(doc.data()).price, entryBuyPressure: calcPr(doc.data()).buyP, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            
-            bal -= amt;
-            updateUI();
-            closeModal('modal-vote');
-            toast(`${tSide.toUpperCase()} placed!`, 'success');
-            loadPolls();
-        });
-        
-        async function loadTrades() {
-            const c = document.getElementById('vtrades');
-            c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:15px;">Loading...</p>';
-            const snap = await db.collection('trades').where('userId', '==', user.uid).orderBy('createdAt', 'desc').get();
-            const trades = [];
-            snap.forEach(d => trades.push({ id: d.id, ...d.data() }));
-            if (!trades.length) { c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:15px;">No trades</p>'; return; }
-            
-            const pIds = [...new Set(trades.map(t => t.pollId))];
-            const pDocs = await Promise.all(pIds.map(id => db.collection('votePolls').doc(id).get()));
-            const polls = {};
-            pDocs.forEach(d => { if (d.exists) polls[d.id] = d.data(); });
-            
-            c.innerHTML = trades.map(t => {
-                const p = polls[t.pollId] || {}, pr = calcPr(p);
-                const prof = t.side === 'buy' ? (pr.price - t.entryPrice) * (t.netAmount / t.entryPrice) : (t.entryPrice - pr.price) * (t.netAmount / t.entryPrice);
-                return `<div class="vt-card ani-in">
-                    <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;font-weight:700;">${p.title||'Unknown'}</span><span style="font-size:8px;font-weight:900;color:${t.side==='buy'?'#10B981':'#EF4444'};">${t.side.toUpperCase()}</span></div>
-                    <div style="display:flex;justify-content:space-between;font-size:8px;margin-top:2px;color:#64748b;"><span>Entry: ${t.entryPrice?.toFixed(2)}</span><span>Now: ${pr.price.toFixed(2)}</span><span style="font-weight:700;color:${prof>=0?'#10B981':'#EF4444'};">${prof>=0?'+':''}${prof.toFixed(2)}</span></div>
-                </div>`;
-            }).join('');
-        }
-        
-        document.getElementById('vp-create-btn').addEventListener('click', async () => {
-            const t = document.getElementById('vp-title').value.trim(), d = document.getElementById('vp-desc').value.trim();
-            const l = document.getElementById('vp-loc').value.trim() || 'Global', dur = parseInt(document.getElementById('vp-dur').value);
-            if (!t) return toast('Enter title', 'error');
-            if (bal < 110) return toast('Need 110 Dh', 'error');
-            
-            await db.collection('users').doc(user.uid).update({ balance: firebase.firestore.FieldValue.increment(-10) });
-            await db.collection('votePolls').add({ title: t, description: d, location: l, duration: dur, creatorId: user.uid, creatorName: user.displayName, buyAmount: 0, sellAmount: 0, buyVoters: [], sellVoters: [], totalCommission: 0, creatorEarnings: 0, status: 'active', createdAt: firebase.firestore.FieldValue.serverTimestamp(), expireAt: new Date(Date.now() + dur * 86400000) });
-            bal -= 10; updateUI();
-            toast('Poll created!', 'success');
-            document.querySelector('.vote-subnav button[data-vtab="market"]').click();
-        });
-        
-        // ========== SHOP ==========
-        document.getElementById('shop-tab-buy').addEventListener('click', () => {
-            document.getElementById('shop-buy-panel').classList.remove('hidden');
-            document.getElementById('shop-withdraw-panel').classList.add('hidden');
-            document.getElementById('shop-tab-buy').style.background = '#fbbf24';
-            document.getElementById('shop-tab-buy').style.color = '#1e293b';
-            document.getElementById('shop-tab-withdraw').style.background = 'transparent';
-            document.getElementById('shop-tab-withdraw').style.color = '#94a3b8';
-        });
-        
-        document.getElementById('shop-tab-withdraw').addEventListener('click', () => {
-            document.getElementById('shop-buy-panel').classList.add('hidden');
-            document.getElementById('shop-withdraw-panel').classList.remove('hidden');
-            document.getElementById('shop-tab-withdraw').style.background = '#fbbf24';
-            document.getElementById('shop-tab-withdraw').style.color = '#1e293b';
-            document.getElementById('shop-tab-buy').style.background = 'transparent';
-            document.getElementById('shop-tab-buy').style.color = '#94a3b8';
-            updateWUI();
-        });
-        
-        async function loadLTC() {
-            const d = await db.collection('adminSettings').doc('ltc_wallet').get();
-            if (d.exists) document.getElementById('plat-ltc').innerText = d.data().address || 'Not set';
-        }
-        
-        function updateWUI() { document.getElementById('w-bal').innerText = (stars||0).toFixed(2); }
-        
-        document.getElementById('copy-ltc').addEventListener('click', () => { navigator.clipboard?.writeText(document.getElementById('plat-ltc').innerText); toast('Copied!'); });
-        
-        document.querySelectorAll('[data-amt]').forEach(el => {
-            el.addEventListener('click', function() {
-                const a = parseInt(this.dataset.amt), p = parseFloat(this.dataset.price);
-                const ex = cart.find(i => i.amt === a);
-                if (ex) ex.qty++; else cart.push({ amt: a, price: p, qty: 1 });
-                rCart(); toast(`${a} STAR added!`);
-            });
-        });
-        
-        function rCart() {
-            const c = document.getElementById('cart-items');
-            if (!cart.length) { c.innerHTML = '<p style="font-size:9px;color:#94a3b8;text-align:center;padding:6px;">Empty</p>'; document.getElementById('cart-total').innerText = '$0.00'; return; }
-            let total = 0;
-            c.innerHTML = cart.map((i, idx) => {
-                const st = i.amt * i.qty * (i.price / i.amt); total += st;
-                return `<div style="display:flex;justify-content:space-between;font-size:9px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span>${i.amt} x${i.qty}</span><span style="color:#fbbf24;">$${st.toFixed(2)}</span><button onclick="rmCart(${idx})" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:10px;">x</button></div>`;
-            }).join('');
-            document.getElementById('cart-total').innerText = '$' + total.toFixed(2);
-        }
-        
-        window.rmCart = function(i) { cart.splice(i, 1); rCart(); };
-        
-        document.getElementById('checkout-btn').addEventListener('click', async () => {
-            if (!cart.length) return toast('Cart empty', 'error');
-            const tx = document.getElementById('ltc-txid').value.trim();
-            if (!tx) return toast('Enter TxID', 'error');
-            let ts = 0, tu = 0; cart.forEach(i => { ts += i.amt * i.qty; tu += i.amt * i.qty * (i.price / i.amt); });
-            if (tu < 1) return toast('Min $1', 'error');
-            await db.collection('buyRequests').add({ userId: user.uid, userEmail: user.email, amountStars: ts, amountUSD: tu, amountLTC: (tu/65).toFixed(6), txHash: tx, status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            toast('Submitted!', 'success'); cart = []; document.getElementById('ltc-txid').value = ''; rCart();
-        });
-        
-        document.getElementById('withdraw-btn').addEventListener('click', async () => {
-            const addr = document.getElementById('w-ltc-addr').value.trim(), amt = parseInt(document.getElementById('w-amt').value);
-            if (!addr) return toast('Enter LTC address', 'error');
-            if (!amt || amt < 1000) return toast('Min 1000', 'error');
-            if (amt > (stars||0)) return toast('Insufficient', 'error');
-            await db.collection('transactions').add({ userId: user.uid, userEmail: user.email, type: 'withdraw', amountStars: amt, ltcAddress: addr, status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            stars -= amt; toast('Submitted!', 'success'); updateWUI();
-        });
-        
-        // ========== PROFILE ==========
-        function openProf() {
-            document.getElementById('prof-name').value = user?.displayName || '';
-            document.getElementById('prof-bio').value = user?.bio || '';
-            document.getElementById('prof-img').src = user?.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-            document.getElementById('prof-ref').innerText = 'Referral: ' + (user?.referralCode || 'N/A');
-            document.getElementById('modal-profile').classList.remove('hidden');
-        }
-        
-        document.getElementById('prof-save').addEventListener('click', async () => {
-            const name = document.getElementById('prof-name').value.trim();
-            if (!name) return toast('Name required', 'error');
-            const upd = { displayName: name, bio: document.getElementById('prof-bio').value.trim() };
-            
-            const file = document.getElementById('prof-photo').files[0];
-            if (file) {
-                if (file.size > 1 * 1024 * 1024) return toast('Max 1MB', 'error');
-                const reader = new FileReader();
-                reader.onload = async (ev) => {
-                    upd.photoURL = ev.target.result;
-                    await db.collection('users').doc(user.uid).update(upd);
-                    user.displayName = name; user.photoURL = upd.photoURL;
-                    updateUI(); closeModal('modal-profile'); toast('Updated!');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                await db.collection('users').doc(user.uid).update(upd);
-                user.displayName = name; updateUI(); closeModal('modal-profile'); toast('Updated!');
-            }
-        });
-        
-        document.getElementById('prof-photo').addEventListener('change', function(e) {
-            const f = e.target.files[0];
-            if (f) { const r = new FileReader(); r.onload = ev => document.getElementById('prof-img').src = ev.target.result; r.readAsDataURL(f); }
-        });
-        
-        document.getElementById('prof-logout').addEventListener('click', () => { auth.signOut(); closeModal('modal-profile'); });
-        
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') ['modal-post','modal-vote','modal-profile','modal-create','modal-about'].forEach(id => closeModal(id)); });
-    </script>
+<!-- AUTH SECTION -->
+<div id="auth-section" class="min-h-screen flex items-center justify-center p-6 brand-green">
+  <div class="bg-white p-8 w-full max-w-sm rounded-[40px] shadow-2xl text-center animate-feed">
+    <h1 class="text-2xl font-black brand-blue-text mb-2 uppercase">Business Partner BD</h1>
+    <p class="text-slate-400 text-[10px] uppercase tracking-widest mb-6">Premium Network</p>
+    <div id="login-form" class="space-y-4">
+      <div class="relative"><i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i><input type="text" id="login-username" placeholder="ইউজারনেম" class="auth-input pl-10"></div>
+      <div class="relative"><i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i><input type="password" id="login-password" placeholder="পাসওয়ার্ড" class="auth-input pl-10"></div>
+      <button id="login-btn" class="w-full py-4 brand-red text-white font-bold auth-btn shadow-lg active:scale-95 transition">প্রবেশ করুন</button>
+      <p class="text-xs text-slate-500 pt-2">অ্যাকাউন্ট নেই? <span id="show-register-btn" class="text-blue-600 cursor-pointer font-bold">রেজিস্ট্রেশন করুন</span></p>
+    </div>
+    <div id="register-form" class="hidden space-y-4">
+      <div class="relative"><i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i><input type="text" id="reg-username" placeholder="নতুন ইউজারনেম" class="auth-input pl-10"></div>
+      <div class="relative"><i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i><input type="password" id="reg-password" placeholder="পাসওয়ার্ড" class="auth-input pl-10"></div>
+      <div class="relative"><i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i><input type="password" id="reg-confirm-password" placeholder="পাসওয়ার্ড নিশ্চিত করুন" class="auth-input pl-10"></div>
+      <div class="relative"><i class="fas fa-gift absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i><input type="text" id="reg-referral" placeholder="রেফারেল কোড (পেলেই ৫০ কয়েন!)" class="auth-input pl-10"></div>
+      <button id="register-btn" class="w-full py-4 brand-green text-white font-bold auth-btn shadow-lg active:scale-95 transition">রেজিস্ট্রেশন করুন</button>
+      <p class="text-xs text-slate-500 pt-2">ইতিমধ্যে অ্যাকাউন্ট আছে? <span id="show-login-btn" class="text-blue-600 cursor-pointer font-bold">লগইন করুন</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" class="hidden min-h-screen flex flex-col">
+  <header class="bg-white p-4 sticky top-0 z-50 flex justify-between items-center border-b shadow-sm">
+    <h2 class="brand-blue-text font-black italic text-lg tracking-tighter">BUSINESS PARTNER BD</h2>
+    <div class="flex items-center gap-3">
+      <div class="text-right">
+        <p id="display-username" class="text-[9px] text-slate-400 font-bold uppercase">GUEST</p>
+        <p id="user-balance" class="text-sm font-black brand-green-text">0.00</p>
+      </div>
+      <div id="profile-avatar-btn" class="w-10 h-10 ring-2 ring-slate-100 rounded-full overflow-hidden cursor-pointer">
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" id="top-avatar" class="w-full h-full object-cover" alt="avatar">
+      </div>
+    </div>
+  </header>
+  <div class="glass p-3 border-b sticky top-[73px] z-40 flex flex-col gap-2 shadow-sm">
+    <div class="bg-slate-50 rounded-xl px-3 flex items-center gap-2 border border-slate-200">
+      <i class="fas fa-search text-slate-400 text-xs"></i>
+      <input type="text" id="global-search" placeholder="টাইটেল, লোকেশন বা ডিটেইলস সার্চ করুন..." class="bg-transparent w-full p-2 text-[11px] outline-none brand-blue-text font-bold">
+    </div>
+    <div class="flex gap-2">
+      <select id="filter-district" class="flex-1 bg-slate-50 text-[10px] font-black p-3 rounded-xl outline-none brand-blue-text border border-slate-200 uppercase"></select>
+      <select id="filter-time-window" class="flex-1 bg-slate-50 text-[10px] font-black p-3 rounded-xl outline-none brand-blue-text border border-slate-200">
+        <option value="all">যেকোনো সময়</option><option value="4">গত ৪ ঘণ্টা</option><option value="12">গত ১২ ঘণ্টা</option><option value="24">আজকের পোস্ট</option><option value="168">এই সপ্তাহের</option>
+      </select>
+    </div>
+  </div>
+  <div class="marquee-container" id="marquee-container">
+    <div class="marquee-content" id="marquee-content"></div>
+  </div>
+  <div class="px-4 py-2 bg-white border-b flex justify-between items-center">
+    <span id="result-count" class="result-count">0 টি পোস্ট পাওয়া গেছে</span>
+    <button id="clear-filters-btn" class="text-[10px] font-bold text-slate-500"><i class="fas fa-times-circle mr-1"></i>ফিল্টার ক্লিয়ার</button>
+  </div>
+  <main class="flex-1 p-4 pb-32">
+    <div id="post-container" class="flex flex-col gap-4"></div>
+  </main>
+  <div class="fab-container">
+    <div id="fab-btn" class="fab-button shadow-2xl"><i class="fas fa-plus text-xl"></i></div>
+    <div id="fab-options" class="fab-options">
+      <div id="vote-business-btn" class="fab-option-item"><i class="fas fa-chart-bar"></i><span>Vote Business</span></div>
+      <div id="create-post-btn" class="fab-option-item"><i class="fas fa-paper-plane"></i><span class="text-green-700">পোস্ট করুন (ফ্রি)</span></div>
+      <div id="profile-btn" class="fab-option-item"><i class="fas fa-user"></i><span>আমার প্রোফাইল</span></div>
+      <div id="admin-btn" class="fab-option-item hidden"><i class="fas fa-crown text-purple-600"></i><span>অ্যাডমিন প্যানেল</span></div>
+      <div id="logout-btn" class="fab-option-item"><i class="fas fa-sign-out-alt"></i><span>লগ আউট</span></div>
+    </div>
+  </div>
+  <nav class="glass border-t p-4 flex justify-around items-center fixed bottom-0 left-0 right-0 z-40">
+    <button id="home-nav" class="brand-green-text"><i class="fas fa-home text-xl"></i></button>
+    <button id="search-nav" class="text-slate-400"><i class="fas fa-search text-xl"></i></button>
+    <button id="star-shop-nav" class="text-slate-400"><i class="fas fa-coins text-xl"></i></button>
+    <button id="vote-nav" class="text-slate-400"><i class="fas fa-chart-bar text-xl"></i></button>
+    <button id="help-nav" class="text-slate-400"><i class="fas fa-users text-xl"></i></button>
+  </nav>
+</div>
+
+<!-- POST MODAL -->
+<div id="post-modal" class="hidden fixed inset-0 z-[2000] glass flex items-center justify-center p-6">
+  <div class="bg-white w-full max-w-sm rounded-[30px] shadow-2xl p-6 animate-feed max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-6"><h3 class="font-black brand-blue-text italic">নতুন বিজনেস পোস্ট</h3><button id="close-post-modal" class="text-slate-400"><i class="fas fa-times text-xl"></i></button></div>
+    <div class="flex flex-col gap-3">
+      <input type="text" id="p-title" placeholder="বিজনেস টাইটেল" class="bg-slate-50 p-4 rounded-xl outline-none text-xs font-bold border">
+      <input type="tel" id="p-whatsapp" placeholder="হোয়াটসঅ্যাপ নাম্বার (11 ডিজিট, 01xxxxxxxxx)" class="bg-slate-50 p-4 rounded-xl outline-none text-xs font-bold border">
+      <select id="p-location" class="flex-1 bg-slate-50 p-4 rounded-xl outline-none text-xs font-bold border"></select>
+      <textarea id="p-details" rows="3" placeholder="বিজনেস ডিটেইলস..." class="bg-slate-50 p-4 rounded-xl outline-none text-xs font-bold border"></textarea>
+      <select id="p-duration" class="bg-slate-50 p-4 rounded-xl outline-none text-xs font-bold border"><option value="4">৪ ঘণ্টা</option><option value="12">১২ ঘণ্টা</option><option value="24">১ দিন</option><option value="168">৭ দিন</option></select>
+      <div class="p-4 bg-green-50 rounded-xl flex justify-between items-center"><span class="text-[10px] font-black text-green-700 uppercase">ফ্রি পোস্ট</span><i class="fas fa-check-circle text-green-500"></i></div>
+      <button id="publish-post-btn" class="w-full py-4 brand-green text-white font-bold rounded-xl shadow-lg">পোস্ট পাবলিশ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAILS MODAL -->
+<div id="details-modal" class="hidden fixed inset-0 z-[2500] glass flex items-center justify-center p-6">
+  <div class="bg-white w-full max-w-sm rounded-[30px] p-6 shadow-2xl animate-feed details-modal">
+    <div class="flex justify-between items-center mb-4"><h3 id="det-title" class="font-black brand-blue-text text-lg"></h3><button id="close-details-modal" class="text-slate-400"><i class="fas fa-times"></i></button></div>
+    <div class="bg-slate-50 p-4 rounded-2xl mb-4"><p id="det-body" class="text-xs text-slate-600 leading-relaxed"></p></div>
+    <div class="bg-slate-50 p-4 rounded-2xl mb-4"><p class="text-[10px] text-slate-500 mb-1">যোগাযোগ:</p><p id="det-whatsapp" class="text-sm font-black brand-green-text"></p></div>
+    <button id="close-details-btn" class="w-full py-3 brand-blue-text bg-slate-100 font-bold rounded-xl">বন্ধ করুন</button>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profile-modal" class="hidden fixed inset-0 z-[3000] glass flex items-center justify-center p-6">
+  <div class="bg-white w-full max-w-sm rounded-[30px] p-6 shadow-2xl animate-feed">
+    <div class="flex justify-between items-center mb-6"><h3 class="font-black brand-blue-text text-lg">আমার প্রোফাইল</h3><button id="close-profile-modal"><i class="fas fa-times text-xl text-slate-400"></i></button></div>
+    <div class="flex flex-col items-center gap-4">
+      <div class="relative"><img src="" id="profile-preview" class="w-24 h-24 rounded-full object-cover ring-4 ring-slate-100" alt="preview"><label for="img-upload" class="absolute bottom-0 right-0 bg-green-600 p-2 rounded-full text-white cursor-pointer shadow-lg"><i class="fas fa-camera text-xs"></i></label><input type="file" id="img-upload" class="hidden" accept="image/*"></div>
+      <input type="text" id="profile-name-input" class="w-full p-4 bg-slate-50 border rounded-xl font-bold" placeholder="আপনার নাম">
+      <textarea id="profile-bio-input" rows="3" class="w-full p-4 bg-slate-50 border rounded-xl font-bold" placeholder="আপনার সম্পর্কে কিছু লিখুন..."></textarea>
+      <button id="save-profile-btn" class="w-full py-4 brand-green text-white font-bold rounded-2xl shadow-lg">সেভ করুন</button>
+      <button id="close-profile-btn" class="w-full text-slate-500 text-sm py-2">বন্ধ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- STAR SHOP PAGE -->
+<div id="star-shop-page" style="display:none;" class="star-shop-page">
+  <button id="close-star-shop" class="fixed top-6 left-6 z-[110] bg-white/10 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/20"><i class="fas fa-arrow-left"></i></button>
+  <div class="fixed top-20 left-0 right-0 z-40 flex justify-center gap-2 p-2"><div class="glass-ts rounded-full p-1 flex"><button id="shop-tab-buy" class="px-6 py-2 rounded-full text-xs font-black uppercase tab-active-ts">Buy</button><button id="shop-tab-withdraw" class="px-6 py-2 rounded-full text-xs font-black uppercase text-slate-400">Withdraw</button></div></div>
+  <div class="max-w-lg mx-auto p-4 pb-32 pt-24">
+    <div id="shop-tab-buy-content">
+      <div class="text-center pt-4 pb-6"><h1 class="text-3xl font-black italic tracking-tighter"><span class="text-yellow-400">Dh STAR</span> <span class="text-white">SHOP</span></h1><p class="text-xs text-slate-400 uppercase tracking-widest mt-2">Buy Coins & Get Approved</p></div>
+      <div class="coin-stats-card mb-6"><div class="flex justify-between items-center mb-4"><div><p class="text-xs font-bold opacity-80 uppercase">Total Supply</p><p class="text-3xl font-black" id="total-coin-supply">20,000,000</p><p class="text-xs opacity-80">Dh STAR</p></div><div class="text-right"><p class="text-xs font-bold opacity-80 uppercase">Current Price</p><p class="text-2xl font-black" id="current-coin-price">৳0.20</p><p class="text-xs opacity-80">per Dh STAR</p></div></div><div class="bg-white/20 rounded-full h-2 overflow-hidden"><div class="bg-white h-full" style="width:35%" id="supply-progress"></div></div><div class="flex justify-between mt-2"><span class="text-[10px] font-bold" id="coins-sold-display">7,000,000</span><span class="text-[10px] font-bold">Available: <span id="coins-available">13,000,000</span></span></div></div>
+      <div class="bg-white/5 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10"><div class="flex justify-between items-center"><div><p class="text-[10px] text-slate-400 uppercase font-bold">আপনার ব্যালেন্স</p><p class="text-2xl font-black text-white" id="shop-user-balance">0.00</p></div><div class="text-right"><p class="text-[10px] text-slate-400 uppercase font-bold">আপনার Dh STAR</p><p class="text-xl font-black text-yellow-400" id="shop-user-stars">0.00</p></div></div></div>
+      <div class="bg-white/5 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10"><h3 class="text-sm font-black text-white mb-4"><i class="fas fa-calculator text-yellow-400"></i> ক্যালকুলেটর</h3><div class="space-y-4"><div><label class="text-[10px] text-slate-400 uppercase font-bold block mb-2">কয়েন পরিমাণ</label><div class="relative"><input type="number" id="calc-amount" placeholder="পরিমাণ" class="calculator-input w-full pr-16" min="2000" value="2000"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-yellow-400 font-bold text-sm">STAR</span></div></div><div class="bg-black/20 rounded-xl p-4"><div class="flex justify-between items-center mb-2"><span class="text-[10px] text-slate-400">প্রতি Dh STAR মূল্য:</span><span class="text-sm font-bold text-white" id="calc-price-per-coin">৳0.20</span></div><div class="flex justify-between items-center mb-2"><span class="text-[10px] text-slate-400">সর্বমোট মূল্য:</span><span class="text-lg font-black text-green-400" id="calc-total-price">৳400.00</span></div><div class="border-t border-white/10 my-3"></div><div class="flex justify-between items-center"><span class="text-[10px] text-slate-400">সর্বোচ্চ ক্রয় সীমা:</span><span class="text-sm font-bold text-yellow-400" id="calc-max-buy">13,000,000 STAR</span></div></div></div></div>
+      <div class="grid grid-cols-2 gap-3 mb-6"><div class="star-package bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 cursor-pointer hover:border-yellow-400 transition" data-amount="2000"><p class="text-xl font-black text-yellow-400">2000</p><p class="text-[10px] text-slate-400 uppercase">Dh STAR</p><p class="text-sm font-bold text-white mt-2">৳400</p></div><div class="star-package bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 cursor-pointer hover:border-yellow-400 transition" data-amount="5000"><p class="text-xl font-black text-yellow-400">5000</p><p class="text-[10px] text-slate-400 uppercase">Dh STAR</p><p class="text-sm font-bold text-white mt-2">৳1,000</p></div><div class="star-package bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 cursor-pointer hover:border-yellow-400 transition" data-amount="10000"><p class="text-xl font-black text-yellow-400">10000</p><p class="text-[10px] text-slate-400 uppercase">Dh STAR</p><p class="text-sm font-bold text-white mt-2">৳2,000</p></div><div class="star-package bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 cursor-pointer hover:border-yellow-400 transition" data-amount="50000"><p class="text-xl font-black text-yellow-400">50000</p><p class="text-[10px] text-slate-400 uppercase">Dh STAR</p><p class="text-sm font-bold text-white mt-2">৳10,000</p></div></div>
+      <div class="mb-6"><h3 class="text-sm font-black text-white mb-4 flex items-center gap-2"><i class="fas fa-credit-card text-yellow-400"></i> পেমেন্ট অপশন</h3><div class="grid grid-cols-2 gap-3"><div class="payment-option active" data-payment="bkash" id="payment-bkash"><div class="flex items-center gap-3"><i class="fas fa-mobile-alt text-pink-400 text-xl"></i><span class="text-sm font-bold text-white">bKash</span></div></div><div class="payment-option" data-payment="nagad" id="payment-nagad"><div class="flex items-center gap-3"><i class="fas fa-mobile-alt text-orange-400 text-xl"></i><span class="text-sm font-bold text-white">Nagad</span></div></div></div><div class="mt-3 p-4 bg-white/5 rounded-xl border border-white/10"><p class="text-[10px] text-slate-400 mb-1">পেমেন্ট নাম্বার</p><p class="text-lg font-black text-white" id="payment-number">01877119177</p></div></div>
+      <div id="cart-section" class="bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-white/10 mb-6"><div class="flex justify-between items-center mb-4"><h3 class="text-sm font-black text-white flex items-center gap-2"><i class="fas fa-shopping-bag text-yellow-400"></i> আপনার কার্ট</h3><button id="clear-cart-btn" class="text-[10px] text-red-400 font-bold"><i class="fas fa-trash-alt mr-1"></i>ক্লিয়ার</button></div><div id="cart-items-container"><p class="text-center text-slate-400 text-xs py-4">কার্ট খালি</p></div><div class="border-t border-white/10 my-4"></div><div class="flex justify-between items-center mb-4"><span class="text-xs text-slate-400">সর্বমোট:</span><span class="text-xl font-black text-green-400" id="cart-total">৳0.00</span></div><input type="text" id="transaction-id" placeholder="TRX ID লিখুন" class="w-full p-3 bg-white/5 rounded-xl outline-none border border-white/10 text-white font-bold text-sm mb-3"><button id="checkout-btn" class="w-full py-4 bg-yellow-500 text-black font-black rounded-xl uppercase text-sm shadow-lg"><i class="fas fa-paper-plane mr-2"></i>ক্রয় রিকোয়েস্ট পাঠান</button><p class="text-[9px] text-slate-500 mt-2 text-center">অ্যাডমিন অ্যাপ্রুভাল সাপেক্ষে কয়েন যুক্ত হবে</p></div>
+    </div>
+    <div id="shop-tab-withdraw-content" class="hidden">
+      <div class="text-center pt-4 pb-6"><h1 class="text-2xl font-black italic tracking-tighter text-white"><span class="text-yellow-400">WITHDRAW</span> COINS</h1><p class="text-xs text-slate-400 uppercase tracking-widest mt-2">Min 1000 Coins</p></div>
+      <div class="wallet-card mb-6"><div class="text-center mb-4"><p class="text-[10px] text-slate-400 uppercase mb-2">আপনার ওয়ালেট অ্যাড্রেস</p><div class="bg-black/30 rounded-xl p-4 border border-white/10"><p class="text-xs font-mono text-yellow-400 break-all" id="wallet-address">0x...</p></div><button id="copy-wallet-btn" class="mt-2 text-[10px] text-slate-400"><i class="far fa-copy mr-1"></i>কপি করুন</button></div><div class="border-t border-white/10 my-4"></div><div class="text-center"><p class="text-[10px] text-slate-400 uppercase mb-1">আপনার Dh STAR</p><p class="text-3xl font-black text-yellow-400" id="withdraw-balance">0.00</p></div></div>
+      <div class="bg-white/5 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10"><h3 class="text-sm font-black text-white mb-4 flex items-center gap-2"><i class="fas fa-wallet text-green-400"></i> Withdraw Request</h3><p class="text-[10px] text-slate-400 mb-3">মিনিমাম 1000 কয়েন</p><div class="space-y-3"><input type="number" id="withdraw-amount" placeholder="কয়েন পরিমাণ (min 1000)" class="w-full p-4 bg-white/5 rounded-xl outline-none border border-white/10 text-white font-bold" min="1000"><div class="grid grid-cols-2 gap-3"><div class="payment-option active" data-withdraw="bkash" id="withdraw-bkash"><div class="flex items-center gap-2"><i class="fas fa-mobile-alt text-pink-400"></i><span class="text-xs font-bold text-white">bKash</span></div></div><div class="payment-option" data-withdraw="nagad" id="withdraw-nagad"><div class="flex items-center gap-2"><i class="fas fa-mobile-alt text-orange-400"></i><span class="text-xs font-bold text-white">Nagad</span></div></div></div><input type="tel" id="withdraw-number" placeholder="আপনার bKash/Nagad নাম্বার" class="w-full p-4 bg-white/5 rounded-xl outline-none border border-white/10 text-white font-bold"><button id="withdraw-send-btn" class="w-full py-4 bg-green-500 text-black font-black rounded-xl uppercase text-sm"><i class="fas fa-paper-plane mr-2"></i>Send Withdraw</button></div><p class="text-[9px] text-slate-500 mt-3"><i class="fas fa-info-circle mr-1"></i>অনুরোধ পাঠানোর পর ২৪ ঘণ্টার মধ্যে পেমেন্ট সম্পন্ন হবে।</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- HELP / REFERRAL PAGE -->
+<div id="help-referral-page" style="display:none;" class="star-shop-page">
+  <button id="close-help-page" class="fixed top-6 left-6 z-[110] bg-white/10 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/20"><i class="fas fa-arrow-left"></i></button>
+  <div class="max-w-lg mx-auto p-4 pb-32 pt-24 text-center">
+    <div class="mb-8"><i class="fas fa-users text-7xl text-yellow-400"></i><h1 class="text-2xl font-black italic tracking-tighter text-white mt-4">REFERRAL SYSTEM</h1><p class="text-xs text-slate-400 uppercase tracking-widest mt-2">Invite & Earn 50 Coins</p></div>
+    <div class="wallet-card mb-6 text-left"><div class="text-center mb-4"><p class="text-[10px] text-slate-400 uppercase mb-2">আপনার রেফারেল কোড</p><div class="bg-black/30 rounded-xl p-4 border border-white/10"><p class="text-xl font-mono text-yellow-400 break-all" id="referral-code">...</p></div><button id="copy-referral-btn" class="mt-2 text-[10px] text-slate-400"><i class="far fa-copy mr-1"></i>কপি করুন</button></div><div class="border-t border-white/10 my-4"></div><div class="flex justify-around text-center"><div><p class="text-[10px] text-slate-400 uppercase">রেফারেল ব্যালেন্স</p><p class="text-2xl font-black text-yellow-400" id="referral-balance">0</p><p class="text-[8px] text-slate-500">Coins</p></div><div><p class="text-[10px] text-slate-400 uppercase">মোট রেফার</p><p class="text-2xl font-black text-white" id="total-referrals">0</p></div></div></div>
+    <div class="bg-white/5 backdrop-blur-md rounded-2xl p-5 mb-6 border border-white/10 text-left"><h3 class="text-sm font-black text-white mb-4">Transfer Referral Balance → Main Balance</h3><button id="transfer-referral-btn" class="w-full py-4 bg-green-500 text-black font-black rounded-xl uppercase text-sm"><i class="fas fa-exchange-alt mr-2"></i>Transfer to Main Balance</button></div>
+    <div class="glass-ts p-6 rounded-3xl border-white/5 space-y-4 text-left"><h3 class="text-cyan-400 font-bold uppercase text-sm">📋 রেফারেল রুলস</h3><div class="text-xs text-slate-400 space-y-2"><p>• প্রতিটি সফল রেফারের জন্য আপনি <span class="text-yellow-400 font-bold">50 কয়েন</span> পাবেন।</p><p>• রেফারকৃত ইউজারকে অবশ্যই <span class="text-white font-bold">কয়েন কিনতে হবে</span> (যেকোনো প্যাকেজ)।</p><p>• কয়েন কেনার পরই রেফারার এর রেফারেল ব্যালেন্সে 50 কয়েন যুক্ত হবে।</p><p>• রেফারেল ব্যালেন্স থেকে মেইন ব্যালেন্সে ট্রান্সফার করতে <span class="text-green-400">Transfer to Main Balance</span> বাটন ব্যবহার করুন।</p><p class="mt-3 text-cyan-400"><i class="fas fa-shield-alt mr-1"></i>রেফারেল সিস্টেম সম্পূর্ণ অটোমেটেড।</p></div></div>
+    <div class="mt-6 text-left"><h3 class="text-sm font-black text-white mb-4">সাপোর্ট</h3><div class="bg-white/5 rounded-2xl p-5 border border-white/10"><p class="text-xs text-slate-400">যেকোনো সমস্যায় যোগাযোগ করুন:</p><p class="text-lg font-black text-white mt-2">support@businesspartnerbd.com</p><p class="text-sm text-slate-400">হেল্পলাইন: 01877119177</p></div></div>
+  </div>
+</div>
+
+<!-- VOTE BUSINESS PAGE -->
+<div id="vote-business-page" style="display:none;" class="ts-body">
+  <button id="close-vb-btn" class="fixed top-6 left-6 z-[110] bg-white/10 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/20"><i class="fas fa-arrow-left"></i></button>
+  <div class="fixed top-24 right-4 z-[60] bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full text-[10px] font-black text-yellow-500 shadow-xl backdrop-blur-md"><i class="fas fa-chart-line mr-1"></i> Owner: <span id="owner-profit" class="mono-ts">0.00</span> Dh</div>
+  <header class="sticky top-0 z-50 glass-ts border-b border-white/5 p-4"><div class="flex justify-between items-center max-w-lg mx-auto"><div><h1 class="text-xl font-black tracking-tighter italic text-white">VOTE <span class="text-[#00d2ff]">BUSINESS</span></h1><p class="text-[8px] font-bold text-slate-500 uppercase">Buy vs Sell • 2% Creator • 5% Owner</p></div><div class="text-right"><div class="bg-black/60 border border-white/10 px-4 py-2 rounded-2xl flex items-center gap-2"><i class="fas fa-coins text-yellow-400 text-xs"></i><span id="vb-balance" class="mono-ts font-bold text-white text-sm">0.00</span></div></div></div><div class="flex justify-around mt-5 text-[11px] font-black uppercase tracking-widest text-slate-500"><button id="vb-market-tab" class="pb-2 tab-active-ts">Market</button><button id="vb-myvotes-tab" class="pb-2">My Votes</button><button id="vb-myposts-tab" class="pb-2">My Posts</button><button id="vb-rules-tab" class="pb-2">Rules</button></div></header>
+  <main class="p-4 pb-40 max-w-lg mx-auto min-h-screen"><div id="vb-market" class="space-y-4"></div><div id="vb-my-votes" class="hidden space-y-4"></div><div id="vb-my-posts" class="hidden space-y-4"></div><div id="vb-rules" class="hidden space-y-4"><div class="glass-ts p-6 rounded-3xl border-white/5 space-y-4"><h3 class="text-cyan-400 font-bold uppercase text-sm">📋 Vote Business Rules</h3><div class="text-xs text-slate-400 space-y-2"><p>• মিনিমাম ব্যালেন্স: 100 Dh STAR | পোস্ট ফি: 10 Dh STAR</p><p>• মেয়াদ: 10, 20, 30, 70 দিন</p><p>• পোস্টকারী কমিশন: 2% | সাইট মালিক: 5%</p><p>• বিজয়ী টিম পরাজিত টিমের 93% টাকা পায়</p><p class="mt-4 text-cyan-400">⚠️ মেয়াদ শেষে অটো সেটেলমেন্ট</p></div></div></div></main>
+  <div id="vb-create-modal" class="hidden fixed inset-0 bg-black/98 z-[100] flex items-center justify-center p-6"><div class="glass-ts w-full max-w-sm p-8 rounded-[40px] border-white/10"><h3 class="text-lg font-black text-white italic uppercase mb-6 text-center">Create Vote Post</h3><div class="space-y-4"><input type="text" id="vb-title" placeholder="Post Title" class="w-full p-4 bg-white/5 rounded-2xl outline-none border border-white/5 text-white font-bold"><select id="vb-duration" class="w-full p-4 bg-white/5 rounded-2xl outline-none border border-white/5 text-white font-bold"><option value="10">10 Days</option><option value="20">20 Days</option><option value="30">30 Days</option><option value="70">70 Days</option></select><div class="p-3 bg-yellow-500/10 rounded-xl text-center"><p class="text-[10px] text-yellow-400">Fee: 10 Dh STAR | Min Balance: 100 Dh</p></div><button id="create-vb-post-btn" class="w-full py-5 bg-cyan-500 text-black font-black rounded-2xl uppercase">Create (10 Dh)</button><button id="close-vb-modal-btn" class="w-full text-slate-600 text-xs font-bold uppercase py-2">Cancel</button></div></div></div>
+  <button id="open-vb-modal-btn" class="fixed bottom-24 right-6 w-16 h-16 bg-cyan-500 text-black rounded-3xl shadow-xl flex items-center justify-center text-2xl z-[60]"><i class="fas fa-plus"></i></button>
+  <div class="fixed bottom-0 left-0 right-0 overflow-hidden bg-black/95 border-t border-white/10 z-50"><div class="scroll-container-ts text-[10px] font-black uppercase tracking-widest text-slate-400 py-3">Buy জিতলে Sell এর টাকা Buyers পায় 💰 | Sell জিতলে Buy এর টাকা Sellers পায় 📈 | Creator পায় 2% | Owner পায় 5% 🏆</div></div>
+</div>
+
+<script>
+(function() {
+  "use strict";
+  const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+  function getDistricts() { try { const d = JSON.parse(localStorage.getItem('app_districts')); return Array.isArray(d) && d.length ? d : ["ঢাকা","চট্টগ্রাম","রাজশাহী","খুলনা","বরিশাল","সিলেট","রংপুর","ময়মনসিংহ","কুমিল্লা","নোয়াখালী","বগুড়া","যশোর","কক্সবাজার"]; } catch { return ["ঢাকা","চট্টগ্রাম","রাজশাহী","খুলনা","বরিশাল","সিলেট","রংপুর","ময়মনসিংহ","কুমিল্লা","নোয়াখালী","বগুড়া","যশোর","কক্সবাজার"]; } }
+  function getMarqueeText() { return localStorage.getItem('app_marquee_text') || '🇧🇩 সারা বাংলাদেশে বিজনেস পার্টনার খুঁজুন • 📢 এখন পোস্ট করুন একদম ফ্রি • 🏢 ৬৪ জেলায় কানেক্টেড • 💼 রেফার করে কয়েন আয় করুন • ⭐ সঠিক পার্টনার খুঁজে নিন'; }
+  function getCoinSupply() { return parseInt(localStorage.getItem('app_total_coin_supply')) || 20000000; }
+  function getCoinPrice() { return parseFloat(localStorage.getItem('app_coin_price')) || 0.20; }
+  function getCoinsSold() { return parseFloat(localStorage.getItem('app_coins_sold')) || 7000000; }
+
+  let users=[], currentUser=null, posts=[], starBalance=0;
+  let votePosts=[], userVotes=[], ownerProfit=0;
+  let cartItems=[];
+  let transactions=[], selectedPayment='bkash', selectedWithdraw='bkash';
+  let referralData = { referrals:[], referralBalance:0 };
+  let buyRequests = [];
+
+  function showToast(msg,type='success'){
+    const c=document.getElementById('toast-container'), t=document.createElement('div');
+    t.className=`toast toast-${type}`; const icon=type==='error'?'fa-exclamation-circle':(type==='warning'?'fa-exclamation-triangle':(type==='info'?'fa-info-circle':'fa-check-circle'));
+    t.innerHTML=`<i class="fas ${icon}"></i> ${msg}`; c.appendChild(t);
+    setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.5s';setTimeout(()=>t.remove(),500);},3000);
+  }
+  function saveAllData(){
+    localStorage.setItem('app_users',JSON.stringify(users));
+    localStorage.setItem('app_currentUser',JSON.stringify(currentUser));
+    localStorage.setItem('main_posts',JSON.stringify(posts));
+    localStorage.setItem('vote_posts',JSON.stringify(votePosts));
+    localStorage.setItem('user_votes',JSON.stringify(userVotes));
+    localStorage.setItem('owner_profit',ownerProfit);
+    localStorage.setItem('wallet_transactions',JSON.stringify(transactions));
+    localStorage.setItem('referral_data',JSON.stringify(referralData));
+    localStorage.setItem('buy_requests',JSON.stringify(buyRequests));
+  }
+  function loadAllData(){
+    try{
+      users=JSON.parse(localStorage.getItem('app_users'))||[];
+      currentUser=JSON.parse(localStorage.getItem('app_currentUser'))||null;
+      posts=JSON.parse(localStorage.getItem('main_posts'))||[];
+      votePosts=JSON.parse(localStorage.getItem('vote_posts'))||[];
+      userVotes=JSON.parse(localStorage.getItem('user_votes'))||[];
+      ownerProfit=parseFloat(localStorage.getItem('owner_profit'))||0;
+      transactions=JSON.parse(localStorage.getItem('wallet_transactions'))||[];
+      referralData=JSON.parse(localStorage.getItem('referral_data'))||{referrals:[],referralBalance:0};
+      buyRequests=JSON.parse(localStorage.getItem('buy_requests'))||[];
+    }catch(e){ users=[];posts=[];votePosts=[];userVotes=[];transactions=[];referralData={referrals:[],referralBalance:0};buyRequests=[]; }
+  }
+  function updateUserInArray(){
+    if(!currentUser) return;
+    const idx = users.findIndex(u => u.username === currentUser.username);
+    if(idx !== -1){
+      users[idx].balance = starBalance;
+      users[idx].stars = currentUser.stars;
+    }
+  }
+  function updateBalanceUI(){
+    if(!currentUser) return;
+    document.getElementById('user-balance').innerText = starBalance.toFixed(2);
+    const vb = document.getElementById('vb-balance');
+    if(vb) vb.innerText = starBalance.toFixed(2);
+  }
+  function syncUI(){
+    if(!currentUser)return;
+    document.getElementById('display-username').innerText=(currentUser.profileName||currentUser.username).toUpperCase();
+    updateBalanceUI();
+    document.getElementById('top-avatar').src=currentUser.profileImage||DEFAULT_AVATAR;
+    if(currentUser.username==='admin') document.getElementById('admin-btn').classList.remove('hidden');
+    else document.getElementById('admin-btn').classList.add('hidden');
+    const op=document.getElementById('owner-profit'); if(op)op.innerText=ownerProfit.toFixed(2);
+    applyFilters();
+  }
+  function initDistrictDropdowns(){
+    const districts = getDistricts();
+    const fd=document.getElementById('filter-district'), pl=document.getElementById('p-location');
+    fd.innerHTML='<option value="all">সকল জেলা</option>';
+    if(pl)pl.innerHTML='<option value="">লোকেশন নির্বাচন করুন</option>';
+    districts.sort().forEach(d=>{fd.innerHTML+=`<option value="${d}">${d}</option>`;if(pl)pl.innerHTML+=`<option value="${d}">${d}</option>`;});
+  }
+  function updateMarquee(){
+    const container = document.getElementById('marquee-content');
+    if(!container) return;
+    const text = getMarqueeText();
+    const parts = text.split('•').map(p=>p.trim()).filter(p=>p);
+    const oneLine = parts.join(' <i class="fas fa-circle" style="margin:0 8px;color:#E31D2B;font-size:8px;"></i> ');
+    container.innerHTML = `<span>${oneLine}</span><span>${oneLine}</span>`;
+  }
+  function generateWalletAddress(u){let h=0;for(let i=0;i<u.length;i++){h=((h<<5)-h)+u.charCodeAt(i);h=h&h;}return'0x'+Math.abs(h).toString(16).padStart(40,'0').substring(0,40);}
+  function getReferralCode(u){return u.toUpperCase()+'-'+Math.abs(u.split('').reduce((a,c)=>a+c.charCodeAt(0),0)).toString(16).toUpperCase();}
+
+  function loginUser(){
+    const u=document.getElementById('login-username').value.trim(), p=document.getElementById('login-password').value.trim();
+    if(!u||!p){showToast("ইউজারনেম ও পাসওয়ার্ড দিন","error");return;}
+    loadAllData();
+    const user=users.find(x=>x.username===u&&x.password===p);
+    if(user){
+      if(!user.walletAddress)user.walletAddress=generateWalletAddress(u);
+      if(user.stars===undefined)user.stars=0;
+      if(!user.referralCode)user.referralCode=getReferralCode(u);
+      currentUser=user; starBalance=user.balance||100;
+      saveAllData();
+      document.getElementById('auth-section').classList.add('hidden');
+      document.getElementById('main-app').classList.remove('hidden');
+      updateMarquee();
+      syncUI();
+      showToast("লগইন সফল! স্বাগতম "+(user.profileName||user.username),"success");
+    }else{showToast("ইউজারনেম বা পাসওয়ার্ড ভুল!","error");}
+  }
+  function registerUser(){
+    const u=document.getElementById('reg-username').value.trim(), p=document.getElementById('reg-password').value.trim(), c=document.getElementById('reg-confirm-password').value.trim(), ref=document.getElementById('reg-referral').value.trim();
+    if(!u||!p||!c){showToast("সব ঘর পূরণ করুন","error");return;}
+    if(u.length<3){showToast("ইউজারনেম কমপক্ষে ৩ অক্ষর","error");return;}
+    if(p.length<4){showToast("পাসওয়ার্ড কমপক্ষে ৪ অক্ষর","error");return;}
+    if(p!==c){showToast("পাসওয়ার্ড মিলছে না","error");return;}
+    loadAllData();
+    if(users.find(x=>x.username===u)){showToast("এই ইউজারনেমটি আগে থেকেই আছে","error");return;}
+    let referredBy=null;
+    if(ref){
+      const refUser = users.find(x=>x.referralCode===ref);
+      if(!refUser){showToast("রেফারেল কোড সঠিক নয়","error");return;}
+      referredBy = refUser.username;
+    }
+    const newUser={username:u,password:p,balance:100,stars:0,profileName:u,profileImage:DEFAULT_AVATAR,bio:"Business Partner BD তে স্বাগতম!",walletAddress:generateWalletAddress(u),referralCode:getReferralCode(u),referredBy};
+    users.push(newUser);
+    saveAllData(); showToast("রেজিস্ট্রেশন সফল! এখন লগইন করুন","success");
+    document.getElementById('reg-username').value='';document.getElementById('reg-password').value='';document.getElementById('reg-confirm-password').value='';document.getElementById('reg-referral').value='';
+  }
+  function logoutUser(){
+    document.getElementById('fab-options').classList.remove('show');document.getElementById('fab-btn').classList.remove('active');
+    if(currentUser){updateUserInArray(); saveAllData();}
+    localStorage.removeItem('app_currentUser');currentUser=null;
+    document.getElementById('main-app').classList.add('hidden');document.getElementById('auth-section').classList.remove('hidden');
+    showToast("লগ আউট সফল!","success");
+  }
+  function openProfileModal(){
+    if(!currentUser)return;
+    document.getElementById('fab-options').classList.remove('show');document.getElementById('fab-btn').classList.remove('active');
+    document.getElementById('profile-name-input').value=currentUser.profileName||currentUser.username;
+    document.getElementById('profile-bio-input').value=currentUser.bio||"";
+    document.getElementById('profile-preview').src=currentUser.profileImage||DEFAULT_AVATAR;
+    document.getElementById('profile-modal').classList.remove('hidden');
+  }
+  function saveProfile(){
+    if(!currentUser)return;
+    const name=document.getElementById('profile-name-input').value.trim();
+    if(!name){showToast("নাম দিতে হবে","error");return;}
+    currentUser.profileName=name;currentUser.bio=document.getElementById('profile-bio-input').value.trim()||"Business Partner BD Member";
+    currentUser.profileImage=document.getElementById('profile-preview').src;
+    updateUserInArray();
+    saveAllData();syncUI();document.getElementById('profile-modal').classList.add('hidden');showToast("প্রোফাইল আপডেট হয়েছে!","success");
+  }
+  function openPostModal(){
+    document.getElementById('fab-options').classList.remove('show');document.getElementById('fab-btn').classList.remove('active');
+    document.getElementById('post-modal').classList.remove('hidden');
+  }
+  function publishPost(){
+    const title=document.getElementById('p-title').value.trim(), whatsapp=document.getElementById('p-whatsapp').value.trim(), location=document.getElementById('p-location').value, details=document.getElementById('p-details').value.trim(), duration=parseInt(document.getElementById('p-duration').value);
+    if(!title||!whatsapp||!location||!details){showToast("সব তথ্য দিন","error");return;}
+    if(whatsapp.length!==11||!/^\d+$/.test(whatsapp)){showToast("সঠিক হোয়াটসঅ্যাপ নাম্বার দিন (11 ডিজিট, 01xxxxxxxxx)","error");return;}
+    posts.unshift({id:Date.now(),userId:currentUser.username,title,whatsapp,location,details,duration,createdAt:Date.now(),expireAt:Date.now()+(duration*60*60*1000),reactions:[],reactionCount:0,approved:false});
+    saveAllData();document.getElementById('post-modal').classList.add('hidden');syncUI();
+    showToast("পোস্ট পাবলিশ হয়েছে! অ্যাডমিন অ্যাপ্রুভাল সাপেক্ষে প্রদর্শিত হবে।","success");
+    document.getElementById('p-title').value='';document.getElementById('p-whatsapp').value='';document.getElementById('p-location').value='';document.getElementById('p-details').value='';
+  }
+  function showDetails(id){
+    const post=posts.find(p=>p.id===id);if(!post)return;
+    document.getElementById('det-title').innerText=post.title;document.getElementById('det-body').innerText=post.details;
+    document.getElementById('det-whatsapp').innerText=post.whatsapp;document.getElementById('details-modal').classList.remove('hidden');
+  }
+  // ** FIXED WhatsApp link with country code **
+  function openWhatsApp(wa){
+    let number = wa.trim();
+    // Assuming Bangladeshi number: 11 digits, starts with 0
+    if (/^0\d{10}$/.test(number)) {
+      number = '880' + number.substring(1);
+    } else if (/^\d{11}$/.test(number)) {
+      number = '880' + number; // fallback
+    }
+    window.open(`https://wa.me/${number}`, '_blank');
+  }
+  function applyFilters(){
+    const autoApprove = localStorage.getItem('app_auto_approve') === 'true';
+    const q=document.getElementById('global-search').value.toLowerCase(), d=document.getElementById('filter-district').value, tw=document.getElementById('filter-time-window').value;
+    let filtered=posts.filter(p=>{
+      if(!autoApprove && p.approved === false) return false;
+      const ms=!q||p.title.toLowerCase().includes(q)||p.location.toLowerCase().includes(q)||p.details.toLowerCase().includes(q);
+      const md=d==='all'||p.location===d;let mt=true;
+      if(tw!=='all'){const ha=(Date.now()-p.createdAt)/(1000*60*60);mt=ha<=parseInt(tw);}
+      return ms&&md&&mt;
+    });
+    renderPosts(filtered);
+  }
+  function renderPosts(filtered){
+    document.getElementById('result-count').innerHTML=`<i class="fas fa-list mr-1"></i>${filtered.length} টি পোস্ট`;
+    const pc=document.getElementById('post-container');
+    if(filtered.length===0){pc.innerHTML='<div class="text-center py-20"><i class="fas fa-folder-open text-slate-200 text-5xl mb-4"></i><p class="text-slate-400 text-xs">কোনো পোস্ট নেই</p></div>';return;}
+    const now=Date.now();
+    pc.innerHTML=filtered.sort((a,b)=>b.createdAt-a.createdAt).map(p=>{
+      const author=users.find(u=>u.username===p.userId)||{profileName:p.userId,profileImage:DEFAULT_AVATAR};
+      const isExp=p.expireAt&&p.expireAt<now;
+      const ta=(()=>{const s=Math.floor((now-p.createdAt)/1000);if(s<60)return'এইমাত্র';if(s<3600)return Math.floor(s/60)+' মিনিট';if(s<86400)return Math.floor(s/3600)+' ঘন্টা';return Math.floor(s/86400)+' দিন';})();
+      const tl=(()=>{const r=p.expireAt-now;if(r<=0)return'মেয়াদ শেষ';const h=Math.floor(r/(3600000)),m=Math.floor((r%3600000)/60000);return`${h}ঘ ${m}মি`;})();
+      const liked = (p.reactions||[]).includes(currentUser?.username);
+      const rc = p.reactionCount || 0;
+      const pendingApproval = (!p.approved && localStorage.getItem('app_auto_approve') !== 'true') ? 'pending-approval' : '';
+      return `<div class="post-card animate-feed ${isExp?'expired':''} ${pendingApproval}"><div class="flex justify-between items-start mb-3"><div class="flex items-center gap-3"><img src="${author.profileImage}" class="w-10 h-10 rounded-full ring-2"><div><p class="text-xs font-black brand-blue-text uppercase">${author.profileName}</p></div></div><span class="status-badge ${isExp?'expired-badge':'active-badge'}"><i class="fas ${isExp?'fa-times-circle':'fa-check-circle'} mr-1"></i>${isExp?'Expired':'Active'}</span></div><h3 class="font-black brand-blue-text text-sm mb-2">${p.title}</h3><div class="flex gap-3 mb-3"><span class="text-[9px] font-black bg-slate-100 px-3 py-1 rounded-lg"><i class="fas fa-map-marker-alt mr-1"></i>${p.location}</span><span class="text-[9px] font-black bg-slate-100 px-3 py-1 rounded-lg"><i class="fas fa-clock mr-1"></i>${p.duration||24}ঘ</span></div><p class="text-xs text-slate-600 mb-3">${p.details.substring(0,100)}...</p><div class="flex gap-2 mb-2"><button class="whatsapp-btn flex-[2] bg-green-600 text-white text-center py-3 rounded-xl text-[10px] font-black uppercase" data-wa="${p.whatsapp}"><i class="fab fa-whatsapp mr-1"></i>WhatsApp</button><button class="details-btn flex-1 bg-slate-100 brand-blue-text py-3 rounded-xl text-[10px] font-black uppercase border" data-id="${p.id}">Details</button></div><div class="flex justify-between text-[8px] text-slate-400"><span><i class="far fa-clock mr-1"></i>${ta} আগে</span><span class="${isExp?'text-red-400':'text-green-600'} font-bold"><i class="fas fa-hourglass-half mr-1"></i>${tl}</span></div><div class="border-t mt-3 pt-2 flex items-center gap-2"><button class="reaction-btn ${liked?'liked':''}" data-reaction-id="${p.id}"><i class="${liked?'fas':'far'} fa-heart"></i> <span>${rc}</span></button></div></div>`;
+    }).join('');
+    document.querySelectorAll('.whatsapp-btn').forEach(b=>b.addEventListener('click',e=>openWhatsApp(e.target.closest('button').dataset.wa)));
+    document.querySelectorAll('.details-btn').forEach(b=>b.addEventListener('click',e=>showDetails(parseInt(e.target.closest('button').dataset.id))));
+    document.querySelectorAll('.reaction-btn').forEach(b=>b.addEventListener('click',e=>{
+      e.stopPropagation();
+      const id = parseInt(e.target.closest('button').dataset.reactionId);
+      if(!currentUser) return;
+      const post = posts.find(p=>p.id===id);
+      if(!post) return;
+      if(!post.reactions) post.reactions = [];
+      const idx = post.reactions.indexOf(currentUser.username);
+      if(idx === -1) { post.reactions.push(currentUser.username); post.reactionCount++; }
+      else { post.reactions.splice(idx,1); post.reactionCount--; }
+      saveAllData();
+      applyFilters();
+    }));
+  }
+
+  // (all other functions remain exactly the same as before, no change)
+
+  function openStarShop(){
+    document.getElementById('fab-options').classList.remove('show');document.getElementById('fab-btn').classList.remove('active');
+    document.getElementById('main-app').style.display='none';document.getElementById('star-shop-page').style.display='block';
+    updateStarShopUI();showShopTab('buy');
+  }
+  function closeStarShop(){document.getElementById('star-shop-page').style.display='none';document.getElementById('main-app').style.display='flex';syncUI();}
+  function showShopTab(t){
+    document.getElementById('shop-tab-buy-content').classList.add('hidden');document.getElementById('shop-tab-withdraw-content').classList.add('hidden');
+    document.getElementById('shop-tab-buy').classList.remove('tab-active-ts');document.getElementById('shop-tab-withdraw').classList.remove('tab-active-ts');
+    if(t==='buy'){document.getElementById('shop-tab-buy-content').classList.remove('hidden');document.getElementById('shop-tab-buy').classList.add('tab-active-ts');updateStarShopUI();}
+    else{document.getElementById('shop-tab-withdraw-content').classList.remove('hidden');document.getElementById('shop-tab-withdraw').classList.add('tab-active-ts');updateWithdrawUI();}
+  }
+  function updateStarShopUI(){
+    const TOTAL = getCoinSupply();const PRICE = getCoinPrice();const sold = getCoinsSold();const av = TOTAL - sold;
+    document.getElementById('total-coin-supply').innerText=TOTAL.toLocaleString();
+    document.getElementById('coins-sold-display').innerText=sold.toLocaleString();
+    document.getElementById('coins-available').innerText=av.toLocaleString();
+    document.getElementById('supply-progress').style.width=((sold/TOTAL)*100)+'%';
+    document.getElementById('current-coin-price').innerText=`৳${PRICE.toFixed(2)}`;
+    document.getElementById('calc-price-per-coin').innerText=`৳${PRICE.toFixed(2)}`;
+    document.getElementById('calc-max-buy').innerText=av.toLocaleString()+' STAR';
+    document.getElementById('shop-user-balance').innerText=starBalance.toFixed(2);
+    document.getElementById('shop-user-stars').innerText=(currentUser?.stars||0).toFixed(2);
+    calculatePrice();renderCart();
+  }
+  function calculatePrice(){
+    const TOTAL = getCoinSupply();const PRICE = getCoinPrice();const sold = getCoinsSold();
+    let amt=parseFloat(document.getElementById('calc-amount').value)||2000;if(amt<2000)amt=2000;
+    const av=TOTAL-sold;if(amt>av)amt=av;
+    document.getElementById('calc-amount').value=amt;
+    document.getElementById('calc-total-price').innerText=`৳${(amt*PRICE).toFixed(2)}`;
+  }
+  function addToCart(amount){
+    const TOTAL = getCoinSupply();const PRICE = getCoinPrice();const sold = getCoinsSold();
+    const av=TOTAL-sold;if(amount<2000){showToast('মিনিমাম 2000 STAR','error');return;}if(amount>av){showToast(`সর্বোচ্চ ${av.toLocaleString()} STAR`,'error');return;}
+    const ex=cartItems.find(i=>i.amount===amount);if(ex)ex.quantity++;else cartItems.push({amount,quantity:1,price:PRICE});
+    renderCart();showToast(`${amount} STAR কার্টে যোগ হয়েছে`,'success');
+  }
+  function clearCart(){cartItems=[];renderCart();}
+  function renderCart(){
+    const c=document.getElementById('cart-items-container');
+    if(cartItems.length===0){c.innerHTML='<p class="text-center text-slate-400 text-xs py-4">কার্ট খালি</p>';document.getElementById('cart-total').innerText='৳0.00';return;}
+    let total=0;c.innerHTML=cartItems.map((item,i)=>{const it=item.amount*item.quantity*item.price;total+=it;return`<div class="cart-item flex justify-between items-center"><div><p class="text-sm font-bold text-white">${item.amount} STAR</p><p class="text-[10px] text-slate-400">${item.quantity} x ৳${(item.amount*item.price).toFixed(2)}</p></div><div class="flex items-center gap-3"><span class="text-sm font-bold text-yellow-400">৳${it.toFixed(2)}</span><button onclick="window.removeFromCart(${i})" class="text-red-400"><i class="fas fa-trash-alt"></i></button></div></div>`;}).join('');
+    document.getElementById('cart-total').innerText=`৳${total.toFixed(2)}`;
+  }
+  function checkout(){
+    if(cartItems.length===0){showToast('কার্ট খালি!','error');return;}
+    const trxId=document.getElementById('transaction-id').value.trim();
+    if(!trxId){showToast('ট্রানজেকশন আইডি দিন','error');return;}
+    let totalStars=0,totalPrice=0;cartItems.forEach(i=>{totalStars+=i.amount*i.quantity;totalPrice+=i.amount*i.quantity*i.price;});
+    buyRequests.push({id:Date.now(),user:currentUser.username,amount:totalStars,totalPrice,trxId,status:'pending',timestamp:Date.now()});
+    saveAllData();cartItems=[];document.getElementById('transaction-id').value='';
+    updateStarShopUI();showToast('ক্রয় রিকোয়েস্ট পাঠানো হয়েছে! অ্যাডমিন অনুমোদন সাপেক্ষে কয়েন পাবেন।','success');
+  }
+  window.removeFromCart=(i)=>{cartItems.splice(i,1);renderCart();};
+
+  function updateWithdrawUI(){
+    document.getElementById('withdraw-balance').innerText=(currentUser?.stars||0).toFixed(2);
+    document.getElementById('wallet-address').innerText=currentUser?.walletAddress||'0x...';
+  }
+  function withdrawSend(){
+    const amt=parseFloat(document.getElementById('withdraw-amount').value);
+    const number=document.getElementById('withdraw-number').value.trim();
+    if(!amt||amt<1000){showToast('মিনিমাম 1000 কয়েন','error');return;}
+    if(!number||number.length<11){showToast('সঠিক নাম্বার দিন','error');return;}
+    if((currentUser?.stars||0)<amt){showToast('পর্যাপ্ত কয়েন নেই','error');return;}
+    currentUser.stars-=amt;
+    updateUserInArray();
+    transactions.unshift({id:Date.now(),type:'withdraw',user:currentUser.username,amount:amt,method:selectedWithdraw,number,timestamp:Date.now(),status:'pending'});
+    saveAllData();updateBalanceUI();updateWithdrawUI();
+    document.getElementById('withdraw-amount').value='';document.getElementById('withdraw-number').value='';
+    showToast(`${amt} কয়েন withdraw অনুরোধ পাঠানো হয়েছে!`,'success');
+  }
+
+  function openHelpPage(){
+    document.getElementById('fab-options').classList.remove('show');document.getElementById('fab-btn').classList.remove('active');
+    document.getElementById('main-app').style.display='none';document.getElementById('help-referral-page').style.display='block';
+    updateReferralUI();
+  }
+  function closeHelpPage(){document.getElementById('help-referral-page').style.display='none';document.getElementById('main-app').style.display='flex';syncUI();}
+  function updateReferralUI(){
+    document.getElementById('referral-code').innerText=currentUser?.referralCode||'';
+    document.getElementById('referral-balance').innerText=(referralData.referralBalance||0).toFixed(0);
+    document.getElementById('total-referrals').innerText=(referralData.referrals||[]).length;
+  }
+  function copyReferralCode(){navigator.clipboard?.writeText(currentUser?.referralCode||'');showToast('রেফারেল কোড কপি হয়েছে!','success');}
+  function transferReferralToMain(){
+    const rb=referralData.referralBalance||0;
+    if(rb<=0){showToast('রেফারেল ব্যালেন্স খালি','error');return;}
+    starBalance+=rb;currentUser.balance=starBalance;referralData.referralBalance=0;
+    updateUserInArray();
+    saveAllData();updateReferralUI();syncUI();showToast(`${rb} কয়েন মেইন ব্যালেন্সে যোগ হয়েছে!`,'success');
+  }
+
+  // VOTE BUSINESS
+  function openVoteBusiness(){
+    document.getElementById('fab-options').classList.remove('show');document.getElementById('fab-btn').classList.remove('active');
+    document.getElementById('main-app').style.display='none';document.getElementById('vote-business-page').style.display='block';
+    syncUI();renderVBMarket();
+  }
+  function closeVoteBusiness(){document.getElementById('vote-business-page').style.display='none';document.getElementById('main-app').style.display='flex';syncUI();}
+  function createVotePost(){
+    const title=document.getElementById('vb-title').value.trim(),duration=parseInt(document.getElementById('vb-duration').value);
+    if(!title){showToast("টাইটেল দিন","error");return;}if(starBalance<100){showToast("100 Dh STAR প্রয়োজন!","error");return;}if(starBalance<10){showToast("ফি এর জন্য ব্যালেন্স নেই!","error");return;}
+    starBalance-=10;currentUser.balance=starBalance;ownerProfit+=10;
+    votePosts.push({id:Date.now(),creator:currentUser.username,title,duration,buyAmount:0,sellAmount:0,createdAt:Date.now(),expireAt:Date.now()+(duration*24*60*60*1000),status:'active',creatorEarnings:0});
+    updateUserInArray();
+    saveAllData();document.getElementById('vb-create-modal').classList.add('hidden');renderVBMarket();updateBalanceUI();showToast("Vote Post তৈরি!","success");
+  }
+  function vote(id,side){
+    const post=votePosts.find(p=>p.id===id);if(!post||post.status!=='active'){showToast("পোস্ট এক্টিভ নেই","error");return;}
+    const amt=parseFloat(prompt(`${side.toUpperCase()} করার পরিমাণ:`));if(isNaN(amt)||amt<=0)return;if(starBalance<amt){showToast("পর্যাপ্ত ব্যালেন্স নেই","error");return;}
+    starBalance-=amt;currentUser.balance=starBalance;
+    updateUserInArray();
+    const of=amt*0.05,cf=amt*0.02,net=amt-of-cf;ownerProfit+=of;post.creatorEarnings+=cf;
+    if(side==='buy')post.buyAmount+=net;else post.sellAmount+=net;
+    userVotes.push({id:Date.now(),postId:id,voter:currentUser.username,side,amount:net,postTitle:post.title,status:'pending'});
+    const creator=users.find(u=>u.username===post.creator);if(creator){creator.balance+=cf;}
+    saveAllData();updateBalanceUI();renderVBMarket();showToast(`${side.toUpperCase()} Vote সফল!`,"success");
+  }
+  function settleVotePost(post){ if(post.status!=='active')return;post.status='settled';const tp=post.buyAmount+post.sellAmount;if(tp===0)return;const ws=post.buyAmount>post.sellAmount?'buy':(post.sellAmount>post.buyAmount?'sell':'tie');if(ws!=='tie'){const wp=ws==='buy'?post.buyAmount:post.sellAmount,lp=ws==='buy'?post.sellAmount:post.buyAmount;userVotes.filter(v=>v.postId===post.id&&v.status==='pending').forEach(v=>{if(v.side===ws){const wr=v.amount/wp*lp;v.status='won';v.winAmount=v.amount+wr;const vu=users.find(u=>u.username===v.voter);if(vu){vu.balance+=v.winAmount;if(v.voter===currentUser?.username)starBalance=vu.balance;}}else{v.status='lost';}});}else{userVotes.filter(v=>v.postId===post.id&&v.status==='pending').forEach(v=>{v.status='refunded';const vu=users.find(u=>u.username===v.voter);if(vu){vu.balance+=v.amount;if(v.voter===currentUser?.username)starBalance=vu.balance;}});}if(currentUser)starBalance=users.find(u=>u.username===currentUser.username)?.balance||starBalance;saveAllData();updateBalanceUI();}
+  function deleteExpiredPosts(){const now=Date.now();votePosts=votePosts.filter(p=>{if(p.expireAt<now&&p.status==='active')settleVotePost(p);return p.expireAt>now||p.status!=='active';});saveAllData();}
+  function renderVBMarket(){deleteExpiredPosts();const vb=document.getElementById('vb-market');const ap=votePosts.filter(p=>p.status==='active');if(ap.length===0){vb.innerHTML='<p class="text-center text-slate-500 py-10">No Active Vote Posts</p>';return;}vb.innerHTML=ap.map(p=>{const t=p.buyAmount+p.sellAmount,bp=t>0?(p.buyAmount/t*100).toFixed(1):50,dl=Math.ceil((p.expireAt-Date.now())/(86400000)),cr=users.find(u=>u.username===p.creator)?.profileName||p.creator;return`<div class="vote-card"><div class="flex justify-between items-start mb-3"><div><h3 class="font-black text-white text-sm">${p.title}</h3><p class="text-[8px] text-slate-400">by ${cr} • ${dl} days left</p></div></div><div class="vote-progress mb-3"><div class="vote-progress-bar bg-green-500" style="width:${bp}%"></div></div><div class="flex justify-between text-[10px] font-bold mb-4"><span class="text-green-400">BUY ${bp}%</span><span class="text-red-400">SELL ${(100-parseFloat(bp)).toFixed(1)}%</span></div><div class="flex gap-3"><button class="vote-buy-btn flex-1 py-3 bg-green-500 text-black font-black rounded-xl text-xs" data-id="${p.id}">VOTE BUY</button><button class="vote-sell-btn flex-1 py-3 bg-red-500 text-white font-black rounded-xl text-xs" data-id="${p.id}">VOTE SELL</button></div><div class="flex justify-between mt-3 text-[8px] text-slate-500"><span>Buy: ${p.buyAmount.toFixed(2)}</span><span>Sell: ${p.sellAmount.toFixed(2)}</span></div></div>`;}).join('');document.querySelectorAll('.vote-buy-btn').forEach(b=>b.addEventListener('click',e=>vote(parseInt(e.target.dataset.id),'buy')));document.querySelectorAll('.vote-sell-btn').forEach(b=>b.addEventListener('click',e=>vote(parseInt(e.target.dataset.id),'sell')));}
+  function renderVBMyVotes(){const c=document.getElementById('vb-my-votes');const mv=userVotes.filter(v=>v.voter===currentUser?.username).reverse();if(mv.length===0){c.innerHTML='<p class="text-center text-slate-500 py-10">No Votes</p>';return;}c.innerHTML=mv.map(v=>`<div class="glass-ts p-4 rounded-2xl"><div class="flex justify-between"><p class="text-xs font-bold text-white">${v.postTitle}</p><p class="text-[10px] font-bold ${v.status==='won'?'text-green-400':v.status==='lost'?'text-red-400':'text-yellow-400'}">${v.status.toUpperCase()}</p></div><p class="text-[9px] text-slate-500">${v.side.toUpperCase()} • ${v.amount.toFixed(2)} Dh ${v.winAmount?'→ +'+v.winAmount.toFixed(2):''}</p></div>`).join('');}
+  function renderVBMyPosts(){const c=document.getElementById('vb-my-posts');const mp=votePosts.filter(p=>p.creator===currentUser?.username).reverse();if(mp.length===0){c.innerHTML='<p class="text-center text-slate-500 py-10">No Posts</p>';return;}c.innerHTML=mp.map(p=>`<div class="glass-ts p-4 rounded-2xl"><div class="flex justify-between"><p class="text-xs font-bold text-white">${p.title}</p><p class="text-[10px] font-bold ${p.status==='active'?'text-green-400':'text-slate-400'}">${p.status.toUpperCase()}</p></div><p class="text-[9px] text-slate-500">Earned: ${p.creatorEarnings.toFixed(2)} Dh</p></div>`).join('');}
+  function navVB(page){document.getElementById('vb-market').classList.add('hidden');document.getElementById('vb-my-votes').classList.add('hidden');document.getElementById('vb-my-posts').classList.add('hidden');document.getElementById('vb-rules').classList.add('hidden');document.querySelectorAll('[id$="-tab"]').forEach(t=>t.classList.remove('tab-active-ts'));if(page==='market'){document.getElementById('vb-market').classList.remove('hidden');renderVBMarket();}else if(page==='my-votes'){document.getElementById('vb-my-votes').classList.remove('hidden');renderVBMyVotes();}else if(page==='my-posts'){document.getElementById('vb-my-posts').classList.remove('hidden');renderVBMyPosts();}else{document.getElementById('vb-rules').classList.remove('hidden');}document.getElementById(`vb-${page}-tab`).classList.add('tab-active-ts');}
+
+  // INIT
+  function init(){
+    loadAllData();
+    if(users.length===0){
+      users.push({username:'admin',password:'admin123',balance:1000,stars:10000,profileName:'Administrator',profileImage:DEFAULT_AVATAR,bio:'Admin',walletAddress:generateWalletAddress('admin'),referralCode:getReferralCode('admin'),referredBy:null});
+      users.push({username:'demo',password:'demo123',balance:500,stars:5000,profileName:'Demo User',profileImage:DEFAULT_AVATAR,bio:'Demo',walletAddress:generateWalletAddress('demo'),referralCode:getReferralCode('demo'),referredBy:'admin'});
+      saveAllData();
+    }
+    users.forEach(u=>{if(!u.walletAddress)u.walletAddress=generateWalletAddress(u.username);if(u.stars===undefined)u.stars=0;if(!u.referralCode)u.referralCode=getReferralCode(u.username);});
+    posts.forEach(p => { if (p.approved === undefined) p.approved = true; });
+    if(posts.length===0){
+      posts.push({id:Date.now()-100000,userId:'demo',title:'রেস্টুরেন্ট পার্টনার',whatsapp:'01712345678',location:'ঢাকা',details:'ধানমন্ডিতে রেস্টুরেন্টের জন্য ইনভেস্টমেন্ট পার্টনার প্রয়োজন।',createdAt:Date.now()-3600000,duration:24,expireAt:Date.now()+24*60*60*1000,reactions:[],reactionCount:0,approved:true});
+      posts.push({id:Date.now()-50000,userId:'admin',title:'অনলাইন বিজনেস',whatsapp:'01812345678',location:'চট্টগ্রাম',details:'ই-কমার্স বিজনেসের জন্য পার্টনার প্রয়োজন।',createdAt:Date.now()-7200000,duration:168,expireAt:Date.now()+168*60*60*1000,reactions:[],reactionCount:0,approved:true});
+      saveAllData();
+    }
+    initDistrictDropdowns();
+    updateMarquee();
+    if(currentUser){
+      const ue=users.find(u=>u.username===currentUser.username);
+      if(ue){currentUser=ue;starBalance=currentUser.balance||100;document.getElementById('auth-section').classList.add('hidden');document.getElementById('main-app').classList.remove('hidden');syncUI();}
+      else{localStorage.removeItem('app_currentUser');currentUser=null;}
+    }
+  }
+
+  document.getElementById('login-btn').addEventListener('click',loginUser);
+  document.getElementById('register-btn').addEventListener('click',registerUser);
+  document.getElementById('show-register-btn').addEventListener('click',()=>{document.getElementById('register-form').classList.remove('hidden');document.getElementById('login-form').classList.add('hidden');});
+  document.getElementById('show-login-btn').addEventListener('click',()=>{document.getElementById('login-form').classList.remove('hidden');document.getElementById('register-form').classList.add('hidden');});
+  document.getElementById('logout-btn').addEventListener('click',logoutUser);
+  document.getElementById('profile-btn').addEventListener('click',openProfileModal);
+  document.getElementById('profile-avatar-btn').addEventListener('click',openProfileModal);
+  document.getElementById('save-profile-btn').addEventListener('click',saveProfile);
+  document.getElementById('close-profile-modal').addEventListener('click',()=>document.getElementById('profile-modal').classList.add('hidden'));
+  document.getElementById('close-profile-btn').addEventListener('click',()=>document.getElementById('profile-modal').classList.add('hidden'));
+  document.getElementById('create-post-btn').addEventListener('click',openPostModal);
+  document.getElementById('close-post-modal').addEventListener('click',()=>document.getElementById('post-modal').classList.add('hidden'));
+  document.getElementById('publish-post-btn').addEventListener('click',publishPost);
+  document.getElementById('close-details-modal').addEventListener('click',()=>document.getElementById('details-modal').classList.add('hidden'));
+  document.getElementById('close-details-btn').addEventListener('click',()=>document.getElementById('details-modal').classList.add('hidden'));
+  document.getElementById('vote-business-btn').addEventListener('click',openVoteBusiness);
+  document.getElementById('vote-nav').addEventListener('click',openVoteBusiness);
+  document.getElementById('close-vb-btn').addEventListener('click',closeVoteBusiness);
+  document.getElementById('open-vb-modal-btn').addEventListener('click',()=>document.getElementById('vb-create-modal').classList.remove('hidden'));
+  document.getElementById('close-vb-modal-btn').addEventListener('click',()=>document.getElementById('vb-create-modal').classList.add('hidden'));
+  document.getElementById('create-vb-post-btn').addEventListener('click',createVotePost);
+  document.getElementById('vb-market-tab').addEventListener('click',()=>navVB('market'));
+  document.getElementById('vb-myvotes-tab').addEventListener('click',()=>navVB('my-votes'));
+  document.getElementById('vb-myposts-tab').addEventListener('click',()=>navVB('my-posts'));
+  document.getElementById('vb-rules-tab').addEventListener('click',()=>navVB('rules'));
+  document.getElementById('star-shop-nav').addEventListener('click',openStarShop);
+  document.getElementById('close-star-shop').addEventListener('click',closeStarShop);
+  document.getElementById('shop-tab-buy').addEventListener('click',()=>showShopTab('buy'));
+  document.getElementById('shop-tab-withdraw').addEventListener('click',()=>showShopTab('withdraw'));
+  document.getElementById('calc-amount').addEventListener('input',calculatePrice);
+  document.getElementById('clear-cart-btn').addEventListener('click',clearCart);
+  document.getElementById('checkout-btn').addEventListener('click',checkout);
+  document.getElementById('payment-bkash').addEventListener('click',()=>{selectedPayment='bkash';document.querySelectorAll('#shop-tab-buy-content .payment-option').forEach(e=>e.classList.remove('active'));document.getElementById('payment-bkash').classList.add('active');document.getElementById('payment-number').innerText='01877119177';});
+  document.getElementById('payment-nagad').addEventListener('click',()=>{selectedPayment='nagad';document.querySelectorAll('#shop-tab-buy-content .payment-option').forEach(e=>e.classList.remove('active'));document.getElementById('payment-nagad').classList.add('active');document.getElementById('payment-number').innerText='01877119177';});
+  document.getElementById('copy-wallet-btn').addEventListener('click',()=>navigator.clipboard?.writeText(currentUser?.walletAddress||'')&&showToast('কপি হয়েছে!','success'));
+  document.getElementById('withdraw-send-btn').addEventListener('click',withdrawSend);
+  document.getElementById('withdraw-bkash').addEventListener('click',()=>{selectedWithdraw='bkash';document.querySelectorAll('#shop-tab-withdraw-content .payment-option').forEach(e=>e.classList.remove('active'));document.getElementById('withdraw-bkash').classList.add('active');});
+  document.getElementById('withdraw-nagad').addEventListener('click',()=>{selectedWithdraw='nagad';document.querySelectorAll('#shop-tab-withdraw-content .payment-option').forEach(e=>e.classList.remove('active'));document.getElementById('withdraw-nagad').classList.add('active');});
+  document.getElementById('help-nav').addEventListener('click',openHelpPage);
+  document.getElementById('close-help-page').addEventListener('click',closeHelpPage);
+  document.getElementById('copy-referral-btn').addEventListener('click',copyReferralCode);
+  document.getElementById('transfer-referral-btn').addEventListener('click',transferReferralToMain);
+  document.querySelectorAll('.star-package').forEach(el=>el.addEventListener('click',function(){addToCart(parseInt(this.dataset.amount));}));
+  document.getElementById('fab-btn').addEventListener('click',()=>{document.getElementById('fab-btn').classList.toggle('active');document.getElementById('fab-options').classList.toggle('show');});
+  document.getElementById('img-upload').addEventListener('change',e=>{const f=e.target.files[0];if(f&&f.size<5*1024*1024){const r=new FileReader();r.onload=ev=>document.getElementById('profile-preview').src=ev.target.result;r.readAsDataURL(f);}else{showToast("ছবি 5MB এর কম হতে হবে","error");}});
+  document.getElementById('global-search').addEventListener('keyup',applyFilters);
+  document.getElementById('filter-district').addEventListener('change',applyFilters);
+  document.getElementById('filter-time-window').addEventListener('change',applyFilters);
+  document.getElementById('clear-filters-btn').addEventListener('click',()=>{document.getElementById('global-search').value='';document.getElementById('filter-district').value='all';document.getElementById('filter-time-window').value='all';applyFilters();});
+  document.getElementById('home-nav').addEventListener('click',applyFilters);
+  document.getElementById('search-nav').addEventListener('click',()=>document.getElementById('global-search').focus());
+  setInterval(()=>{const vbPage=document.getElementById('vote-business-page');if(vbPage.style.display==='block'&&!document.getElementById('vb-market').classList.contains('hidden'))renderVBMarket();},5000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) updateMarquee(); });
+  init();
+})();
+</script>
 </body>
 </html>
-[]
