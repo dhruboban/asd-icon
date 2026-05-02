@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,9 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ASD ICON • Admin Panel</title>
     
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -19,62 +23,44 @@
             --green: #10B981;
             --red: #EF4444;
             --gold: #fbbf24;
-            --cyan: #00d2ff;
             --blue: #3B82F6;
             --text: #e2e8f0;
             --sub: #94a3b8;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         html, body {
-            height: 100%;
-            width: 100%;
+            height: 100%; width: 100%;
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--bg);
             color: var(--text);
             overflow-x: hidden;
         }
-        
         body {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
         }
-        
         .admin-wrap {
-            max-width: 900px;
-            margin: 0 auto;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            max-width: 900px; margin: 0 auto; min-height: 100vh;
+            display: flex; flex-direction: column;
         }
-        
         .hidden { display: none !important; }
         
         .adm-header {
-            background: var(--card);
-            border-bottom: 1px solid var(--border);
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            background: var(--card); border-bottom: 1px solid var(--border);
+            padding: 14px 20px; display: flex; align-items: center;
+            justify-content: space-between; position: sticky; top: 0; z-index: 100;
         }
-        
         .adm-logo { display: flex; align-items: center; gap: 10px; }
         .adm-logo-icon {
             width: 38px; height: 38px;
             background: linear-gradient(135deg, #002266, #003399);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
             color: white; font-weight: 900; font-size: 18px;
         }
-        .adm-logo-text { font-size: 18px; font-weight: 900; color: white; }
+        .adm-logo-text { font-size: 18px; font-weight: 900; color: white; letter-spacing: -0.5px; }
         .adm-logo-sub { font-size: 9px; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+        
         .adm-header-right { display: flex; align-items: center; gap: 12px; }
         .adm-stat-mini { text-align: right; }
         .adm-stat-mini span { font-size: 9px; color: var(--sub); text-transform: uppercase; font-weight: 700; }
@@ -86,7 +72,6 @@
             border-bottom: 1px solid var(--border);
             position: sticky; top: 66px; z-index: 99;
         }
-        
         .adm-tab {
             padding: 8px 14px; border: 1px solid var(--border);
             border-radius: 20px; font-size: 11px; font-weight: 700;
@@ -99,28 +84,40 @@
         .adm-content { flex: 1; padding: 16px; }
         .adm-panel { display: none; }
         .adm-panel.active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+        .adm-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 16px; margin-bottom: 12px;
         }
-        
-        .adm-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
         .adm-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .adm-card-title { font-size: 14px; font-weight: 900; color: white; }
         
-        .adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 16px; }
-        .adm-stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; text-align: center; }
+        .adm-stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px; margin-bottom: 16px;
+        }
+        .adm-stat-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 14px; text-align: center;
+        }
         .adm-stat-value { font-size: 28px; font-weight: 900; font-family: monospace; color: var(--gold); }
         .adm-stat-label { font-size: 10px; color: var(--sub); text-transform: uppercase; font-weight: 700; margin-top: 4px; }
         
         .adm-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .adm-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        .adm-table th { background: rgba(255,255,255,0.05); padding: 10px 12px; text-align: left; font-weight: 700; font-size: 10px; color: var(--sub); text-transform: uppercase; white-space: nowrap; }
+        .adm-table th {
+            background: rgba(255,255,255,0.05); padding: 10px 12px; text-align: left;
+            font-weight: 700; font-size: 10px; color: var(--sub); text-transform: uppercase; white-space: nowrap;
+        }
         .adm-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
         .adm-table tr:hover td { background: rgba(255,255,255,0.02); }
         
-        .btn { padding: 8px 16px; border: none; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 8px; font-weight: 700;
+            font-size: 11px; cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
         .btn:active { transform: scale(0.97); }
         .btn-green { background: var(--green); color: white; }
         .btn-red { background: var(--red); color: white; }
@@ -129,10 +126,15 @@
         .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
         .btn-sm { padding: 5px 10px; font-size: 9px; border-radius: 6px; }
         
-        .adm-input { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; font-size: 13px; outline: none; }
+        .adm-input {
+            width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border); border-radius: 10px; color: white; font-size: 13px; outline: none;
+        }
         .adm-input:focus { border-color: var(--blue); }
-        .adm-textarea { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; font-size: 13px; outline: none; resize: vertical; min-height: 80px; }
-        .adm-select { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; font-size: 13px; outline: none; }
+        .adm-select {
+            width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border); border-radius: 10px; color: white; font-size: 13px; outline: none;
+        }
         
         .badge { font-size: 8px; font-weight: 900; padding: 3px 8px; border-radius: 8px; text-transform: uppercase; }
         .badge-success { background: #065f46; color: #6ee7b7; }
@@ -140,15 +142,31 @@
         .badge-warning { background: #78350f; color: #fcd34d; }
         .badge-info { background: #1e3a5f; color: #93c5fd; }
         
-        #adm-toast { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
-        .adm-toast { padding: 10px 18px; border-radius: 10px; color: white; font-weight: 700; font-size: 12px; animation: slideDown 0.3s ease-out; pointer-events: auto; white-space: nowrap; }
+        #adm-toast {
+            position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; display: flex; flex-direction: column; gap: 6px;
+            pointer-events: none;
+        }
+        .adm-toast {
+            padding: 10px 18px; border-radius: 10px; color: white;
+            font-weight: 700; font-size: 12px; animation: slideDown 0.3s ease-out;
+            pointer-events: auto; white-space: nowrap;
+        }
         .adm-toast-success { background: var(--green); }
         .adm-toast-error { background: var(--red); }
-        
         @keyframes slideDown { from { transform: translateY(-40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        .adm-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 16px; }
-        .adm-modal { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; width: 100%; max-width: 480px; max-height: 80vh; overflow-y: auto; animation: fadeIn 0.3s ease-out; }
+        .adm-modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px); z-index: 2000;
+            display: flex; align-items: center; justify-content: center; padding: 16px;
+        }
+        .adm-modal {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 20px; padding: 20px; width: 100%;
+            max-width: 480px; max-height: 80vh; overflow-y: auto;
+            animation: fadeIn 0.3s ease-out;
+        }
         
         @media (max-width: 600px) {
             .adm-tabs { flex-wrap: nowrap; overflow-x: auto; }
@@ -159,6 +177,7 @@
 <body>
     <div id="adm-toast"></div>
     
+    <!-- ==================== LOGIN ==================== -->
     <div id="adm-login" class="admin-wrap" style="align-items: center; justify-content: center;">
         <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 28px; width: 90%; max-width: 360px; animation: fadeIn 0.5s ease-out;">
             <div style="text-align: center; margin-bottom: 20px;">
@@ -174,19 +193,31 @@
         </div>
     </div>
     
+    <!-- ==================== DASHBOARD ==================== -->
     <div id="adm-dashboard" class="admin-wrap hidden">
+        <!-- HEADER -->
         <header class="adm-header">
             <div class="adm-logo">
                 <div class="adm-logo-icon">A</div>
-                <div><div class="adm-logo-text">ASD ICON</div><div class="adm-logo-sub">Admin Panel</div></div>
+                <div>
+                    <div class="adm-logo-text">ASD ICON</div>
+                    <div class="adm-logo-sub">Admin Panel</div>
+                </div>
             </div>
             <div class="adm-header-right">
-                <div class="adm-stat-mini"><span>Total Users</span><p id="adm-total-users">0</p></div>
-                <div class="adm-stat-mini"><span>Revenue</span><p id="adm-revenue">0</p></div>
+                <div class="adm-stat-mini">
+                    <span>Total Users</span>
+                    <p id="adm-total-users">0</p>
+                </div>
+                <div class="adm-stat-mini">
+                    <span>Revenue</span>
+                    <p id="adm-revenue">0</p>
+                </div>
                 <button id="adm-logout-btn" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
         
+        <!-- TABS -->
         <nav class="adm-tabs" id="adm-tabs">
             <button class="adm-tab active" data-panel="overview">📊 Overview</button>
             <button class="adm-tab" data-panel="posts">📝 Posts</button>
@@ -197,27 +228,147 @@
             <button class="adm-tab" data-panel="settings">⚙️ Settings</button>
         </nav>
         
+        <!-- CONTENT -->
         <div class="adm-content" id="adm-content">
+            <!-- OVERVIEW -->
             <div id="panel-overview" class="adm-panel active">
                 <div class="adm-stats" id="overview-stats"></div>
-                <div class="adm-card"><h3 class="adm-card-title">📋 Recent Posts</h3><div class="adm-table-wrap" id="overview-posts"></div></div>
-                <div class="adm-card"><h3 class="adm-card-title">📈 Recent Trades</h3><div class="adm-table-wrap" id="overview-trades"></div></div>
+                <div class="adm-card">
+                    <h3 class="adm-card-title">📋 Recent Posts</h3>
+                    <div class="adm-table-wrap" id="overview-posts"></div>
+                </div>
+                <div class="adm-card">
+                    <h3 class="adm-card-title">📈 Recent Trades</h3>
+                    <div class="adm-table-wrap" id="overview-trades"></div>
+                </div>
             </div>
-            <div id="panel-posts" class="adm-panel"><div class="adm-card"><div class="adm-card-header"><h3 class="adm-card-title">📝 All Posts</h3><button id="refresh-posts" class="btn btn-outline btn-sm"><i class="fas fa-sync-alt"></i> Refresh</button></div><div class="adm-table-wrap" id="posts-table"></div></div></div>
-            <div id="panel-polls" class="adm-panel"><div class="adm-card"><div class="adm-card-header"><h3 class="adm-card-title">📈 All Polls</h3><button id="create-poll-btn" class="btn btn-blue btn-sm"><i class="fas fa-plus"></i> Create Poll</button></div><div class="adm-table-wrap" id="polls-table"></div></div>
-                <div id="poll-modal" class="adm-modal-overlay hidden"><div class="adm-modal"><h3 style="font-weight:900;margin-bottom:12px;">Create New Poll</h3><div style="display:flex;flex-direction:column;gap:10px;"><input type="text" id="new-poll-title" placeholder="Poll Title" class="adm-input"><textarea id="new-poll-desc" placeholder="Description" class="adm-textarea"></textarea><input type="text" id="new-poll-location" placeholder="Location" class="adm-input" value="Global"><select id="new-poll-duration" class="adm-select"><option value="1">1 Day</option><option value="3">3 Days</option><option value="7">7 Days</option><option value="30">30 Days</option><option value="90">90 Days</option></select><button id="submit-poll" class="btn btn-gold" style="width:100%;">Create Poll</button><button onclick="closePollModal()" class="btn btn-outline" style="width:100%;">Cancel</button></div></div></div>
-                <div id="edit-poll-modal" class="adm-modal-overlay hidden"><div class="adm-modal"><h3 style="font-weight:900;margin-bottom:12px;">Edit Poll</h3><input type="hidden" id="edit-poll-id"><div style="display:flex;flex-direction:column;gap:10px;"><input type="text" id="edit-poll-title" placeholder="Poll Title" class="adm-input"><textarea id="edit-poll-desc" placeholder="Description" class="adm-textarea"></textarea><select id="edit-poll-status" class="adm-select"><option value="active">Active</option><option value="settled">Settled</option></select><button id="update-poll" class="btn btn-blue" style="width:100%;">Update Poll</button><button onclick="closeEditPollModal()" class="btn btn-outline" style="width:100%;">Cancel</button></div></div></div>
+            
+            <!-- POSTS -->
+            <div id="panel-posts" class="adm-panel">
+                <div class="adm-card">
+                    <div class="adm-card-header">
+                        <h3 class="adm-card-title">📝 All Posts</h3>
+                        <button id="refresh-posts" class="btn btn-outline btn-sm"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                    <div class="adm-table-wrap" id="posts-table"></div>
+                </div>
             </div>
-            <div id="panel-users" class="adm-panel"><div class="adm-card"><h3 class="adm-card-title">👥 All Users</h3><div class="adm-table-wrap" id="users-table"></div></div>
-                <div id="user-modal" class="adm-modal-overlay hidden"><div class="adm-modal"><h3 style="font-weight:900;margin-bottom:12px;">Edit User</h3><input type="hidden" id="edit-user-id"><div style="display:flex;flex-direction:column;gap:10px;"><input type="text" id="edit-user-name" placeholder="Display Name" class="adm-input"><input type="number" id="edit-user-balance" placeholder="Balance" class="adm-input" step="0.01"><input type="number" id="edit-user-stars" placeholder="Stars" class="adm-input" step="0.01"><select id="edit-user-role" class="adm-select"><option value="user">User</option><option value="admin">Admin</option></select><button id="update-user" class="btn btn-blue" style="width:100%;">Update User</button><button onclick="closeUserModal()" class="btn btn-outline" style="width:100%;">Cancel</button></div></div></div>
+            
+            <!-- POLLS -->
+            <div id="panel-polls" class="adm-panel">
+                <div class="adm-card">
+                    <div class="adm-card-header">
+                        <h3 class="adm-card-title">📈 All Polls</h3>
+                        <button id="create-poll-btn" class="btn btn-blue btn-sm"><i class="fas fa-plus"></i> Create Poll</button>
+                    </div>
+                    <div class="adm-table-wrap" id="polls-table"></div>
+                </div>
+                <!-- Create Poll Modal -->
+                <div id="poll-modal" class="adm-modal-overlay hidden">
+                    <div class="adm-modal">
+                        <h3 style="font-weight:900; margin-bottom:12px;">Create New Poll</h3>
+                        <div style="display:flex;flex-direction:column;gap:10px;">
+                            <input type="text" id="new-poll-title" placeholder="Poll Title" class="adm-input">
+                            <textarea id="new-poll-desc" placeholder="Description" class="adm-input"></textarea>
+                            <input type="text" id="new-poll-location" placeholder="Location" class="adm-input" value="Global">
+                            <select id="new-poll-duration" class="adm-select">
+                                <option value="1">1 Day</option><option value="3">3 Days</option><option value="7">7 Days</option><option value="30">30 Days</option><option value="90">90 Days</option>
+                            </select>
+                            <button id="submit-poll" class="btn btn-gold" style="width:100%;">Create Poll</button>
+                            <button onclick="closePollModal()" class="btn btn-outline" style="width:100%;">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Edit Poll Modal -->
+                <div id="edit-poll-modal" class="adm-modal-overlay hidden">
+                    <div class="adm-modal">
+                        <h3 style="font-weight:900; margin-bottom:12px;">Edit Poll</h3>
+                        <input type="hidden" id="edit-poll-id">
+                        <div style="display:flex;flex-direction:column;gap:10px;">
+                            <input type="text" id="edit-poll-title" placeholder="Poll Title" class="adm-input">
+                            <textarea id="edit-poll-desc" placeholder="Description" class="adm-input"></textarea>
+                            <select id="edit-poll-status" class="adm-select">
+                                <option value="active">Active</option><option value="settled">Settled</option>
+                            </select>
+                            <button id="update-poll" class="btn btn-blue" style="width:100%;">Update Poll</button>
+                            <button onclick="closeEditPollModal()" class="btn btn-outline" style="width:100%;">Cancel</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="panel-deposits" class="adm-panel"><div class="adm-card"><h3 class="adm-card-title">💰 Buy Requests</h3><div class="adm-table-wrap" id="deposits-table"></div></div></div>
-            <div id="panel-withdrawals" class="adm-panel"><div class="adm-card"><h3 class="adm-card-title">💸 Withdraw Requests</h3><div class="adm-table-wrap" id="withdrawals-table"></div></div></div>
-            <div id="panel-settings" class="adm-panel"><div class="adm-card"><h3 class="adm-card-title">⚙️ Platform Settings</h3><div style="display:flex;flex-direction:column;gap:12px;"><div><label style="font-size:10px;color:var(--sub);font-weight:700;">LTC Wallet Address</label><input type="text" id="set-ltc" placeholder="LTC Address" class="adm-input"></div><div><label style="font-size:10px;color:var(--sub);font-weight:700;">Coin Price (USD)</label><input type="number" id="set-price" placeholder="0.20" class="adm-input" step="0.01" value="0.20"></div><div><label style="font-size:10px;color:var(--sub);font-weight:700;">Auto Approve Posts</label><select id="set-auto-approve" class="adm-select"><option value="false">No</option><option value="true">Yes</option></select></div><button id="save-settings" class="btn btn-gold" style="width:100%;">Save Settings</button></div></div></div>
+            
+            <!-- USERS -->
+            <div id="panel-users" class="adm-panel">
+                <div class="adm-card">
+                    <h3 class="adm-card-title">👥 All Users</h3>
+                    <div class="adm-table-wrap" id="users-table"></div>
+                </div>
+                <!-- Edit User Modal -->
+                <div id="user-modal" class="adm-modal-overlay hidden">
+                    <div class="adm-modal">
+                        <h3 style="font-weight:900; margin-bottom:12px;">Edit User</h3>
+                        <input type="hidden" id="edit-user-id">
+                        <div style="display:flex;flex-direction:column;gap:10px;">
+                            <input type="text" id="edit-user-name" placeholder="Display Name" class="adm-input">
+                            <input type="number" id="edit-user-stars" placeholder="Dh STAR Balance" class="adm-input" step="0.01">
+                            <select id="edit-user-role" class="adm-select">
+                                <option value="user">User</option><option value="admin">Admin</option>
+                            </select>
+                            <button id="update-user" class="btn btn-blue" style="width:100%;">Update User</button>
+                            <button onclick="closeUserModal()" class="btn btn-outline" style="width:100%;">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- DEPOSITS -->
+            <div id="panel-deposits" class="adm-panel">
+                <div class="adm-card">
+                    <h3 class="adm-card-title">💰 Buy Requests</h3>
+                    <div class="adm-table-wrap" id="deposits-table"></div>
+                </div>
+            </div>
+            
+            <!-- WITHDRAWALS -->
+            <div id="panel-withdrawals" class="adm-panel">
+                <div class="adm-card">
+                    <h3 class="adm-card-title">💸 Withdraw Requests</h3>
+                    <div class="adm-table-wrap" id="withdrawals-table"></div>
+                </div>
+            </div>
+            
+            <!-- SETTINGS -->
+            <div id="panel-settings" class="adm-panel">
+                <div class="adm-card">
+                    <h3 class="adm-card-title">⚙️ Platform Settings</h3>
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                        <div>
+                            <label style="font-size:10px;color:var(--sub);font-weight:700;">LTC Wallet Address</label>
+                            <input type="text" id="set-ltc" placeholder="LTC Address" class="adm-input">
+                        </div>
+                        <div>
+                            <label style="font-size:10px;color:var(--sub);font-weight:700;">Coin Price (USD per STAR)</label>
+                            <input type="number" id="set-price" placeholder="0.20" class="adm-input" step="0.01" value="0.20">
+                        </div>
+                        <div>
+                            <label style="font-size:10px;color:var(--sub);font-weight:700;">Auto Approve Posts</label>
+                            <select id="set-auto-approve" class="adm-select">
+                                <option value="false">No (Manual)</option><option value="true">Yes (Auto)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:10px;color:var(--sub);font-weight:700;">Admin Email</label>
+                            <input type="email" id="set-admin-email" placeholder="dhrubo1200@gmail.com" class="adm-input" value="dhrubo1200@gmail.com">
+                        </div>
+                        <button id="save-settings" class="btn btn-gold" style="width:100%;">Save Settings</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // ========== FIREBASE ==========
         const fbConfig = {
             apiKey: "AIzaSyB31gEKElLRlKVynHsEn3PU0F7bv1AHso8",
             authDomain: "vote-trading.firebaseapp.com",
@@ -226,7 +377,6 @@
             messagingSenderId: "25813578973",
             appId: "1:25813578973:web:b2297633811dd633be5734"
         };
-        
         firebase.initializeApp(fbConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -242,7 +392,7 @@
             setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 2500);
         }
         
-        // ✅ FIXED AUTH CHECK
+        // ========== AUTH ==========
         auth.onAuthStateChanged(async (u) => {
             if (u) {
                 const d = await db.collection('users').doc(u.uid).get();
@@ -271,6 +421,7 @@
         
         document.getElementById('adm-logout-btn').addEventListener('click', () => auth.signOut());
         
+        // ========== TAB NAVIGATION ==========
         document.querySelectorAll('.adm-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('active'));
@@ -294,21 +445,25 @@
             }
         }
         
-        function loadAll() { loadOverview(); loadSettings(); }
+        function loadAll() {
+            loadOverview();
+            loadSettings();
+        }
         
+        // ========== OVERVIEW ==========
         async function loadOverview() {
             const [usersSnap, postsSnap, pollsSnap, tradesSnap, depositsSnap, withdrawalsSnap] = await Promise.all([
                 db.collection('users').get(),
-                db.collection('posts').orderBy('createdAt', 'desc').limit(5).get(),
-                db.collection('votePolls').where('status', '==', 'active').get(),
-                db.collection('trades').orderBy('createdAt', 'desc').limit(10).get(),
-                db.collection('buyRequests').where('status', '==', 'pending').get(),
-                db.collection('transactions').where('status', '==', 'pending').get()
+                db.collection('posts').orderBy('createdAt','desc').limit(5).get(),
+                db.collection('votePolls').where('status','==','active').get(),
+                db.collection('trades').orderBy('createdAt','desc').limit(10).get(),
+                db.collection('buyRequests').where('status','==','pending').get(),
+                db.collection('transactions').where('status','==','pending').get()
             ]);
             
             const totalUsers = usersSnap.size;
             let totalVolume = 0;
-            pollsSnap.forEach(d => totalVolume += (d.data().buyAmount || 0) + (d.data().sellAmount || 0));
+            pollsSnap.forEach(d => totalVolume += (d.data().buyAmount||0)+(d.data().sellAmount||0));
             
             document.getElementById('adm-total-users').innerText = totalUsers;
             document.getElementById('adm-revenue').innerText = totalVolume.toFixed(0);
@@ -321,20 +476,35 @@
                 <div class="adm-stat-card"><p class="adm-stat-value">${depositsSnap.size}</p><p class="adm-stat-label">Pending Deposits</p></div>
                 <div class="adm-stat-card"><p class="adm-stat-value">${withdrawalsSnap.size}</p><p class="adm-stat-label">Pending Withdrawals</p></div>
             `;
-        }
-        
-        async function loadPosts() {
-            const snap = await db.collection('posts').orderBy('createdAt', 'desc').get();
-            document.getElementById('posts-table').innerHTML = `
-                <table class="adm-table"><thead><tr><th>Title</th><th>User</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-                ${snap.docs.map(d => {
+            
+            document.getElementById('overview-posts').innerHTML = `
+                <table class="adm-table"><thead><tr><th>Title</th><th>User</th><th>Status</th><th>Action</th></tr></thead><tbody>
+                ${postsSnap.docs.map(d => {
                     const p = d.data();
                     return `<tr><td>${(p.title||'').substr(0,25)}</td><td>${p.userName||''}</td>
                     <td><span class="badge ${p.approved?'badge-success':'badge-warning'}">${p.approved?'Approved':'Pending'}</span></td>
-                    <td>
-                        <button class="btn btn-sm ${p.approved?'btn-red':'btn-green'}" onclick="togglePost('${d.id}',${!p.approved})">${p.approved?'Reject':'Approve'}</button>
-                        <button class="btn btn-sm btn-red" onclick="deletePost('${d.id}')"><i class="fas fa-trash"></i></button>
-                    </td></tr>`;
+                    <td><button class="btn btn-sm ${p.approved?'btn-red':'btn-green'}" onclick="togglePost('${d.id}',${!p.approved})">${p.approved?'Reject':'Approve'}</button></td></tr>`;
+                }).join('')}
+                </tbody></table>`;
+        }
+        
+        // ========== POSTS ==========
+        async function loadPosts() {
+            const snap = await db.collection('posts').orderBy('createdAt','desc').get();
+            document.getElementById('posts-table').innerHTML = `
+                <table class="adm-table"><thead><tr><th>Title</th><th>User</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+                ${snap.docs.map(d => {
+                    const p = d.data();
+                    return `<tr>
+                        <td>${(p.title||'').substr(0,25)}</td>
+                        <td>${p.userName||''}</td>
+                        <td>${p.location||''}</td>
+                        <td><span class="badge ${p.approved?'badge-success':'badge-warning'}">${p.approved?'Approved':'Pending'}</span></td>
+                        <td>
+                            <button class="btn btn-sm ${p.approved?'btn-red':'btn-green'}" onclick="togglePost('${d.id}',${!p.approved})">${p.approved?'Reject':'Approve'}</button>
+                            <button class="btn btn-sm btn-red" onclick="deletePost('${d.id}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
@@ -355,21 +525,25 @@
         
         document.getElementById('refresh-posts').addEventListener('click', loadPosts);
         
+        // ========== POLLS ==========
         async function loadPolls() {
-            const snap = await db.collection('votePolls').orderBy('createdAt', 'desc').get();
+            const snap = await db.collection('votePolls').orderBy('createdAt','desc').get();
             document.getElementById('polls-table').innerHTML = `
-                <table class="adm-table"><thead><tr><th>Title</th><th>Status</th><th>Buy</th><th>Sell</th><th>Actions</th></tr></thead><tbody>
+                <table class="adm-table"><thead><tr><th>Title</th><th>Creator</th><th>Status</th><th>Buy</th><th>Sell</th><th>Actions</th></tr></thead><tbody>
                 ${snap.docs.map(d => {
                     const p = d.data();
-                    return `<tr><td>${(p.title||'').substr(0,25)}</td>
-                    <td><span class="badge ${p.status==='active'?'badge-success':'badge-info'}">${p.status}</span></td>
-                    <td style="color:#10B981;">${(p.buyAmount||0).toFixed(0)}</td>
-                    <td style="color:#EF4444;">${(p.sellAmount||0).toFixed(0)}</td>
-                    <td>
-                        <button class="btn btn-sm btn-blue" onclick="editPoll('${d.id}')"><i class="fas fa-edit"></i></button>
-                        ${p.status==='active'?`<button class="btn btn-sm btn-gold" onclick="settlePoll('${d.id}')">Settle</button>`:''}
-                        <button class="btn btn-sm btn-red" onclick="deletePoll('${d.id}')"><i class="fas fa-trash"></i></button>
-                    </td></tr>`;
+                    return `<tr>
+                        <td>${(p.title||'').substr(0,25)}</td>
+                        <td>${p.creatorName||''}</td>
+                        <td><span class="badge ${p.status==='active'?'badge-success':'badge-info'}">${p.status}</span></td>
+                        <td style="color:#10B981;">${(p.buyAmount||0).toFixed(0)}</td>
+                        <td style="color:#EF4444;">${(p.sellAmount||0).toFixed(0)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-blue" onclick="editPoll('${d.id}')"><i class="fas fa-edit"></i></button>
+                            ${p.status==='active'?`<button class="btn btn-sm btn-gold" onclick="settlePoll('${d.id}')">Settle</button>`:''}
+                            <button class="btn btn-sm btn-red" onclick="deletePoll('${d.id}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
@@ -428,15 +602,19 @@
             }
         };
         
+        // ========== USERS ==========
         async function loadUsers() {
             const snap = await db.collection('users').get();
             document.getElementById('users-table').innerHTML = `
-                <table class="adm-table"><thead><tr><th>User</th><th>Balance</th><th>Stars</th><th>Role</th><th>Actions</th></tr></thead><tbody>
+                <table class="adm-table"><thead><tr><th>User</th><th>Stars</th><th>Role</th><th>Actions</th></tr></thead><tbody>
                 ${snap.docs.map(d => {
                     const u = d.data();
-                    return `<tr><td>${u.displayName||u.email||''}</td><td>${(u.balance||0).toFixed(2)}</td><td>${(u.stars||0).toFixed(2)}</td>
-                    <td><span class="badge ${u.role==='admin'?'badge-info':'badge-success'}">${u.role||'user'}</span></td>
-                    <td><button class="btn btn-sm btn-blue" onclick="editUser('${d.id}')"><i class="fas fa-edit"></i></button></td></tr>`;
+                    return `<tr>
+                        <td>${u.displayName||u.email||''}</td>
+                        <td>${(u.stars||0).toFixed(2)}</td>
+                        <td><span class="badge ${u.role==='admin'?'badge-info':'badge-success'}">${u.role||'user'}</span></td>
+                        <td><button class="btn btn-sm btn-blue" onclick="editUser('${d.id}')"><i class="fas fa-edit"></i></button></td>
+                    </tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
@@ -446,7 +624,6 @@
             const u = d.data();
             document.getElementById('edit-user-id').value = id;
             document.getElementById('edit-user-name').value = u.displayName || '';
-            document.getElementById('edit-user-balance').value = u.balance || 0;
             document.getElementById('edit-user-stars').value = u.stars || 0;
             document.getElementById('edit-user-role').value = u.role || 'user';
             document.getElementById('user-modal').classList.remove('hidden');
@@ -455,63 +632,92 @@
         document.getElementById('update-user').addEventListener('click', async () => {
             await db.collection('users').doc(document.getElementById('edit-user-id').value).update({
                 displayName: document.getElementById('edit-user-name').value,
-                balance: parseFloat(document.getElementById('edit-user-balance').value),
                 stars: parseFloat(document.getElementById('edit-user-stars').value),
                 role: document.getElementById('edit-user-role').value
             });
             toast('User updated!'); closeUserModal(); loadUsers();
         });
         
+        // ========== DEPOSITS (APPROVE ADDS STARS) ==========
         async function loadDeposits() {
-            const snap = await db.collection('buyRequests').orderBy('createdAt', 'desc').get();
+            const snap = await db.collection('buyRequests').orderBy('createdAt','desc').get();
             document.getElementById('deposits-table').innerHTML = `
-                <table class="adm-table"><thead><tr><th>User</th><th>Stars</th><th>USD</th><th>Status</th><th>Action</th></tr></thead><tbody>
+                <table class="adm-table"><thead><tr><th>User</th><th>Stars</th><th>USD</th><th>TxID</th><th>Status</th><th>Action</th></tr></thead><tbody>
                 ${snap.docs.map(d => {
                     const r = d.data();
-                    return `<tr><td>${r.userEmail||''}</td><td>${r.amountStars}</td><td>$${(r.amountUSD||0).toFixed(2)}</td>
-                    <td><span class="badge ${r.status==='approved'?'badge-success':r.status==='rejected'?'badge-danger':'badge-warning'}">${r.status}</span></td>
-                    <td>${r.status==='pending'?`<button class="btn btn-sm btn-green" onclick="approveDeposit('${d.id}','${r.userId}',${r.amountStars})">Approve</button><button class="btn btn-sm btn-red" onclick="rejectDeposit('${d.id}')">Reject</button>`:''}</td></tr>`;
+                    return `<tr>
+                        <td>${r.userEmail||''}</td>
+                        <td>${r.amountStars}</td>
+                        <td>$${(r.amountUSD||0).toFixed(2)}</td>
+                        <td style="font-size:9px;">${(r.txHash||'').substr(0,15)}...</td>
+                        <td><span class="badge ${r.status==='approved'?'badge-success':r.status==='rejected'?'badge-danger':'badge-warning'}">${r.status}</span></td>
+                        <td>
+                            ${r.status==='pending'?`
+                                <button class="btn btn-sm btn-green" onclick="approveDeposit('${d.id}','${r.userId}',${r.amountStars})">Approve</button>
+                                <button class="btn btn-sm btn-red" onclick="rejectDeposit('${d.id}')">Reject</button>
+                            `:''}
+                        </td>
+                    </tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
         
-        window.approveDeposit = async function(id, uid, stars) {
+        window.approveDeposit = async function(id, uid, starsAmount) {
             await db.collection('buyRequests').doc(id).update({ status: 'approved' });
-            await db.collection('users').doc(uid).update({ stars: firebase.firestore.FieldValue.increment(stars) });
-            toast('Approved!'); loadDeposits();
+            await db.collection('users').doc(uid).update({ stars: firebase.firestore.FieldValue.increment(starsAmount) });
+            toast('Deposit approved! Stars added to user.');
+            loadDeposits();
         };
         
         window.rejectDeposit = async function(id) {
             await db.collection('buyRequests').doc(id).update({ status: 'rejected' });
-            toast('Rejected!'); loadDeposits();
+            toast('Deposit rejected.');
+            loadDeposits();
         };
         
+        // ========== WITHDRAWALS ==========
         async function loadWithdrawals() {
             const snap = await db.collection('transactions').where('type','==','withdraw').orderBy('createdAt','desc').get();
             document.getElementById('withdrawals-table').innerHTML = `
-                <table class="adm-table"><thead><tr><th>User</th><th>Stars</th><th>Status</th><th>Action</th></tr></thead><tbody>
+                <table class="adm-table"><thead><tr><th>User</th><th>Stars</th><th>LTC Address</th><th>Status</th><th>Action</th></tr></thead><tbody>
                 ${snap.docs.map(d => {
                     const r = d.data();
-                    return `<tr><td>${r.userEmail||''}</td><td>${r.amountStars}</td>
-                    <td><span class="badge ${r.status==='completed'?'badge-success':r.status==='rejected'?'badge-danger':'badge-warning'}">${r.status}</span></td>
-                    <td>${r.status==='pending'?`<button class="btn btn-sm btn-green" onclick="approveWithdraw('${d.id}')">Complete</button><button class="btn btn-sm btn-red" onclick="rejectWithdraw('${d.id}')">Reject</button>`:''}</td></tr>`;
+                    return `<tr>
+                        <td>${r.userEmail||''}</td>
+                        <td>${r.amountStars}</td>
+                        <td style="font-size:9px;">${(r.ltcAddress||'').substr(0,20)}...</td>
+                        <td><span class="badge ${r.status==='completed'?'badge-success':r.status==='rejected'?'badge-danger':'badge-warning'}">${r.status}</span></td>
+                        <td>
+                            ${r.status==='pending'?`
+                                <button class="btn btn-sm btn-green" onclick="completeWithdrawal('${d.id}')">Complete</button>
+                                <button class="btn btn-sm btn-red" onclick="rejectWithdrawal('${d.id}')">Reject</button>
+                            `:''}
+                        </td>
+                    </tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
         
-        window.approveWithdraw = async function(id) {
+        window.completeWithdrawal = async function(id) {
             await db.collection('transactions').doc(id).update({ status: 'completed' });
-            toast('Completed!'); loadWithdrawals();
+            toast('Withdrawal completed!');
+            loadWithdrawals();
         };
         
-        window.rejectWithdraw = async function(id) {
-            const d = await db.collection('transactions').doc(id).get();
-            const r = d.data();
+        window.rejectWithdrawal = async function(id) {
+            const doc = await db.collection('transactions').doc(id).get();
+            if (doc.exists) {
+                const data = doc.data();
+                await db.collection('users').doc(data.userId).update({
+                    stars: firebase.firestore.FieldValue.increment(data.amountStars)
+                });
+            }
             await db.collection('transactions').doc(id).update({ status: 'rejected' });
-            await db.collection('users').doc(r.userId).update({ stars: firebase.firestore.FieldValue.increment(r.amountStars) });
-            toast('Rejected!'); loadWithdrawals();
+            toast('Withdrawal rejected. Stars refunded.');
+            loadWithdrawals();
         };
         
+        // ========== SETTINGS ==========
         async function loadSettings() {
             const ltcDoc = await db.collection('adminSettings').doc('ltc_wallet').get();
             document.getElementById('set-ltc').value = ltcDoc.exists ? (ltcDoc.data().address || '') : '';
@@ -519,20 +725,20 @@
             if (platDoc.exists) {
                 document.getElementById('set-price').value = platDoc.data().coinPrice || 0.20;
                 document.getElementById('set-auto-approve').value = String(platDoc.data().autoApprove || false);
+                document.getElementById('set-admin-email').value = platDoc.data().adminEmail || 'dhrubo1200@gmail.com';
             }
         }
         
         document.getElementById('save-settings').addEventListener('click', async () => {
-            await db.collection('adminSettings').doc('ltc_wallet').set({ address: document.getElementById('set-ltc').value.trim() });
+            await db.collection('adminSettings').doc('ltc_wallet').set({
+                address: document.getElementById('set-ltc').value.trim()
+            });
             await db.collection('adminSettings').doc('platform').set({
                 coinPrice: parseFloat(document.getElementById('set-price').value),
-                autoApprove: document.getElementById('set-auto-approve').value === 'true'
+                autoApprove: document.getElementById('set-auto-approve').value === 'true',
+                adminEmail: document.getElementById('set-admin-email').value.trim()
             });
-            toast('Saved!');
-        });
-        
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') { closePollModal(); closeEditPollModal(); closeUserModal(); }
+            toast('Settings saved!');
         });
     </script>
 </body>
