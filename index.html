@@ -157,6 +157,15 @@
         .modal-close { background:none; border:none; font-size:24px; color:#94a3b8; cursor:pointer; }
         
         .shop-bg { background:linear-gradient(135deg,#0f172a,#1e293b); min-height:100%; color:white; padding:16px; }
+        
+        .direct-deposit-card {
+            background: linear-gradient(135deg, rgba(30,30,60,0.95), rgba(20,20,50,0.95));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 10px;
+            color: #e2e8f0;
+        }
     </style>
 </head>
 <body>
@@ -248,8 +257,8 @@
                                 <select id="vp-duration" class="input">
                                     <option value="1">1 Day</option><option value="3">3 Days</option><option value="7">7 Days</option><option value="30">30 Days</option>
                                 </select>
-                                <div style="background:#fef3c7;padding:8px;border-radius:8px;text-align:center;"><p style="font-size:10px;font-weight:700;color:#92400e;">Fee: 10 Dh | Min Balance: 100 Dh</p></div>
-                                <button id="vp-create-btn" class="btn btn-blue" style="width:100%;">Create Poll (10 Dh)</button>
+                                <div style="background:#fef3c7;padding:8px;border-radius:8px;text-align:center;"><p style="font-size:10px;font-weight:700;color:#92400e;">Fee: 10 Dh STAR | Min Balance: 100 Dh STAR</p></div>
+                                <button id="vp-create-btn" class="btn btn-blue" style="width:100%;">Create Poll (10 Dh STAR)</button>
                             </div>
                         </div>
                     </div>
@@ -264,10 +273,11 @@
                     <button id="shop-tab-withdraw" style="flex:1;padding:8px;border:none;border-radius:18px;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:#94a3b8;">Withdraw</button>
                 </div>
                 <div id="shop-buy-panel">
-                    <div style="text-align:center;margin-bottom:12px;"><h2 style="font-size:20px;font-weight:900;"><span style="color:#fbbf24;">STAR</span> SHOP</h2><p style="font-size:10px;color:#94a3b8;">Buy with LTC • Min $1 USD</p></div>
+                    <div style="text-align:center;margin-bottom:12px;"><h2 style="font-size:20px;font-weight:900;"><span style="color:#fbbf24;">STAR</span> SHOP</h2><p style="font-size:10px;color:#94a3b8;">Buy with LTC • Min $3 USD</p></div>
                     <div class="card-dark"><span class="badge badge-live">LTC</span><span style="font-size:10px;color:#94a3b8;margin-left:6px;">Platform Address</span><div style="background:rgba(0,0,0,0.3);padding:8px;border-radius:8px;margin-top:6px;"><p id="plat-ltc" style="font-size:10px;font-family:monospace;color:#fbbf24;word-break:break-all;">Loading...</p></div><button id="copy-ltc" style="font-size:9px;color:#94a3b8;background:none;border:none;cursor:pointer;margin-top:4px;">Copy Address</button></div>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;">
-                        <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="100" data-price="20"><p style="font-size:15px;font-weight:900;color:#fbbf24;">100 STAR</p><p style="font-size:9px;color:#94a3b8;">Min • $20</p></div>
+                        <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="15" data-price="3"><p style="font-size:15px;font-weight:900;color:#fbbf24;">15 STAR</p><p style="font-size:9px;color:#94a3b8;">Min • $3</p></div>
+                        <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="100" data-price="20"><p style="font-size:15px;font-weight:900;color:#fbbf24;">100 STAR</p><p style="font-size:9px;color:#94a3b8;">$20</p></div>
                         <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="500" data-price="100"><p style="font-size:15px;font-weight:900;color:#fbbf24;">500 STAR</p><p style="font-size:9px;color:#94a3b8;">Starter • $100</p></div>
                         <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="2000" data-price="400"><p style="font-size:15px;font-weight:900;color:#fbbf24;">2K STAR</p><p style="font-size:9px;color:#94a3b8;">Popular • $400</p></div>
                         <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="5000" data-price="1000"><p style="font-size:15px;font-weight:900;color:#fbbf24;">5K STAR</p><p style="font-size:9px;color:#94a3b8;">Premium • $1K</p></div>
@@ -280,6 +290,18 @@
                         <button id="checkout-btn" class="btn btn-gold" style="width:100%;">Submit Buy Request</button>
                         <p style="font-size:8px;color:#64748b;text-align:center;margin-top:4px;">Admin approval required</p>
                     </div>
+                    <!-- DIRECT DEPOSIT -->
+                    <div class="direct-deposit-card" style="margin-top:16px;">
+                        <h5 style="font-size:13px;font-weight:900;margin-bottom:8px;color:#fbbf24;">💵 Direct Deposit</h5>
+                        <p style="font-size:10px;color:#94a3b8;margin-bottom:6px;">Enter any custom STAR amount (min 15 STAR = $3 USD)</p>
+                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                            <input type="number" id="custom-star-amount" placeholder="STAR amount" class="input-dark" style="flex:2;font-size:13px;" min="15" value="15">
+                            <span style="color:#fbbf24;font-weight:900;flex:1;text-align:center;" id="custom-usd-display">$3.00</span>
+                        </div>
+                        <input type="text" id="custom-ltc-txid" placeholder="LTC Transaction Hash (TxID)" class="input-dark" style="margin-bottom:8px;font-size:11px;">
+                        <button id="direct-deposit-btn" class="btn btn-cyan" style="width:100%;">Submit Direct Deposit</button>
+                        <p style="font-size:8px;color:#64748b;text-align:center;margin-top:4px;">Send exact LTC amount to platform address & paste TxID</p>
+                    </div>
                 </div>
                 <div id="shop-withdraw-panel" class="hidden">
                     <div style="text-align:center;margin-bottom:12px;"><h2 style="font-size:20px;font-weight:900;color:white;">Withdraw</h2><p style="font-size:10px;color:#94a3b8;">Min 15 STAR (~$3 USD)</p></div>
@@ -288,6 +310,16 @@
                         <input type="text" id="w-ltc-addr" placeholder="Your LTC Address" class="input-dark" style="margin-bottom:6px;font-size:11px;">
                         <input type="number" id="w-amt" placeholder="Amount (min 15 STAR)" class="input-dark" style="margin-bottom:6px;" min="15">
                         <button id="withdraw-btn" class="btn btn-green" style="width:100%;">Submit Withdraw</button>
+                    </div>
+                    <!-- LTC Calculator -->
+                    <div class="direct-deposit-card" style="margin-top:16px;">
+                        <h5 style="font-size:13px;font-weight:900;margin-bottom:8px;color:#00d2ff;">🔄 LTC to STAR Calculator</h5>
+                        <p style="font-size:10px;color:#94a3b8;margin-bottom:6px;">Live LTC Price: $<span id="ltc-live-price">Loading...</span> USD</p>
+                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                            <input type="number" id="calc-star-amount" placeholder="STAR amount" class="input-dark" style="flex:2;font-size:13px;" min="15" value="15" oninput="calculateLTC()">
+                            <span style="color:#fbbf24;font-weight:900;flex:1;text-align:center;" id="calc-ltc-result">0.00 LTC</span>
+                        </div>
+                        <p style="font-size:8px;color:#64748b;text-align:center;">You will receive this amount in LTC</p>
                     </div>
                 </div>
             </div>
@@ -304,24 +336,13 @@
 </div>
 
 <!-- MODALS -->
-<div id="modal-post" class="modal-overlay hidden">
-    <div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 id="mpd-title" style="font-weight:900;"></h4><button class="modal-close" onclick="closeM('modal-post')">&times;</button></div><p id="mpd-body" style="font-size:12px;color:#64748b;margin-bottom:10px;"></p><div style="background:#f8fafc;padding:10px;border-radius:10px;margin-bottom:10px;"><p style="font-size:9px;color:#94a3b8;">Contact:</p><p id="mpd-wa" style="font-size:13px;font-weight:900;color:#006633;"></p></div><button id="mpd-wa-btn" class="btn btn-green" style="width:100%;"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</button></div>
-</div>
-<div id="modal-vote" class="modal-overlay hidden">
-    <div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 id="mvd-title" style="font-weight:900;"></h4><button class="modal-close" onclick="closeM('modal-vote')">&times;</button></div><p id="mvd-desc" style="font-size:11px;color:#64748b;margin-bottom:8px;"></p><div class="price-box"><span style="font-size:10px;color:#64748b;">Price:</span><span class="price-num" id="mvd-price" style="color:#fbbf24;">100.00</span><span id="mvd-change" style="font-size:11px;font-weight:700;">+0%</span></div><div class="prog-bar"><div class="prog-buy" id="mvd-buy-bar" style="width:50%;"></div><div class="prog-sell" id="mvd-sell-bar" style="width:50%;"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;font-weight:700;margin:6px 0;"><span style="color:#10B981;">Buy <span id="mvd-bp">50%</span></span><span style="color:#EF4444;">Sell <span id="mvd-sp">50%</span></span></div><div style="display:flex;gap:8px;margin-bottom:8px;"><button id="mv-buy" class="btn-buy">BUY</button><button id="mv-sell" class="btn-sell">SELL</button></div><input type="number" id="mv-amount" placeholder="Amount (Dh)" class="input" style="margin-bottom:8px;font-size:13px;" min="10"><button id="mv-submit" class="btn btn-blue" style="width:100%;">Place Trade</button></div>
-</div>
-<div id="modal-profile" class="modal-overlay hidden">
-    <div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 style="font-weight:900;">Profile</h4><button class="modal-close" onclick="closeM('modal-profile')">&times;</button></div><div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><img id="prof-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:64px;height:64px;border-radius:50%;border:3px solid #e2e8f0;object-fit:cover;"><label class="btn btn-outline" style="font-size:11px;cursor:pointer;">Change Photo<input type="file" id="prof-photo" class="hidden" accept="image/*"></label><input type="text" id="prof-name" placeholder="Your Name" class="input"><textarea id="prof-bio" rows="2" placeholder="About you..." class="input"></textarea><button id="prof-save" class="btn btn-green" style="width:100%;">Save Profile</button><p id="prof-ref" style="font-size:10px;color:#64748b;text-align:center;"></p><button id="prof-logout" class="btn btn-red" style="width:100%;">Logout</button></div></div>
-</div>
-<div id="modal-create" class="modal-overlay hidden">
-    <div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 style="font-weight:900;">Create Post</h4><button class="modal-close" onclick="closeM('modal-create')">&times;</button></div><div style="display:flex;flex-direction:column;gap:8px;"><input type="text" id="cp-title" placeholder="Business Title" class="input"><input type="tel" id="cp-wa" placeholder="WhatsApp (01xxxxxxxxx)" class="input"><input type="text" id="cp-loc" placeholder="Location" class="input"><textarea id="cp-det" rows="2" placeholder="Details..." class="input"></textarea><select id="cp-dur" class="input"><option value="4">4 Hours</option><option value="12">12 Hours</option><option value="24">1 Day</option><option value="168">7 Days</option></select><button id="cp-pub" class="btn btn-green" style="width:100%;">Publish</button></div></div>
-</div>
-<div id="modal-about" class="modal-overlay hidden">
-    <div class="modal-box" style="max-height:85vh;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h4 style="font-weight:900;">About ASD ICON</h4><button class="modal-close" onclick="closeM('modal-about')">&times;</button></div><div style="font-size:12px;color:#334155;"><p>🚀 ASD ICON is a premium business networking and trading platform.</p><p style="margin-top:8px;">📊 Features: Business Posts, Forex Trading, LTC Payments</p><p style="margin-top:8px;">📧 Support: dhrubo1200@gmail.com</p></div></div>
-</div>
+<div id="modal-post" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 id="mpd-title" style="font-weight:900;"></h4><button class="modal-close" onclick="closeM('modal-post')">&times;</button></div><p id="mpd-body" style="font-size:12px;color:#64748b;margin-bottom:10px;"></p><div style="background:#f8fafc;padding:10px;border-radius:10px;margin-bottom:10px;"><p style="font-size:9px;color:#94a3b8;">Contact:</p><p id="mpd-wa" style="font-size:13px;font-weight:900;color:#006633;"></p></div><button id="mpd-wa-btn" class="btn btn-green" style="width:100%;"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</button></div></div>
+<div id="modal-vote" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 id="mvd-title" style="font-weight:900;"></h4><button class="modal-close" onclick="closeM('modal-vote')">&times;</button></div><p id="mvd-desc" style="font-size:11px;color:#64748b;margin-bottom:8px;"></p><div class="price-box"><span style="font-size:10px;color:#64748b;">Price:</span><span class="price-num" id="mvd-price" style="color:#fbbf24;">100.00</span><span id="mvd-change" style="font-size:11px;font-weight:700;">+0%</span></div><div class="prog-bar"><div class="prog-buy" id="mvd-buy-bar" style="width:50%;"></div><div class="prog-sell" id="mvd-sell-bar" style="width:50%;"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;font-weight:700;margin:6px 0;"><span style="color:#10B981;">Buy <span id="mvd-bp">50%</span></span><span style="color:#EF4444;">Sell <span id="mvd-sp">50%</span></span></div><div style="display:flex;gap:8px;margin-bottom:8px;"><button id="mv-buy" class="btn-buy">BUY</button><button id="mv-sell" class="btn-sell">SELL</button></div><input type="number" id="mv-amount" placeholder="Amount (Dh STAR)" class="input" style="margin-bottom:8px;font-size:13px;" min="10"><button id="mv-submit" class="btn btn-blue" style="width:100%;">Place Trade</button></div></div>
+<div id="modal-profile" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 style="font-weight:900;">Profile</h4><button class="modal-close" onclick="closeM('modal-profile')">&times;</button></div><div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><img id="prof-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:64px;height:64px;border-radius:50%;border:3px solid #e2e8f0;object-fit:cover;"><label class="btn btn-outline" style="font-size:11px;cursor:pointer;">Change Photo<input type="file" id="prof-photo" class="hidden" accept="image/*"></label><input type="text" id="prof-name" placeholder="Your Name" class="input"><textarea id="prof-bio" rows="2" placeholder="About you..." class="input"></textarea><button id="prof-save" class="btn btn-green" style="width:100%;">Save Profile</button><p id="prof-ref" style="font-size:10px;color:#64748b;text-align:center;"></p><button id="prof-logout" class="btn btn-red" style="width:100%;">Logout</button></div></div></div>
+<div id="modal-create" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 style="font-weight:900;">Create Post</h4><button class="modal-close" onclick="closeM('modal-create')">&times;</button></div><div style="display:flex;flex-direction:column;gap:8px;"><input type="text" id="cp-title" placeholder="Business Title" class="input"><input type="tel" id="cp-wa" placeholder="WhatsApp (01xxxxxxxxx)" class="input"><input type="text" id="cp-loc" placeholder="Location" class="input"><textarea id="cp-det" rows="2" placeholder="Details..." class="input"></textarea><select id="cp-dur" class="input"><option value="4">4 Hours</option><option value="12">12 Hours</option><option value="24">1 Day</option><option value="168">7 Days</option></select><button id="cp-pub" class="btn btn-green" style="width:100%;">Publish</button></div></div></div>
+<div id="modal-about" class="modal-overlay hidden"><div class="modal-box" style="max-height:85vh;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h4 style="font-weight:900;">About ASD ICON</h4><button class="modal-close" onclick="closeM('modal-about')">&times;</button></div><div style="font-size:12px;color:#334155;"><p>🚀 ASD ICON is a premium business networking and trading platform.</p><p style="margin-top:8px;">📊 Features: Business Posts, Forex Trading, LTC Payments</p><p style="margin-top:8px;">📧 Support: dhrubo1200@gmail.com</p></div></div></div>
 
 <script>
-    // ========== FIREBASE ==========
     const fbConfig = {
         apiKey: "AIzaSyB31gEKElLRlKVynHsEn3PU0F7bv1AHso8",
         authDomain: "vote-trading.firebaseapp.com",
@@ -346,23 +367,9 @@
         setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.4s'; setTimeout(() => t.remove(), 400); }, 2500);
     }
     function closeM(id) { document.getElementById(id).classList.add('hidden'); }
-    function tAgo(ts) {
-        if (!ts) return '';
-        const s = Math.floor((Date.now() - ts) / 1000);
-        if (s < 60) return 'Now';
-        if (s < 3600) return Math.floor(s/60)+'m';
-        if (s < 86400) return Math.floor(s/3600)+'h';
-        return Math.floor(s/86400)+'d';
-    }
-    function tLeft(ts) {
-        if (!ts) return '--';
-        const r = ts - Date.now();
-        if (r <= 0) return 'Ended';
-        const d = Math.floor(r/86400000), h = Math.floor((r%86400000)/3600000);
-        return d>0?`${d}d ${h}h`:`${h}h`;
-    }
+    function tAgo(ts) { if(!ts) return ''; const s = Math.floor((Date.now() - ts) / 1000); if(s<60) return 'Now'; if(s<3600) return Math.floor(s/60)+'m'; if(s<86400) return Math.floor(s/3600)+'h'; return Math.floor(s/86400)+'d'; }
+    function tLeft(ts) { if(!ts) return '--'; const r = ts - Date.now(); if(r<=0) return 'Ended'; const d = Math.floor(r/86400000), h = Math.floor((r%86400000)/3600000); return d>0?`${d}d ${h}h`:`${h}h`; }
     
-    // ========== AUTH ==========
     auth.onAuthStateChanged(async (u) => {
         if (u) {
             const d = await db.collection('users').doc(u.uid).get();
@@ -371,7 +378,8 @@
                 user = { uid: u.uid, email: u.email, displayName: u.email.split('@')[0], photoURL: 'https://cdn-icons-png.flaticon.com/512/149/149071.png', bio: 'Member', balance: 100, stars: 0, referralCode: u.email.split('@')[0].toUpperCase()+'-'+Math.random().toString(36).substr(2,6).toUpperCase(), referralBalance:0, totalReferrals:0, role:'user' };
                 await db.collection('users').doc(u.uid).set(user);
             }
-            bal = user.balance || 0; stars = user.stars || 0;
+            stars = user.stars || 0;
+            bal = stars; // ✅ Main Balance = Dh STAR
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
             updateUI(); loadPosts(); loadPolls(); loadLTC();
@@ -382,220 +390,174 @@
         }
     });
     
-    document.getElementById('login-btn').addEventListener('click', () => {
-        const e = document.getElementById('login-email').value.trim(), p = document.getElementById('login-password').value;
-        if (!e || !p) return toast('Fill all fields', 'error');
-        auth.signInWithEmailAndPassword(e, p).catch(err => toast(err.message, 'error'));
-    });
-    document.getElementById('register-btn').addEventListener('click', () => {
-        const e = document.getElementById('reg-email').value.trim(), p = document.getElementById('reg-password').value, c = document.getElementById('reg-confirm').value;
-        if (!e || !p) return toast('Fill all fields', 'error');
-        if (p.length < 6) return toast('Min 6 chars', 'error');
-        if (p !== c) return toast('Passwords mismatch', 'error');
-        auth.createUserWithEmailAndPassword(e, p).then(() => { toast('Account created!', 'success'); document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); }).catch(err => toast(err.message, 'error'));
-    });
-    document.getElementById('forgot-pass').addEventListener('click', () => { const e = prompt('Enter your email:'); if (e) auth.sendPasswordResetEmail(e).then(() => toast('Email sent!')).catch(err => toast(err.message, 'error')); });
+    document.getElementById('login-btn').addEventListener('click', () => { const e = document.getElementById('login-email').value.trim(), p = document.getElementById('login-password').value; if(!e||!p) return toast('Fill all fields','error'); auth.signInWithEmailAndPassword(e,p).catch(err => toast(err.message,'error')); });
+    document.getElementById('register-btn').addEventListener('click', () => { const e = document.getElementById('reg-email').value.trim(), p = document.getElementById('reg-password').value, c = document.getElementById('reg-confirm').value; if(!e||!p) return toast('Fill all fields','error'); if(p.length<6) return toast('Min 6 chars','error'); if(p!==c) return toast('Passwords mismatch','error'); auth.createUserWithEmailAndPassword(e,p).then(() => { toast('Account created!','success'); document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); }).catch(err => toast(err.message,'error')); });
+    document.getElementById('forgot-pass').addEventListener('click', () => { const e = prompt('Enter your email:'); if(e) auth.sendPasswordResetEmail(e).then(() => toast('Email sent!')).catch(err => toast(err.message,'error')); });
     document.getElementById('show-register').addEventListener('click', () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); });
     document.getElementById('show-login').addEventListener('click', () => { document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); });
     
-    function updateUI() {
-        if (!user) return;
-        document.getElementById('hdr-balance').innerText = bal.toFixed(2);
-        document.getElementById('hdr-avatar').src = user.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-        document.getElementById('vt-bal').innerText = bal.toFixed(2);
-    }
+    function updateUI() { if(!user) return; document.getElementById('hdr-balance').innerText = bal.toFixed(2); document.getElementById('hdr-avatar').src = user.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; document.getElementById('vt-bal').innerText = bal.toFixed(2); }
     
     function goPage(p) {
         document.querySelectorAll('.section-page').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.top-nav-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
         document.getElementById(`page-${p}`).classList.add('active');
-        const tn = document.querySelector(`.top-nav-btn[data-page="${p}"]`); if (tn) tn.classList.add('active');
-        const bn = document.querySelector(`.bn-item[data-bnav="${p}"]`); if (bn) bn.classList.add('active');
-        if (p === 'vote') loadPolls();
-        if (p === 'shop') { loadLTC(); updateWUI(); }
-        if (p === 'about') document.getElementById('modal-about').classList.remove('hidden');
+        const tn = document.querySelector(`.top-nav-btn[data-page="${p}"]`); if(tn) tn.classList.add('active');
+        const bn = document.querySelector(`.bn-item[data-bnav="${p}"]`); if(bn) bn.classList.add('active');
+        if(p==='vote') loadPolls();
+        if(p==='shop') { loadLTC(); updateWUI(); }
+        if(p==='about') document.getElementById('modal-about').classList.remove('hidden');
         page = p;
     }
     document.querySelectorAll('.top-nav-btn').forEach(b => b.addEventListener('click', () => goPage(b.dataset.page)));
-    document.querySelectorAll('.bn-item').forEach(b => { b.addEventListener('click', () => { const nav = b.dataset.bnav; if (nav === 'profile') openProf(); else if (nav === 'about') document.getElementById('modal-about').classList.remove('hidden'); else goPage(nav); }); });
+    document.querySelectorAll('.bn-item').forEach(b => { b.addEventListener('click', () => { const nav = b.dataset.bnav; if(nav==='profile') openProf(); else if(nav==='about') document.getElementById('modal-about').classList.remove('hidden'); else goPage(nav); }); });
     
     // ========== BUSINESS ==========
     function loadPosts() {
-        db.collection('posts').where('approved', '==', true).get().then(snap => {
-            let posts = [];
-            snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
+        db.collection('posts').where('approved','==',true).get().then(snap => {
+            let posts = []; snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
             posts.sort((a,b) => { const at = a.createdAt?.toMillis()||0, bt = b.createdAt?.toMillis()||0; return bt-at; });
             const q = (document.getElementById('biz-search')?.value || '').toLowerCase();
-            if (q) posts = posts.filter(p => (p.title||'').toLowerCase().includes(q) || (p.location||'').toLowerCase().includes(q) || (p.details||'').toLowerCase().includes(q));
+            if(q) posts = posts.filter(p => (p.title||'').toLowerCase().includes(q) || (p.location||'').toLowerCase().includes(q) || (p.details||'').toLowerCase().includes(q));
             const c = document.getElementById('posts-container');
-            if (!posts.length) { c.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;"><p>No approved posts yet</p></div>'; return; }
+            if(!posts.length) { c.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;"><p>No approved posts yet</p></div>'; return; }
             c.innerHTML = posts.map(p => {
-                const ago = tAgo(p.createdAt?.toMillis());
-                const exp = p.expireAt?.toMillis() < Date.now();
-                return `<div class="card-white ani-in" onclick="openPD('${p.id}')" style="cursor:pointer;">
-                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:10px;font-weight:700;color:#64748b;">${p.userName||'User'}</span><span class="badge ${exp?'badge-expired':'badge-active'}">${exp?'Expired':'Active'}</span></div>
-                    <h5 style="font-weight:900;font-size:13px;margin-bottom:4px;">${p.title}</h5>
-                    <div style="display:flex;gap:4px;margin-bottom:4px;"><span style="font-size:8px;background:#f1f5f9;padding:2px 6px;border-radius:6px;">📍${p.location}</span><span style="font-size:8px;background:#f0fdf4;padding:2px 6px;border-radius:6px;color:#006633;">📞${p.whatsapp}</span></div>
-                    <p style="font-size:11px;color:#64748b;">${(p.details||'').substr(0,90)}...</p>
-                    <p style="font-size:8px;color:#94a3b8;">${ago}</p>
-                </div>`;
+                const ago = tAgo(p.createdAt?.toMillis()); const exp = p.expireAt?.toMillis() < Date.now();
+                return `<div class="card-white ani-in" onclick="openPD('${p.id}')" style="cursor:pointer;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:10px;font-weight:700;color:#64748b;">${p.userName||'User'}</span><span class="badge ${exp?'badge-expired':'badge-active'}">${exp?'Expired':'Active'}</span></div><h5 style="font-weight:900;font-size:13px;margin-bottom:4px;">${p.title}</h5><div style="display:flex;gap:4px;margin-bottom:4px;"><span style="font-size:8px;background:#f1f5f9;padding:2px 6px;border-radius:6px;">📍${p.location}</span><span style="font-size:8px;background:#f0fdf4;padding:2px 6px;border-radius:6px;color:#006633;">📞${p.whatsapp}</span></div><p style="font-size:11px;color:#64748b;">${(p.details||'').substr(0,90)}...</p><p style="font-size:8px;color:#94a3b8;">${ago}</p></div>`;
             }).join('');
         }).catch(e => { document.getElementById('posts-container').innerHTML = `<p style="color:red;text-align:center;">Error: ${e.message}</p>`; });
     }
     
-    window.openPD = async function(id) { const d = await db.collection('posts').doc(id).get(); if (!d.exists) return; const p = d.data(); document.getElementById('mpd-title').innerText = p.title; document.getElementById('mpd-body').innerText = p.details; document.getElementById('mpd-wa').innerText = p.whatsapp; document.getElementById('modal-post').classList.remove('hidden'); };
-    document.getElementById('mpd-wa-btn').addEventListener('click', () => { let n = (document.getElementById('mpd-wa').innerText || '').replace(/\D/g,''); if (n.startsWith('0')) n = '880' + n.substring(1); if (n) window.open('https://wa.me/'+n, '_blank'); });
+    window.openPD = async function(id) { const d = await db.collection('posts').doc(id).get(); if(!d.exists) return; const p = d.data(); document.getElementById('mpd-title').innerText = p.title; document.getElementById('mpd-body').innerText = p.details; document.getElementById('mpd-wa').innerText = p.whatsapp; document.getElementById('modal-post').classList.remove('hidden'); };
+    document.getElementById('mpd-wa-btn').addEventListener('click', () => { let n = (document.getElementById('mpd-wa').innerText || '').replace(/\D/g,''); if(n.startsWith('0')) n = '880' + n.substring(1); if(n) window.open('https://wa.me/'+n, '_blank'); });
     document.getElementById('fab-create').addEventListener('click', () => document.getElementById('modal-create').classList.remove('hidden'));
-    document.getElementById('cp-pub').addEventListener('click', async () => {
-        const t = document.getElementById('cp-title').value.trim(), w = document.getElementById('cp-wa').value.trim(), l = document.getElementById('cp-loc').value.trim() || 'Bangladesh', d = document.getElementById('cp-det').value.trim(), dur = parseInt(document.getElementById('cp-dur').value);
-        if (!t || !w || !d) return toast('Fill all fields', 'error');
-        if (!/^01\d{9}$/.test(w)) return toast('Valid WhatsApp required', 'error');
-        await db.collection('posts').add({ userId: user.uid, userName: user.displayName, userPhoto: user.photoURL, title: t, whatsapp: w, location: l, details: d, duration: dur, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(), expireAt: new Date(Date.now() + dur * 3600000) });
-        toast('Post submitted!', 'success'); closeM('modal-create');
-    });
+    document.getElementById('cp-pub').addEventListener('click', async () => { const t = document.getElementById('cp-title').value.trim(), w = document.getElementById('cp-wa').value.trim(), l = document.getElementById('cp-loc').value.trim() || 'Bangladesh', d = document.getElementById('cp-det').value.trim(), dur = parseInt(document.getElementById('cp-dur').value); if(!t||!w||!d) return toast('Fill all fields','error'); if(!/^01\d{9}$/.test(w)) return toast('Valid WhatsApp required','error'); await db.collection('posts').add({ userId: user.uid, userName: user.displayName, userPhoto: user.photoURL, title: t, whatsapp: w, location: l, details: d, duration: dur, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(), expireAt: new Date(Date.now() + dur * 3600000) }); toast('Post submitted!','success'); closeM('modal-create'); });
     document.getElementById('biz-search').addEventListener('keyup', loadPosts);
     
     // ========== VOTE ==========
-    document.querySelectorAll('.vote-subnav button').forEach(b => { b.addEventListener('click', () => { document.querySelectorAll('.vote-panel').forEach(p => p.classList.remove('active')); document.querySelectorAll('.vote-subnav button').forEach(x => x.classList.remove('active')); document.getElementById(`vpanel-${b.dataset.vtab}`).classList.add('active'); b.classList.add('active'); vtab = b.dataset.vtab; if (vtab === 'market') loadPolls(); if (vtab === 'trades') loadTrades(); }); });
+    document.querySelectorAll('.vote-subnav button').forEach(b => { b.addEventListener('click', () => { document.querySelectorAll('.vote-panel').forEach(p => p.classList.remove('active')); document.querySelectorAll('.vote-subnav button').forEach(x => x.classList.remove('active')); document.getElementById(`vpanel-${b.dataset.vtab}`).classList.add('active'); b.classList.add('active'); vtab = b.dataset.vtab; if(vtab==='market') loadPolls(); if(vtab==='trades') loadTrades(); }); });
     
-    function calcPr(poll) {
-        const ba = poll.buyAmount || 0, sa = poll.sellAmount || 0, tot = ba + sa;
-        if (tot === 0) return { price: 100, chg: 0 };
-        const net = ba - sa;
-        const price = 100 * (1 + net / (tot + 1));
-        return { price: Math.max(1, price), chg: ((price - 100) / 100) * 100 };
-    }
+    function calcPr(poll) { const ba = poll.buyAmount || 0, sa = poll.sellAmount || 0, tot = ba + sa; if(tot===0) return { price: 100, chg: 0 }; const net = ba - sa; const price = 100 * (1 + net / (tot + 1)); return { price: Math.max(1, price), chg: ((price - 100) / 100) * 100 }; }
     
     function loadPolls() {
-        db.collection('votePolls').where('status', '==', 'active').get().then(snap => {
-            const polls = [];
-            snap.forEach(d => polls.push({ id: d.id, ...d.data() }));
-            document.getElementById('vt-active').innerText = polls.length;
-            let tv = 0; polls.forEach(p => tv += (p.buyAmount||0) + (p.sellAmount||0));
-            document.getElementById('vt-vol').innerText = tv.toFixed(0);
-            const c = document.getElementById('vpolls-container');
-            if (!polls.length) { c.innerHTML = '<div style="text-align:center;padding:30px;color:#94a3b8;">No active polls</div>'; return; }
+        db.collection('votePolls').where('status','==','active').get().then(snap => {
+            const polls = []; snap.forEach(d => polls.push({ id: d.id, ...d.data() }));
+            document.getElementById('vt-active').innerText = polls.length; let tv = 0; polls.forEach(p => tv += (p.buyAmount||0) + (p.sellAmount||0));
+            document.getElementById('vt-vol').innerText = tv.toFixed(0); const c = document.getElementById('vpolls-container');
+            if(!polls.length) { c.innerHTML = '<div style="text-align:center;padding:30px;color:#94a3b8;">No active polls</div>'; return; }
             c.innerHTML = polls.map(p => {
-                const pr = calcPr(p);
-                const tot = (p.buyAmount||0) + (p.sellAmount||0);
-                const bp = tot > 0 ? Math.round((p.buyAmount||0)/tot*100) : 50;
-                const isUp = pr.chg >= 0;
-                return `<div class="vt-card ani-in" onclick="openVD('${p.id}')" style="cursor:pointer;">
-                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><h5 style="font-weight:900;font-size:12px;">${p.title}</h5><span class="badge badge-live">Live</span></div>
-                    <p style="font-size:9px;color:#94a3b8;">${p.location||'Global'} • ${tLeft(p.expireAt?.toMillis())}</p>
-                    <div style="display:flex;justify-content:space-between;align-items:center;background:#f8fafc;padding:8px;border-radius:8px;margin:6px 0;"><span style="font-size:9px;color:#94a3b8;">Price:</span><span style="font-size:18px;font-weight:900;color:${isUp?'#10B981':'#EF4444'};">${pr.price.toFixed(2)}</span><span style="font-size:10px;font-weight:700;color:${isUp?'#10B981':'#EF4444'};">${isUp?'+':''}${pr.chg.toFixed(1)}%</span></div>
-                    <div class="prog-bar"><div class="prog-buy" style="width:${bp}%;"></div><div class="prog-sell" style="width:${100-bp}%;"></div></div>
-                    <div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700;margin-top:4px;"><span style="color:#10B981;">Buy ${bp}%</span><span style="color:#EF4444;">Sell ${100-bp}%</span><span style="color:#94a3b8;">Vol: ${tot.toFixed(0)}</span></div>
-                </div>`;
+                const pr = calcPr(p); const tot = (p.buyAmount||0) + (p.sellAmount||0); const bp = tot > 0 ? Math.round((p.buyAmount||0)/tot*100) : 50; const isUp = pr.chg >= 0;
+                return `<div class="vt-card ani-in" onclick="openVD('${p.id}')" style="cursor:pointer;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><h5 style="font-weight:900;font-size:12px;">${p.title}</h5><span class="badge badge-live">Live</span></div><p style="font-size:9px;color:#94a3b8;">${p.location||'Global'} • ${tLeft(p.expireAt?.toMillis())}</p><div style="display:flex;justify-content:space-between;align-items:center;background:#f8fafc;padding:8px;border-radius:8px;margin:6px 0;"><span style="font-size:9px;color:#94a3b8;">Price:</span><span style="font-size:18px;font-weight:900;color:${isUp?'#10B981':'#EF4444'};">${pr.price.toFixed(2)}</span><span style="font-size:10px;font-weight:700;color:${isUp?'#10B981':'#EF4444'};">${isUp?'+':''}${pr.chg.toFixed(1)}%</span></div><div class="prog-bar"><div class="prog-buy" style="width:${bp}%;"></div><div class="prog-sell" style="width:${100-bp}%;"></div></div><div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700;margin-top:4px;"><span style="color:#10B981;">Buy ${bp}%</span><span style="color:#EF4444;">Sell ${100-bp}%</span><span style="color:#94a3b8;">Vol: ${tot.toFixed(0)}</span></div></div>`;
             }).join('');
         });
     }
     
-    window.openVD = async function(id) { tPollId = id; const d = await db.collection('votePolls').doc(id).get(); if (!d.exists) return; const p = d.data(); const pr = calcPr(p); const tot = (p.buyAmount||0)+(p.sellAmount||0); const bp = tot > 0 ? Math.round((p.buyAmount||0)/tot*100) : 50; document.getElementById('mvd-title').innerText = p.title; document.getElementById('mvd-desc').innerText = p.description || ''; document.getElementById('mvd-price').innerText = pr.price.toFixed(2); document.getElementById('mvd-price').style.color = pr.chg >= 0 ? '#10B981' : '#EF4444'; document.getElementById('mvd-change').innerText = (pr.chg >= 0 ? '+' : '') + pr.chg.toFixed(1) + '%'; document.getElementById('mvd-change').style.color = pr.chg >= 0 ? '#10B981' : '#EF4444'; document.getElementById('mvd-buy-bar').style.width = bp + '%'; document.getElementById('mvd-sell-bar').style.width = (100-bp) + '%'; document.getElementById('mvd-bp').innerText = bp + '%'; document.getElementById('mvd-sp').innerText = (100-bp) + '%'; tSide = null; document.getElementById('mv-amount').value = ''; document.getElementById('modal-vote').classList.remove('hidden'); };
-    
+    window.openVD = async function(id) { tPollId = id; const d = await db.collection('votePolls').doc(id).get(); if(!d.exists) return; const p = d.data(); const pr = calcPr(p); const tot = (p.buyAmount||0)+(p.sellAmount||0); const bp = tot > 0 ? Math.round((p.buyAmount||0)/tot*100) : 50; document.getElementById('mvd-title').innerText = p.title; document.getElementById('mvd-desc').innerText = p.description || ''; document.getElementById('mvd-price').innerText = pr.price.toFixed(2); document.getElementById('mvd-price').style.color = pr.chg >= 0 ? '#10B981' : '#EF4444'; document.getElementById('mvd-change').innerText = (pr.chg >= 0 ? '+' : '') + pr.chg.toFixed(1) + '%'; document.getElementById('mvd-change').style.color = pr.chg >= 0 ? '#10B981' : '#EF4444'; document.getElementById('mvd-buy-bar').style.width = bp + '%'; document.getElementById('mvd-sell-bar').style.width = (100-bp) + '%'; document.getElementById('mvd-bp').innerText = bp + '%'; document.getElementById('mvd-sp').innerText = (100-bp) + '%'; tSide = null; document.getElementById('mv-amount').value = ''; document.getElementById('modal-vote').classList.remove('hidden'); };
     document.getElementById('mv-buy').addEventListener('click', function() { tSide = 'buy'; this.style.opacity = '0.6'; document.getElementById('mv-sell').style.opacity = '1'; });
     document.getElementById('mv-sell').addEventListener('click', function() { tSide = 'sell'; this.style.opacity = '0.6'; document.getElementById('mv-buy').style.opacity = '1'; });
-    
     document.getElementById('mv-submit').addEventListener('click', async () => {
-        if (!tSide) return toast('Select BUY or SELL', 'error');
+        if(!tSide) return toast('Select BUY or SELL','error');
         const amt = parseFloat(document.getElementById('mv-amount').value);
-        if (!amt || amt < 10) return toast('Min 10 Dh', 'error');
-        if (amt > bal) return toast('Insufficient balance', 'error');
+        if(!amt || amt < 10) return toast('Min 10 Dh STAR','error');
+        if(amt > bal) return toast('Insufficient Dh STAR','error');
         const ref = db.collection('votePolls').doc(tPollId);
         const doc = await ref.get();
-        if (!doc.exists || doc.data().status !== 'active') return toast('Poll ended', 'error');
+        if(!doc.exists || doc.data().status !== 'active') return toast('Poll ended','error');
         const com = amt * 0.07, net = amt - com;
-        await db.collection('users').doc(user.uid).update({ balance: firebase.firestore.FieldValue.increment(-amt) });
+        // ✅ Deduct from stars (main balance)
+        await db.collection('users').doc(user.uid).update({ stars: firebase.firestore.FieldValue.increment(-amt) });
         const fld = tSide === 'buy' ? 'buyAmount' : 'sellAmount', vf = tSide === 'buy' ? 'buyVoters' : 'sellVoters';
         await ref.update({ [fld]: firebase.firestore.FieldValue.increment(net), [vf]: firebase.firestore.FieldValue.arrayUnion(user.uid), totalCommission: firebase.firestore.FieldValue.increment(com) });
+        // ✅ Credit creator commission to stars
+        if(doc.data().creatorId && doc.data().creatorId !== user.uid) {
+            const creatorCut = amt * 0.02;
+            await db.collection('users').doc(doc.data().creatorId).update({ stars: firebase.firestore.FieldValue.increment(creatorCut) });
+        }
         await db.collection('trades').add({ pollId: tPollId, userId: user.uid, side: tSide, amount: amt, netAmount: net, commission: com, entryPrice: calcPr(doc.data()).price, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        bal -= amt; updateUI(); closeM('modal-vote'); toast(`${tSide.toUpperCase()} placed! (7% fee)`, 'success'); loadPolls();
+        stars -= amt; bal = stars; updateUI(); closeM('modal-vote'); toast(`${tSide.toUpperCase()} placed! (7% fee)`,'success'); loadPolls();
     });
     
     async function loadTrades() {
-        const c = document.getElementById('vtrades-container');
-        c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">Loading...</p>';
+        const c = document.getElementById('vtrades-container'); c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">Loading...</p>';
         try {
-            const snap = await db.collection('trades').where('userId', '==', user.uid).get();
-            const trades = [];
-            snap.forEach(d => trades.push({ id: d.id, ...d.data() }));
-            // Sort manually
-            trades.sort((a, b) => {
-                const aTime = a.createdAt?.toMillis() || 0;
-                const bTime = b.createdAt?.toMillis() || 0;
-                return bTime - aTime;
-            });
-            if (!trades.length) {
-                c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">No trades yet</p>';
-                return;
-            }
-            const pIds = [...new Set(trades.map(t => t.pollId))];
-            const pDocs = await Promise.all(pIds.map(id => db.collection('votePolls').doc(id).get()));
-            const polls = {};
-            pDocs.forEach(d => { if (d.exists) polls[d.id] = d.data(); });
+            const snap = await db.collection('trades').where('userId','==',user.uid).get();
+            const trades = []; snap.forEach(d => trades.push({ id: d.id, ...d.data() }));
+            trades.sort((a,b) => { const aTime = a.createdAt?.toMillis()||0; const bTime = b.createdAt?.toMillis()||0; return bTime - aTime; });
+            if(!trades.length) { c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">No trades yet</p>'; return; }
+            const pIds = [...new Set(trades.map(t => t.pollId))]; const pDocs = await Promise.all(pIds.map(id => db.collection('votePolls').doc(id).get()));
+            const polls = {}; pDocs.forEach(d => { if(d.exists) polls[d.id] = d.data(); });
             c.innerHTML = trades.map(t => {
-                const p = polls[t.pollId] || {};
-                const pr = calcPr(p);
+                const p = polls[t.pollId] || {}; const pr = calcPr(p);
                 const prof = t.side === 'buy' ? (pr.price - t.entryPrice) * (t.netAmount / t.entryPrice) : (t.entryPrice - pr.price) * (t.netAmount / t.entryPrice);
-                const isProf = prof > 0;
-                // ✅ safely uppercase
-                const sideDisplay = (t.side || '').toUpperCase();
-                return `<div class="vt-card ani-in">
-                    <div style="display:flex;justify-content:space-between;">
-                        <span style="font-size:11px;font-weight:700;">${p.title||'Unknown'}</span>
-                        <span style="font-size:9px;font-weight:900;color:${t.side==='buy'?'#10B981':'#EF4444'};">${sideDisplay}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;font-size:9px;margin-top:4px;color:#64748b;">
-                        <span>Entry: ${t.entryPrice?.toFixed(2)}</span>
-                        <span>Now: ${pr.price.toFixed(2)}</span>
-                        <span style="font-weight:700;color:${isProf?'#10B981':'#EF4444'};">${isProf?'+':''}${prof.toFixed(2)}</span>
-                    </div>
-                </div>`;
+                const isProf = prof > 0; const sideDisplay = (t.side||'').toUpperCase();
+                return `<div class="vt-card ani-in"><div style="display:flex;justify-content:space-between;"><span style="font-size:11px;font-weight:700;">${p.title||'Unknown'}</span><span style="font-size:9px;font-weight:900;color:${t.side==='buy'?'#10B981':'#EF4444'};">${sideDisplay}</span></div><div style="display:flex;justify-content:space-between;font-size:9px;margin-top:4px;color:#64748b;"><span>Entry: ${t.entryPrice?.toFixed(2)}</span><span>Now: ${pr.price.toFixed(2)}</span><span style="font-weight:700;color:${isProf?'#10B981':'#EF4444'};">${isProf?'+':''}${prof.toFixed(2)}</span></div></div>`;
             }).join('');
-        } catch (e) {
-            c.innerHTML = `<p style="color:red;text-align:center;">Error: ${e.message}</p>`;
-            console.error('loadTrades error:', e);
-        }
+        } catch(e) { c.innerHTML = `<p style="color:red;text-align:center;">Error: ${e.message}</p>`; console.error(e); }
     }
     
     document.getElementById('vp-create-btn').addEventListener('click', async () => {
         const t = document.getElementById('vp-title').value.trim(), d = document.getElementById('vp-desc').value.trim(), l = document.getElementById('vp-location').value.trim() || 'Global', dur = parseInt(document.getElementById('vp-duration').value);
-        if (!t) return toast('Enter title', 'error');
-        if (bal < 110) return toast('Need 110 Dh', 'error');
-        await db.collection('users').doc(user.uid).update({ balance: firebase.firestore.FieldValue.increment(-10) });
+        if(!t) return toast('Enter title','error');
+        if(stars < 110) return toast('Need 110 Dh STAR','error');
+        // ✅ Deduct fee from stars
+        await db.collection('users').doc(user.uid).update({ stars: firebase.firestore.FieldValue.increment(-10) });
         await db.collection('votePolls').add({ title: t, description: d, location: l, duration: dur, creatorId: user.uid, creatorName: user.displayName, buyAmount: 0, sellAmount: 0, buyVoters: [], sellVoters: [], totalCommission: 0, status: 'active', createdAt: firebase.firestore.FieldValue.serverTimestamp(), expireAt: new Date(Date.now() + dur * 86400000) });
-        bal -= 10; updateUI(); toast('Poll created!', 'success'); document.querySelector('.vote-subnav button[data-vtab="market"]').click(); ['vp-title','vp-desc','vp-location'].forEach(id => document.getElementById(id).value = '');
+        stars -= 10; bal = stars; updateUI(); toast('Poll created!','success'); document.querySelector('.vote-subnav button[data-vtab="market"]').click(); ['vp-title','vp-desc','vp-location'].forEach(id => document.getElementById(id).value = '');
     });
     
     // ========== SHOP ==========
     document.getElementById('shop-tab-buy').addEventListener('click', () => { document.getElementById('shop-buy-panel').classList.remove('hidden'); document.getElementById('shop-withdraw-panel').classList.add('hidden'); document.getElementById('shop-tab-buy').style.background='#fbbf24'; document.getElementById('shop-tab-buy').style.color='#1e293b'; document.getElementById('shop-tab-withdraw').style.background='transparent'; document.getElementById('shop-tab-withdraw').style.color='#94a3b8'; });
     document.getElementById('shop-tab-withdraw').addEventListener('click', () => { document.getElementById('shop-buy-panel').classList.add('hidden'); document.getElementById('shop-withdraw-panel').classList.remove('hidden'); document.getElementById('shop-tab-withdraw').style.background='#fbbf24'; document.getElementById('shop-tab-withdraw').style.color='#1e293b'; document.getElementById('shop-tab-buy').style.background='transparent'; document.getElementById('shop-tab-buy').style.color='#94a3b8'; updateWUI(); });
-    async function loadLTC() { const d = await db.collection('adminSettings').doc('ltc_wallet').get(); if (d.exists) document.getElementById('plat-ltc').innerText = d.data().address || 'Not configured'; }
+    async function loadLTC() { const d = await db.collection('adminSettings').doc('ltc_wallet').get(); if(d.exists) document.getElementById('plat-ltc').innerText = d.data().address || 'Not configured'; }
     document.getElementById('copy-ltc').addEventListener('click', () => { navigator.clipboard?.writeText(document.getElementById('plat-ltc').innerText); toast('Copied!'); });
-    document.querySelectorAll('.pkg-card').forEach(el => { el.addEventListener('click', function() { const a = parseInt(this.dataset.amt), p = parseFloat(this.dataset.price); const ex = cart.find(i => i.amt === a); if (ex) ex.qty++; else cart.push({ amt: a, price: p, qty: 1 }); rCart(); toast(`${a} STAR added!`); }); });
-    function rCart() { const c = document.getElementById('cart-items'); if (!cart.length) { c.innerHTML = '<p style="font-size:10px;color:#94a3b8;text-align:center;padding:8px;">Empty</p>'; document.getElementById('cart-total').innerText = '$0.00'; return; } let total = 0; c.innerHTML = cart.map((i, idx) => { const st = i.amt * i.qty * (i.price / i.amt); total += st; return `<div style="display:flex;justify-content:space-between;font-size:10px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span>${i.amt}STAR x${i.qty}</span><span style="color:#fbbf24;">$${st.toFixed(2)}</span><button onclick="rmCart(${idx})" style="background:none;border:none;color:#EF4444;cursor:pointer;">x</button></div>`; }).join(''); document.getElementById('cart-total').innerText = '$' + total.toFixed(2); }
+    document.querySelectorAll('.pkg-card').forEach(el => { el.addEventListener('click', function() { const a = parseInt(this.dataset.amt), p = parseFloat(this.dataset.price); const ex = cart.find(i => i.amt === a); if(ex) ex.qty++; else cart.push({ amt: a, price: p, qty: 1 }); rCart(); toast(`${a} STAR added!`); }); });
+    function rCart() { const c = document.getElementById('cart-items'); if(!cart.length) { c.innerHTML = '<p style="font-size:10px;color:#94a3b8;text-align:center;padding:8px;">Empty</p>'; document.getElementById('cart-total').innerText = '$0.00'; return; } let total = 0; c.innerHTML = cart.map((i, idx) => { const st = i.amt * i.qty * (i.price / i.amt); total += st; return `<div style="display:flex;justify-content:space-between;font-size:10px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span>${i.amt}STAR x${i.qty}</span><span style="color:#fbbf24;">$${st.toFixed(2)}</span><button onclick="rmCart(${idx})" style="background:none;border:none;color:#EF4444;cursor:pointer;">x</button></div>`; }).join(''); document.getElementById('cart-total').innerText = '$' + total.toFixed(2); }
     window.rmCart = function(i) { cart.splice(i, 1); rCart(); };
-    document.getElementById('checkout-btn').addEventListener('click', async () => { if (!cart.length) return toast('Cart empty', 'error'); const tx = document.getElementById('ltc-txid').value.trim(); if (!tx) return toast('Enter TxID', 'error'); let ts = 0, tu = 0; cart.forEach(i => { ts += i.amt * i.qty; tu += i.amt * i.qty * (i.price / i.amt); }); if (tu < 1) return toast('Min $1 USD', 'error'); await db.collection('buyRequests').add({ userId: user.uid, userEmail: user.email, amountStars: ts, amountUSD: tu, amountLTC: (tu/65).toFixed(6), txHash: tx, status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() }); toast('Submitted!', 'success'); cart = []; document.getElementById('ltc-txid').value = ''; rCart(); });
-    function updateWUI() { document.getElementById('w-bal').innerText = (stars || 0).toFixed(2); }
+    document.getElementById('checkout-btn').addEventListener('click', async () => { if(!cart.length) return toast('Cart empty','error'); const tx = document.getElementById('ltc-txid').value.trim(); if(!tx) return toast('Enter TxID','error'); let ts=0, tu=0; cart.forEach(i => { ts += i.amt * i.qty; tu += i.amt * i.qty * (i.price / i.amt); }); if(tu < 3) return toast('Min $3 USD','error'); await db.collection('buyRequests').add({ userId: user.uid, userEmail: user.email, amountStars: ts, amountUSD: tu, amountLTC: (tu/65).toFixed(6), txHash: tx, status:'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() }); toast('Submitted!','success'); cart = []; document.getElementById('ltc-txid').value = ''; rCart(); });
+    
+    // DIRECT DEPOSIT
+    document.getElementById('custom-star-amount').addEventListener('input', function() { const amt = parseInt(this.value) || 0; document.getElementById('custom-usd-display').textContent = `$${(amt*0.20).toFixed(2)}`; });
+    document.getElementById('direct-deposit-btn').addEventListener('click', async () => {
+        const starAmt = parseInt(document.getElementById('custom-star-amount').value);
+        const tx = document.getElementById('custom-ltc-txid').value.trim();
+        if(!starAmt || starAmt < 15) return toast('Min 15 STAR (~$3 USD)','error');
+        if(!tx) return toast('Enter LTC TxID','error');
+        const usd = starAmt * 0.20;
+        await db.collection('buyRequests').add({ userId: user.uid, userEmail: user.email, amountStars: starAmt, amountUSD: usd, amountLTC: (usd/65).toFixed(6), txHash: tx, status:'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        toast('Deposit request submitted!','success');
+        document.getElementById('custom-star-amount').value = '15'; document.getElementById('custom-ltc-txid').value = ''; document.getElementById('custom-usd-display').textContent = '$3.00';
+    });
+    
+    // LTC Calculator
+    let currentLtcPrice = 65;
+    async function fetchLtcPrice() { try { const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=litecoin&vs_currencies=usd'); const data = await res.json(); if(data && data.litecoin && data.litecoin.usd) { currentLtcPrice = data.litecoin.usd; document.getElementById('ltc-live-price').innerText = currentLtcPrice.toFixed(2); calculateLTC(); } } catch(e) { document.getElementById('ltc-live-price').innerText = '65.00'; } }
+    function calculateLTC() { const starAmt = parseFloat(document.getElementById('calc-star-amount').value) || 0; const usdValue = starAmt * 0.20; document.getElementById('calc-ltc-result').innerText = (usdValue / currentLtcPrice).toFixed(6); }
+    fetchLtcPrice();
+    
+    // Withdraw (fresh balance)
+    async function updateWUI() { if(!user) return; try { const freshDoc = await db.collection('users').doc(user.uid).get(); if(freshDoc.exists) { stars = freshDoc.data().stars || 0; bal = stars; user.stars = stars; } } catch(e) {} document.getElementById('w-bal').innerText = stars.toFixed(2); }
     document.getElementById('withdraw-btn').addEventListener('click', async () => {
         const addr = document.getElementById('w-ltc-addr').value.trim();
         const amt = parseInt(document.getElementById('w-amt').value);
-        if (!addr) return toast('Enter LTC address', 'error');
-        if (!amt || amt < 15) return toast('Min 15 STAR (~$3 USD)', 'error');
-        if (amt > (stars||0)) return toast('Insufficient stars', 'error');
-        await db.collection('transactions').add({ userId: user.uid, userEmail: user.email, type: 'withdraw', amountStars: amt, ltcAddress: addr, status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        stars -= amt; toast('Submitted!', 'success'); updateWUI();
-        document.getElementById('w-amt').value = ''; document.getElementById('w-ltc-addr').value = '';
+        if(!addr) return toast('Enter LTC address','error');
+        if(!amt || amt < 15) return toast('Min 15 STAR (~$3 USD)','error');
+        const freshDoc = await db.collection('users').doc(user.uid).get();
+        const currentStars = freshDoc.exists ? (freshDoc.data().stars || 0) : 0;
+        if(amt > currentStars) return toast('Insufficient stars','error');
+        await db.collection('users').doc(user.uid).update({ stars: firebase.firestore.FieldValue.increment(-amt) });
+        await db.collection('transactions').add({ userId: user.uid, userEmail: user.email, type:'withdraw', amountStars: amt, ltcAddress: addr, status:'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        stars = currentStars - amt; bal = stars; toast('Withdraw request submitted!','success');
+        updateWUI(); document.getElementById('w-amt').value = ''; document.getElementById('w-ltc-addr').value = '';
     });
     
     // ========== PROFILE ==========
     function openProf() { document.getElementById('prof-name').value = user?.displayName || ''; document.getElementById('prof-bio').value = user?.bio || ''; document.getElementById('prof-img').src = user?.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; document.getElementById('prof-ref').innerText = 'Referral: ' + (user?.referralCode || 'N/A'); document.getElementById('modal-profile').classList.remove('hidden'); }
-    document.getElementById('prof-save').addEventListener('click', async () => { const name = document.getElementById('prof-name').value.trim(); if (!name) return toast('Name required', 'error'); const upd = { displayName: name, bio: document.getElementById('prof-bio').value.trim() }; const file = document.getElementById('prof-photo').files[0]; if (file) { const ref = storage.ref(`avatars/${user.uid}`); await ref.put(file); upd.photoURL = await ref.getDownloadURL(); } await db.collection('users').doc(user.uid).update(upd); user.displayName = name; if (upd.photoURL) user.photoURL = upd.photoURL; updateUI(); closeM('modal-profile'); toast('Profile updated!'); });
-    document.getElementById('prof-photo').addEventListener('change', function(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = ev => document.getElementById('prof-img').src = ev.target.result; r.readAsDataURL(f); } });
+    document.getElementById('prof-save').addEventListener('click', async () => { const name = document.getElementById('prof-name').value.trim(); if(!name) return toast('Name required','error'); const upd = { displayName: name, bio: document.getElementById('prof-bio').value.trim() }; const file = document.getElementById('prof-photo').files[0]; if(file) { const ref = storage.ref(`avatars/${user.uid}`); await ref.put(file); upd.photoURL = await ref.getDownloadURL(); } await db.collection('users').doc(user.uid).update(upd); user.displayName = name; if(upd.photoURL) user.photoURL = upd.photoURL; updateUI(); closeM('modal-profile'); toast('Profile updated!'); });
+    document.getElementById('prof-photo').addEventListener('change', function(e) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = ev => document.getElementById('prof-img').src = ev.target.result; r.readAsDataURL(f); } });
     document.getElementById('prof-logout').addEventListener('click', () => { auth.signOut(); closeM('modal-profile'); });
     
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { ['modal-post','modal-vote','modal-profile','modal-create','modal-about'].forEach(id => closeM(id)); } });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') { ['modal-post','modal-vote','modal-profile','modal-create','modal-about'].forEach(id => closeM(id)); } });
 </script>
 </body>
 </html>
