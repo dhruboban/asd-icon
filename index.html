@@ -5,559 +5,1220 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ASD ICON • Premium Network</title>
-    
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js">
+    </script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
-            --green: #006633;
-            --red: #E31D2B;
-            --blue: #002266;
-            --gold: #fbbf24;
-            --cyan: #00d2ff;
-            --bg-dark: #0a0e27;
+            --bg: #1a1a1a;
+            --surface: #2d2d2d;
+            --surface-light: #3a3a3a;
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --accent: #FF9800;
+            --danger: #f44336;
+            --gold: #FFD700;
+            --cyan: #00BCD4;
+            --purple: #9C27B0;
+            --text: #E0E0E0;
+            --text-secondary: #BDBDBD;
+            --border: #404040;
+            --card-bg: #252525;
+            --input-bg: #333333;
             --header-h: 56px;
             --tabs-h: 40px;
             --bottom-h: 60px;
             --safe-b: env(safe-area-inset-bottom, 0px);
         }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        html, body {
-            height: 100%; width: 100%;
-            overflow: hidden;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #0a0a0a;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            -webkit-tap-highlight-color: transparent;
+        .light-mode {
+            --bg: #f5f5f5;
+            --surface: #ffffff;
+            --surface-light: #fafafa;
+            --primary: #006633;
+            --primary-dark: #004422;
+            --accent: #E31D2B;
+            --gold: #f59e0b;
+            --cyan: #0097a7;
+            --purple: #7B1FA2;
+            --text: #212121;
+            --text-secondary: #757575;
+            --border: #e0e0e0;
+            --card-bg: #ffffff;
+            --input-bg: #f5f5f5;
         }
-        
-        .app-wrapper {
-            width: 100%;
-            max-width: 480px;
-            height: 100vh; height: 100dvh;
-            margin: 0 auto;
-            display: flex; flex-direction: column;
-            background: #f8fafc;
-            position: relative; overflow: hidden;
-        }
-        
-        .hidden { display: none !important; }
-        
-        .header {
-            height: var(--header-h); min-height: var(--header-h);
-            padding: 0 14px; display: flex; align-items: center;
-            justify-content: space-between; background: #ffffff;
-            border-bottom: 1px solid #e2e8f0; flex-shrink: 0; z-index: 100;
-        }
-        .header-brand { display: flex; align-items: center; gap: 8px; }
-        .header-logo {
-            width: 34px; height: 34px;
-            background: linear-gradient(135deg, #002266, #003399);
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 16px; font-weight: 900;
-        }
-        .header-title { font-size: 17px; font-weight: 900; font-style: italic; color: #002266; }
-        .header-subtitle { font-size: 8px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
-        .header-user { display: flex; align-items: center; gap: 8px; }
-        .header-balance-box { text-align: right; }
-        .header-balance-label { font-size: 7px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
-        .header-balance-value { font-size: 14px; font-weight: 900; color: #006633; font-family: monospace; }
-        .header-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #e2e8f0; cursor: pointer; object-fit: cover; }
-        
-        .top-nav {
-            height: var(--tabs-h); min-height: var(--tabs-h);
-            display: flex; background: white; border-bottom: 1px solid #e2e8f0;
-            flex-shrink: 0; z-index: 99;
-        }
-        .top-nav-btn {
-            flex: 1; border: none; background: none; font-size: 11px;
-            font-weight: 700; color: #94a3b8; cursor: pointer; transition: all 0.2s;
-            position: relative; display: flex; align-items: center; justify-content: center; gap: 4px;
-        }
-        .top-nav-btn.active { color: #002266; }
-        .top-nav-btn.active::after {
-            content: ''; position: absolute; bottom: 0; left: 30%; right: 30%;
-            height: 3px; background: #002266; border-radius: 3px 3px 0 0;
-        }
-        
-        .content-area { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
-        .section-page { display: none; min-height: 100%; }
-        .section-page.active { display: block; }
-        
-        .bottom-nav {
-            height: var(--bottom-h); min-height: var(--bottom-h);
-            display: flex; align-items: center; justify-content: space-around;
-            background: white; border-top: 1px solid #e2e8f0;
-            flex-shrink: 0; z-index: 100; padding-bottom: var(--safe-b);
-        }
-        .bn-item {
-            display: flex; flex-direction: column; align-items: center; gap: 2px;
-            cursor: pointer; color: #94a3b8; font-size: 9px; font-weight: 700;
-            border: none; background: none; padding: 4px 10px; transition: all 0.2s; position: relative;
-        }
-        .bn-item.active { color: #006633; }
-        .bn-item i { font-size: 18px; }
-        
-        .btn { padding: 10px 18px; border: none; border-radius: 10px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-green { background: #006633; color: white; }
-        .btn-red { background: #E31D2B; color: white; }
-        .btn-blue { background: #002266; color: white; }
-        .btn-gold { background: #fbbf24; color: #1e293b; }
-        .btn-cyan { background: linear-gradient(135deg, #00d2ff, #0099cc); color: white; }
-        .btn-outline { background: white; border: 2px solid #e2e8f0; color: #1e293b; }
-        .btn-buy { background: #10B981; color: white; flex:1; padding:12px; border-radius:12px; font-weight:900; font-size:12px; }
-        .btn-sell { background: #EF4444; color: white; flex:1; padding:12px; border-radius:12px; font-weight:900; font-size:12px; }
-        
-        .input { width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; outline: none; background: #f8fafc; }
-        .input:focus { border-color: #006633; background: white; }
-        .input-dark { width: 100%; padding: 11px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; font-size: 13px; outline: none; }
-        .input-dark:focus { border-color: #fbbf24; }
-        
-        #toast-container { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 6px; pointer-events: none; width: 90%; max-width: 380px; }
-        .toast { padding: 10px 18px; border-radius: 10px; color: white; font-weight: 700; font-size: 12px; text-align: center; animation: slideDown 0.3s ease-out; pointer-events: auto; }
-        .toast-success { background: #10B981; }
-        .toast-error { background: #EF4444; }
-        .toast-info { background: #3B82F6; }
-        @keyframes slideDown { from { transform: translateY(-40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .ani-in { animation: fadeInUp 0.35s ease-out; }
-        
-        .card-white { background: white; border-radius: 16px; padding: 14px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
-        .card-dark { background: linear-gradient(135deg, rgba(20,20,50,0.95), rgba(15,15,40,0.95)); border-radius: 16px; padding: 14px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px; color: #e2e8f0; }
-        .badge { font-size: 8px; font-weight: 900; padding: 3px 8px; border-radius: 10px; text-transform: uppercase; }
-        .badge-active { background: #dcfce7; color: #166534; }
-        .badge-expired { background: #fee2e2; color: #991b1b; }
-        .badge-live { background: rgba(0,210,255,0.2); color: #00d2ff; }
-        
-        .vote-page { background: #ffffff; min-height: 100%; }
-        .vote-subnav { display: flex; background: #f8fafc; border-bottom: 1px solid #e2e8f0; position:sticky; top:0; z-index:40; }
-        .vote-subnav button { flex:1; padding:10px; border:none; background:none; font-size:11px; font-weight:700; color:#94a3b8; cursor:pointer; }
-        .vote-subnav button.active { color:#002266; background:white; border-bottom:2px solid #002266; }
-        .vote-panel { display:none; }
-        .vote-panel.active { display:block; }
-        .vt-card { background:white; border:1px solid #e2e8f0; border-radius:14px; padding:14px; margin-bottom:10px; }
-        .prog-bar { height:8px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden; display:flex; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html,body { height:100%; width:100%; overflow:hidden; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); position:fixed; top:0; left:0; right:0; bottom:0; -webkit-tap-highlight-color:transparent; transition:background 0.3s,color 0.3s; }
+        .app-wrapper { width:100%; max-width:480px; height:100vh; height:100dvh; margin:0 auto; display:flex; flex-direction:column; background:var(--bg); position:relative; overflow:hidden; transition:background 0.3s; }
+        .hidden { display:none !important; }
+        .header { height:var(--header-h); min-height:var(--header-h); padding:0 10px; display:flex; align-items:center; justify-content:space-between; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; z-index:100; transition:background 0.3s,border 0.3s; gap:6px; }
+        .header-logo { width:34px; height:34px; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; font-size:16px; font-weight:900; box-shadow:0 4px 15px rgba(0,0,0,0.3); flex-shrink:0; }
+        .header-title { font-size:14px; font-weight:900; color:var(--primary); line-height:1; }
+        .header-subtitle { font-size:7px; color:var(--text-secondary); font-weight:700; text-transform:uppercase; letter-spacing:2px; line-height:1; }
+        .balance-icon-wrap { display:flex; align-items:center; gap:5px; background:var(--surface-light); border-radius:20px; padding:5px 10px; cursor:pointer; border:1px solid var(--border); flex-shrink:0; transition:all 0.3s; }
+        .balance-icon-wrap .bal-icon { font-size:16px; color:var(--gold); }
+        .balance-icon-wrap .bal-val { font-size:12px; font-weight:900; color:var(--gold); font-family:monospace; }
+        .balance-icon-wrap .bal-label { font-size:7px; color:var(--text-secondary); font-weight:700; line-height:1; }
+        .header-right-group { display:flex; align-items:center; gap:4px; flex-shrink:0; }
+        .notification-bell { position:relative; cursor:pointer; padding:4px; }
+        .notification-bell i { font-size:18px; color:var(--text-secondary); }
+        .notification-badge { position:absolute; top:-2px; right:-4px; background:var(--danger); color:white; font-size:9px; font-weight:900; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; animation:pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
+        .ticker-wrap { width:100%; overflow:hidden; background:var(--surface-light); border-bottom:1px solid var(--border); padding:6px 0; transition:background 0.3s; }
+        .ticker { display:flex; animation:ticker 25s linear infinite; white-space:nowrap; }
+        .ticker-item { display:inline-flex; align-items:center; gap:6px; padding:0 16px; font-size:10px; font-weight:700; color:var(--text); }
+        .ticker-up { color:#4CAF50; }
+        .ticker-down { color:#f44336; }
+        @keyframes ticker { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+        .top-nav { height:var(--tabs-h); min-height:var(--tabs-h); display:flex; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; z-index:99; transition:background 0.3s; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+        .top-nav-btn { flex:1 0 auto; min-width:fit-content; padding:0 10px; border:none; background:none; font-size:10px; font-weight:700; color:var(--text-secondary); cursor:pointer; transition:all 0.2s; position:relative; display:flex; align-items:center; justify-content:center; gap:4px; white-space:nowrap; }
+        .top-nav-btn.active { color:var(--primary); }
+        .top-nav-btn.active::after { content:''; position:absolute; bottom:0; left:25%; right:25%; height:3px; background:var(--primary); border-radius:3px 3px 0 0; }
+        .vote-sub-tab,.trading-sub-tab { flex:1; padding:10px 8px; border:none; background:none; font-size:11px; font-weight:700; color:var(--text-secondary); cursor:pointer; transition:all 0.2s; position:relative; display:flex; align-items:center; justify-content:center; gap:4px; }
+        .vote-sub-tab.active,.trading-sub-tab.active { color:var(--primary); }
+        .vote-sub-tab.active::after,.trading-sub-tab.active::after { content:''; position:absolute; bottom:0; left:25%; right:25%; height:3px; background:var(--primary); border-radius:3px 3px 0 0; }
+        .content-area { flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+        .section-page { display:none; min-height:100%; }
+        .section-page.active { display:block; }
+        .bottom-nav { height:var(--bottom-h); min-height:var(--bottom-h); display:flex; align-items:center; justify-content:space-around; background:var(--surface); border-top:1px solid var(--border); flex-shrink:0; z-index:100; padding-bottom:var(--safe-b); transition:background 0.3s; overflow-x:auto; }
+        .bn-item { display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; color:var(--text-secondary); font-size:8px; font-weight:700; border:none; background:none; padding:4px 8px; transition:all 0.2s; position:relative; white-space:nowrap; flex-shrink:0; }
+        .bn-item.active { color:var(--primary); }
+        .bn-item i { font-size:17px; }
+        .btn { padding:10px 18px; border:none; border-radius:12px; font-weight:700; font-size:12px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:6px; }
+        .btn:active { transform:scale(0.97); }
+        .btn-primary { background:var(--primary); color:white; }
+        .btn-danger { background:var(--danger); color:white; }
+        .btn-accent { background:var(--accent); color:white; }
+        .btn-gold { background:var(--gold); color:#1a1a1a; font-weight:900; }
+        .btn-purple { background:var(--purple); color:white; font-weight:900; }
+        .btn-outline { background:transparent; border:2px solid var(--border); color:var(--text); }
+        .input { width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:12px; font-size:13px; outline:none; background:var(--input-bg); color:var(--text); transition:all 0.3s; }
+        .input:focus { border-color:var(--primary); }
+        .input-dark { width:100%; padding:12px 16px; background:var(--input-bg); border:1px solid var(--border); border-radius:12px; color:var(--text); font-size:13px; outline:none; }
+        .input-dark:focus { border-color:var(--gold); }
+        .card { background:var(--card-bg); border-radius:16px; padding:16px; border:1px solid var(--border); margin-bottom:10px; transition:all 0.3s; }
+        .card-dark { background:var(--surface); border-radius:16px; padding:16px; border:1px solid var(--border); margin-bottom:10px; }
+        .card-glow { background:var(--surface); border-radius:16px; padding:16px; border:2px solid var(--gold); margin-bottom:10px; box-shadow:0 0 20px rgba(255,215,0,0.15); animation:glowPulse 2s ease-in-out infinite; }
+        @keyframes glowPulse { 0%,100%{box-shadow:0 0 20px rgba(255,215,0,0.15);} 50%{box-shadow:0 0 35px rgba(255,215,0,0.3);} }
+        #toast-container { position:fixed; top:12px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:6px; pointer-events:none; width:90%; max-width:380px; }
+        .toast { padding:12px 20px; border-radius:12px; color:white; font-weight:700; font-size:12px; text-align:center; animation:slideDown 0.3s ease-out; pointer-events:auto; }
+        .toast-success { background:var(--primary); }
+        .toast-error { background:var(--danger); }
+        .toast-info { background:var(--cyan); }
+        @keyframes slideDown { from{transform:translateY(-40px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+        @keyframes fadeInUp { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+        .ani-in { animation:fadeInUp 0.35s ease-out; }
+        .badge { font-size:9px; font-weight:900; padding:4px 10px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; }
+        .badge-primary { background:rgba(76,175,80,0.2); color:var(--primary); }
+        .badge-danger { background:rgba(244,67,54,0.2); color:var(--danger); }
+        .badge-gold { background:rgba(255,215,0,0.2); color:var(--gold); }
+        .badge-purple { background:rgba(156,39,176,0.2); color:var(--purple); }
+        .badge-cyan { background:rgba(0,188,212,0.2); color:var(--cyan); }
+        .badge-info { background:rgba(0,188,212,0.2); color:var(--cyan); }
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:2000; display:flex; align-items:center; justify-content:center; padding:20px; }
+        .modal-box { background:var(--surface); border-radius:24px; padding:24px; width:100%; max-width:380px; max-height:85vh; overflow-y:auto; animation:fadeInUp 0.3s ease-out; border:1px solid var(--border); }
+        .modal-close { background:none; border:none; font-size:24px; color:var(--text-secondary); cursor:pointer; }
+        .vt-card { background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:10px; transition:all 0.3s; }
+        .prog-bar { height:10px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden; display:flex; }
         .prog-buy { background:linear-gradient(90deg,#00c853,#69f0ae); transition:width 0.5s; }
         .prog-sell { background:linear-gradient(90deg,#ff1744,#ff5252); transition:width 0.5s; }
-        .price-box { display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); border-radius:10px; padding:10px 12px; margin:8px 0; }
-        .price-num { font-size:22px; font-weight:900; font-family:monospace; }
-        
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); z-index:2000; display:flex; align-items:center; justify-content:center; padding:20px; }
-        .modal-box { background:white; border-radius:20px; padding:20px; width:100%; max-width:360px; max-height:80vh; overflow-y:auto; animation:fadeInUp 0.3s ease-out; }
-        .modal-close { background:none; border:none; font-size:24px; color:#94a3b8; cursor:pointer; }
-        
-        .shop-bg { background:linear-gradient(135deg,#0f172a,#1e293b); min-height:100%; color:white; padding:16px; }
-        
-        .direct-deposit-card {
-            background: linear-gradient(135deg, rgba(30,30,60,0.95), rgba(20,20,50,0.95));
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 14px;
-            margin-bottom: 10px;
-            color: #e2e8f0;
-        }
+        .leaderboard-item { display:flex; align-items:center; gap:12px; padding:12px; background:var(--surface); border-radius:12px; margin-bottom:8px; border:1px solid var(--border); }
+        .rank-badge { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px; }
+        .rank-1 { background:linear-gradient(135deg,#FFD700,#FFA000); color:#1a1a1a; }
+        .rank-2 { background:linear-gradient(135deg,#C0C0C0,#9E9E9E); color:#1a1a1a; }
+        .rank-3 { background:linear-gradient(135deg,#CD7F32,#8D6E63); color:white; }
+        .rank-other { background:var(--surface-light); color:var(--text-secondary); }
+        .shop-bg { background:var(--surface); min-height:100%; color:var(--text); padding:16px; border-radius:20px 20px 0 0; }
+        .mini-chart { width:100%; height:80px; background:var(--surface-light); border-radius:12px; overflow:hidden; margin:8px 0; display:flex; align-items:flex-end; gap:3px; padding:4px; }
+        .chart-bar { display:inline-block; width:8px; background:var(--primary); border-radius:4px 4px 0 0; transition:height 0.5s; animation:grow 0.5s ease-out; flex-shrink:0; }
+        @keyframes grow { from{height:0;} }
+        .countdown-timer { font-family:monospace; font-weight:900; font-size:18px; color:var(--accent); text-align:center; padding:8px; background:rgba(255,152,0,0.1); border-radius:10px; letter-spacing:1px; }
+        .tournament-banner { background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460); border:2px solid var(--gold); border-radius:16px; padding:16px; margin:10px 12px; position:relative; overflow:hidden; cursor:pointer; animation:bannerShimmer 3s ease-in-out infinite; }
+        @keyframes bannerShimmer { 0%,100%{box-shadow:0 0 20px rgba(255,215,0,0.2);} 50%{box-shadow:0 0 40px rgba(255,215,0,0.4);} }
+        .tournament-banner::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle,rgba(255,215,0,0.1) 0%,transparent 70%); animation:rotateGlow 6s linear infinite; }
+        @keyframes rotateGlow { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+        .participant-chip { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; background:var(--surface-light); border-radius:20px; font-size:10px; font-weight:600; margin:2px; color:var(--text); }
+        .history-item { display:flex; align-items:center; gap:10px; padding:12px; background:var(--surface); border-radius:12px; margin-bottom:8px; border:1px solid var(--border); font-size:10px; }
+        .history-icon { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+        .hist-deposit { background:rgba(76,175,80,0.2); color:#4CAF50; }
+        .hist-withdraw { background:rgba(244,67,54,0.2); color:#f44336; }
+        .hist-tournament { background:rgba(255,215,0,0.2); color:#FFD700; }
+        .hist-trade { background:rgba(0,188,212,0.2); color:#00BCD4; }
     </style>
 </head>
 <body>
-<div id="toast-container"></div>
-
-<!-- AUTH SCREEN -->
-<div id="auth-screen" class="app-wrapper" style="align-items:center;justify-content:center;background:linear-gradient(135deg,#006633,#004422);">
-    <div style="background:white;border-radius:24px;padding:24px;width:90%;max-width:340px;animation:fadeInUp 0.5s ease-out;">
-        <div style="text-align:center;margin-bottom:18px;">
-            <div style="width:50px;height:50px;background:linear-gradient(135deg,#002266,#003399);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:white;font-size:22px;font-weight:900;">A</div>
-            <h1 style="font-size:22px;font-weight:900;color:#1e293b;">ASD ICON</h1>
-            <p style="font-size:10px;color:#94a3b8;letter-spacing:2px;text-transform:uppercase;">Premium Network</p>
-        </div>
-        <div id="login-form" style="display:flex;flex-direction:column;gap:10px;">
-            <input type="email" id="login-email" placeholder="Email Address" class="input">
-            <input type="password" id="login-password" placeholder="Password" class="input">
-            <button id="login-btn" class="btn btn-red" style="width:100%;padding:13px;">Sign In</button>
-            <p style="font-size:10px;text-align:center;color:#94a3b8;">
-                <span id="show-register" style="color:#3B82F6;font-weight:700;cursor:pointer;">Create Account</span> |
-                <span id="forgot-pass" style="color:#3B82F6;font-weight:700;cursor:pointer;">Forgot Password?</span>
-            </p>
-        </div>
-        <div id="register-form" class="hidden" style="display:flex;flex-direction:column;gap:10px;">
-            <input type="email" id="reg-email" placeholder="Email Address" class="input">
-            <input type="password" id="reg-password" placeholder="Password (min 6 chars)" class="input">
-            <input type="password" id="reg-confirm" placeholder="Confirm Password" class="input">
-            <input type="text" id="reg-referral" placeholder="Referral Code (optional)" class="input">
-            <button id="register-btn" class="btn btn-green" style="width:100%;padding:13px;">Create Account</button>
-            <p style="font-size:10px;text-align:center;color:#94a3b8;">
-                <span id="show-login" style="color:#3B82F6;font-weight:700;cursor:pointer;">Back to Login</span>
-            </p>
+    <div id="toast-container"></div>
+    <!-- AUTH SCREEN -->
+    <div id="auth-screen" class="app-wrapper" style="align-items:center;justify-content:center;background:linear-gradient(180deg, #1a1a1a 0%, #2d1b00 50%, #1a1a1a 100%);">
+        <div style="padding:24px;width:90%;max-width:360px;">
+            <div style="text-align:center;margin-bottom:32px;">
+                <div style="width:80px;height:80px;background:linear-gradient(135deg, #4CAF50, #2E7D32);border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:white;font-size:36px;font-weight:900;box-shadow:0 8px 32px rgba(76,175,80,0.3);">A</div>
+                <h1 style="font-size:28px;font-weight:900;color:#E0E0E0;letter-spacing:-1px;">ASD ICON</h1>
+                <p style="font-size:11px;color:#9E9E9E;letter-spacing:3px;text-transform:uppercase;margin-top:4px;">Premium Network</p>
+            </div>
+            <div id="login-form" style="display:flex;flex-direction:column;gap:12px;">
+                <div style="background:#2d2d2d;border-radius:16px;padding:4px;border:1px solid #404040;">
+                    <div style="display:flex;">
+                        <button id="tab-login" style="flex:1;padding:12px;border:none;background:#4CAF50;color:white;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;">Sign In</button>
+                        <button id="tab-register" style="flex:1;padding:12px;border:none;background:transparent;color:#9E9E9E;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;">Register</button>
+                    </div>
+                </div>
+                <div style="background:#2d2d2d;border-radius:16px;padding:20px;border:1px solid #404040;">
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div style="position:relative;"><i class="fas fa-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#757575;"></i><input type="email" id="login-email" placeholder="Email Address" style="width:100%;padding:14px 14px 14px 42px;background:#1a1a1a;border:1px solid #404040;border-radius:12px;font-size:14px;color:#E0E0E0;outline:none;"></div>
+                        <div style="position:relative;"><i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#757575;"></i><input type="password" id="login-password" placeholder="Password" style="width:100%;padding:14px 14px 14px 42px;background:#1a1a1a;border:1px solid #404040;border-radius:12px;font-size:14px;color:#E0E0E0;outline:none;"></div>
+                        <button id="login-btn" style="width:100%;padding:14px;background:linear-gradient(135deg,#4CAF50,#2E7D32);color:white;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 15px rgba(76,175,80,0.3);">Sign In</button>
+                    </div>
+                </div>
+                <p style="font-size:11px;text-align:center;color:#757575;"><span id="forgot-pass" style="color:#FF9800;font-weight:700;cursor:pointer;">Forgot Password?</span></p>
+            </div>
+            <div id="register-form" class="hidden" style="display:flex;flex-direction:column;gap:12px;">
+                <div style="background:#2d2d2d;border-radius:16px;padding:4px;border:1px solid #404040;">
+                    <div style="display:flex;">
+                        <button id="tab-login2" style="flex:1;padding:12px;border:none;background:transparent;color:#9E9E9E;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;">Sign In</button>
+                        <button id="tab-register2" style="flex:1;padding:12px;border:none;background:#4CAF50;color:white;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;">Register</button>
+                    </div>
+                </div>
+                <div style="background:#2d2d2d;border-radius:16px;padding:20px;border:1px solid #404040;">
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div style="position:relative;"><i class="fas fa-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#757575;"></i><input type="email" id="reg-email" placeholder="Email Address" style="width:100%;padding:14px 14px 14px 42px;background:#1a1a1a;border:1px solid #404040;border-radius:12px;font-size:14px;color:#E0E0E0;outline:none;"></div>
+                        <div style="position:relative;"><i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#757575;"></i><input type="password" id="reg-password" placeholder="Password (min 6 chars)" style="width:100%;padding:14px 14px 14px 42px;background:#1a1a1a;border:1px solid #404040;border-radius:12px;font-size:14px;color:#E0E0E0;outline:none;"></div>
+                        <div style="position:relative;"><i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#757575;"></i><input type="password" id="reg-confirm" placeholder="Confirm Password" style="width:100%;padding:14px 14px 14px 42px;background:#1a1a1a;border:1px solid #404040;border-radius:12px;font-size:14px;color:#E0E0E0;outline:none;"></div>
+                        <div style="position:relative;"><i class="fas fa-gift" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#757575;"></i><input type="text" id="reg-referral" placeholder="Referral Code (optional)" style="width:100%;padding:14px 14px 14px 42px;background:#1a1a1a;border:1px solid #404040;border-radius:12px;font-size:14px;color:#E0E0E0;outline:none;"></div>
+                        <button id="register-btn" style="width:100%;padding:14px;background:linear-gradient(135deg,#4CAF50,#2E7D32);color:white;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 15px rgba(76,175,80,0.3);">Create Account</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- MAIN APP -->
-<div id="main-app" class="app-wrapper hidden">
-    <header class="header">
-        <div class="header-brand">
-            <div class="header-logo">A</div>
-            <div><div class="header-title">ASD ICON</div><div class="header-subtitle">Premium Network</div></div>
-        </div>
-        <div class="header-user" onclick="openProfile()" style="cursor:pointer;">
-            <div class="header-balance-box">
-                <div class="header-balance-label">Balance</div>
-                <div class="header-balance-value" id="hdr-balance">0.00</div>
-            </div>
-            <img id="hdr-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="header-avatar" alt="avatar">
-        </div>
-    </header>
-    
-    <nav class="top-nav">
-        <button class="top-nav-btn active" data-page="business">📋 Business</button>
-        <button class="top-nav-btn" data-page="vote">📊 Vote</button>
-        <button class="top-nav-btn" data-page="shop">🛒 Shop</button>
-    </nav>
-    
-    <div class="content-area" id="main-content">
-        <div id="page-business" class="section-page active">
-            <div style="padding:8px 12px;">
-                <div style="position:relative;"><i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;"></i><input type="text" id="biz-search" placeholder="Search business posts..." class="input" style="padding-left:34px;font-size:12px;"></div>
-            </div>
-            <div id="posts-container" style="padding:4px 12px 80px;"></div>
-            <button id="fab-create" style="position:fixed;bottom:85px;right:20px;width:48px;height:48px;background:#002266;border:none;border-radius:50%;color:white;font-size:20px;cursor:pointer;z-index:50;box-shadow:0 6px 20px rgba(0,0,0,0.3);">+</button>
-        </div>
-        
-        <div id="page-vote" class="section-page">
-            <div class="vote-page">
-                <div class="vote-subnav">
-                    <button class="active" data-vtab="market">Market</button>
-                    <button data-vtab="trades">My Trades</button>
-                    <button data-vtab="create">Create Poll</button>
+    <!-- MAIN APP -->
+    <div id="main-app" class="app-wrapper hidden">
+        <!-- HEADER -->
+        <header class="header">
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                <div class="header-logo">A</div>
+                <div>
+                    <div class="header-title">ASD ICON</div>
+                    <div class="header-subtitle">Premium Network</div>
                 </div>
-                <div style="display:flex;justify-content:space-between;padding:6px 12px;font-size:9px;font-weight:700;background:#f1f5f9;color:#64748b;">
-                    <span>Volume: <span id="vt-vol" style="color:#002266;">0</span></span>
-                    <span>Active: <span id="vt-active" style="color:#006633;">0</span></span>
-                    <span>Balance: <span id="vt-bal" style="color:#006633;">0</span></span>
+            </div>
+            <div class="header-right-group">
+                <div class="balance-icon-wrap" onclick="openWalletDetail()" title="Tap for wallet details">
+                    <i class="fas fa-wallet bal-icon"></i>
+                    <div>
+                        <div class="bal-label">STAR</div>
+                        <div class="bal-val" id="hdr-balance-icon">0.00</div>
+                    </div>
                 </div>
-                <div class="vote-content-area" style="padding:12px;">
-                    <div id="vpanel-market" class="vote-panel active"><div id="vpolls-container"></div></div>
-                    <div id="vpanel-trades" class="vote-panel"><div id="vtrades-container"></div></div>
-                    <div id="vpanel-create" class="vote-panel">
-                        <div class="vt-card">
-                            <h4 style="font-size:15px;font-weight:900;color:#002266;margin-bottom:10px;">Create Trading Poll</h4>
-                            <div style="display:flex;flex-direction:column;gap:8px;">
-                                <input type="text" id="vp-title" placeholder="Poll Title" class="input">
-                                <textarea id="vp-desc" rows="2" placeholder="Description..." class="input"></textarea>
-                                <input type="text" id="vp-location" placeholder="Location (e.g. Global)" class="input">
-                                <select id="vp-duration" class="input">
-                                    <option value="1">1 Day</option><option value="3">3 Days</option><option value="7">7 Days</option><option value="30">30 Days</option>
-                                </select>
-                                <div style="background:#fef3c7;padding:8px;border-radius:8px;text-align:center;"><p style="font-size:10px;font-weight:700;color:#92400e;">Fee: 10 Dh STAR | Min Balance: 100 Dh STAR</p></div>
-                                <button id="vp-create-btn" class="btn btn-blue" style="width:100%;">Create Poll (10 Dh STAR)</button>
+                <div class="balance-icon-wrap" style="border-color:rgba(255,215,0,0.4);" onclick="openWalletDetail()" title="Tap for wallet details">
+                    <i class="fas fa-coins bal-icon" style="color:#FFD700;"></i>
+                    <div>
+                        <div class="bal-label" style="color:#FFD700;">COIN</div>
+                        <div class="bal-val" id="hdr-coin-icon" style="color:#FFD700;">0</div>
+                    </div>
+                </div>
+                <div class="notification-bell" onclick="openNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notif-badge" style="display:none;">0</span>
+                </div>
+                <button onclick="toggleTheme()" style="background:none;border:none;color:var(--text-secondary);font-size:16px;cursor:pointer;padding:2px;"><i class="fas fa-moon" id="theme-icon"></i></button>
+            </div>
+        </header>
+
+        <!-- TOP NAV -->
+        <nav class="top-nav" id="main-top-nav">
+            <button class="top-nav-btn active" data-page="business">📋 Business</button>
+            <button class="top-nav-btn" data-page="trading">📈 Trading</button>
+            <button class="top-nav-btn" data-page="vote">📊 Vote</button>
+            <button class="top-nav-btn" data-page="shop">🛒 Shop</button>
+        </nav>
+
+        <!-- CONTENT -->
+        <div class="content-area" id="main-content">
+            <!-- BUSINESS PAGE -->
+            <div id="page-business" class="section-page active">
+                <div class="ticker-wrap">
+                    <div class="ticker" id="market-ticker">
+                        <span class="ticker-item">📈 BTC <span class="ticker-up">+2.4%</span></span>
+                        <span class="ticker-item">📉 ETH <span class="ticker-down">-1.2%</span></span>
+                        <span class="ticker-item">📈 LTC <span class="ticker-up">+5.7%</span></span>
+                        <span class="ticker-item">📈 SOL <span class="ticker-up">+3.1%</span></span>
+                    </div>
+                </div>
+                <div class="tournament-banner" id="tournament-banner" onclick="openTournamentDetail()" style="display:none;">
+                    <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;">
+                        <div>
+                            <p style="font-size:9px;color:var(--gold);font-weight:700;text-transform:uppercase;">🏆 Weekly Tournament</p>
+                            <p style="font-size:16px;font-weight:900;color:white;" id="t-banner-title">Loading...</p>
+                            <p style="font-size:11px;color:var(--gold);">Prize: <span id="t-banner-prize">5000</span> COIN</p>
+                        </div>
+                        <div style="text-align:right;">
+                            <p style="font-size:9px;color:var(--text-secondary);">Ends in</p>
+                            <p class="countdown-timer" id="t-banner-countdown" style="font-size:14px;">--:--:--</p>
+                            <span class="badge badge-gold" id="t-banner-entry">FREE ENTRY</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding:8px 12px;">
+                    <div style="position:relative;"><i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-secondary);"></i><input type="text" id="biz-search" placeholder="Search business posts..." class="input" style="padding-left:34px;"></div>
+                </div>
+                <div id="posts-container" style="padding:4px 12px 80px;"></div>
+                <button onclick="openLeaderboard()" style="position:fixed;bottom:155px;right:20px;width:48px;height:48px;background:var(--accent);border:none;border-radius:50%;color:white;font-size:18px;cursor:pointer;z-index:50;box-shadow:0 6px 20px rgba(0,0,0,0.4);">🏆</button>
+                <button id="fab-create" style="position:fixed;bottom:85px;right:20px;width:48px;height:48px;background:var(--primary);border:none;border-radius:50%;color:white;font-size:20px;cursor:pointer;z-index:50;box-shadow:0 6px 20px rgba(0,0,0,0.4);">+</button>
+            </div>
+
+            <!-- TRADING PAGE -->
+            <div id="page-trading" class="section-page">
+                <div style="background:var(--bg);min-height:100%;">
+                    <div style="display:flex;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:40;">
+                        <button class="trading-sub-tab active" data-ttab="overview">📊 Overview</button>
+                        <button class="trading-sub-tab" data-ttab="tournaments">🏆 Tournaments</button>
+                        <button class="trading-sub-tab" data-ttab="history">📜 History</button>
+                    </div>
+                    <div style="padding:12px;">
+                        <div id="tpanel-overview" class="trading-panel">
+                            <div class="card-dark" style="text-align:center;">
+                                <h4 style="font-weight:900;color:var(--gold);margin-bottom:8px;">📊 Live Market Sentiment</h4>
+                                <div style="display:flex;justify-content:space-around;gap:8px;">
+                                    <div style="flex:1;background:rgba(76,175,80,0.1);border-radius:12px;padding:12px;"><p style="font-size:10px;color:#4CAF50;">🟢 Bullish</p><p style="font-size:20px;font-weight:900;color:#4CAF50;" id="bullish-pct">--%</p></div>
+                                    <div style="flex:1;background:rgba(244,67,54,0.1);border-radius:12px;padding:12px;"><p style="font-size:10px;color:#f44336;">🔴 Bearish</p><p style="font-size:20px;font-weight:900;color:#f44336;" id="bearish-pct">--%</p></div>
+                                </div>
+                                <div class="prog-bar" style="margin-top:8px;"><div class="prog-buy" id="t-overview-buy-bar" style="width:50%;"></div><div class="prog-sell" id="t-overview-sell-bar" style="width:50%;"></div></div>
+                                <p style="font-size:9px;color:var(--text-secondary);margin-top:4px;">Based on all active polls</p>
+                            </div>
+                            <div class="card-dark" onclick="switchTradingTab('tournaments')" style="cursor:pointer;">
+                                <h5 style="font-weight:900;color:var(--purple);margin-bottom:6px;">🏆 Active Tournaments</h5>
+                                <div id="t-active-tournaments-summary"><p style="font-size:11px;color:var(--text-secondary);">Loading...</p></div>
+                                <button class="btn btn-purple" style="width:100%;margin-top:8px;font-size:11px;">View All Tournaments →</button>
+                            </div>
+                            <div class="card-dark">
+                                <h5 style="font-weight:900;color:var(--cyan);margin-bottom:6px;">⚡ Quick Trade</h5>
+                                <p style="font-size:10px;color:var(--text-secondary);margin-bottom:8px;">Jump to active voting polls to start trading</p>
+                                <button class="btn btn-primary" style="width:100%;" onclick="goPage('vote');setTimeout(()=>document.querySelector('[data-vtab=market]')?.click(),300);">Go to Vote Market →</button>
+                            </div>
+                        </div>
+                        <div id="tpanel-tournaments" class="trading-panel hidden">
+                            <div id="tournaments-list-container"><p style="text-align:center;color:var(--text-secondary);padding:20px;">Loading tournaments...</p></div>
+                        </div>
+                        <div id="tpanel-history" class="trading-panel hidden">
+                            <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+                                <button class="btn btn-outline history-filter-btn active" data-hfilter="all" style="font-size:10px;padding:6px 12px;">All</button>
+                                <button class="btn btn-outline history-filter-btn" data-hfilter="deposit" style="font-size:10px;padding:6px 12px;">💰 DP</button>
+                                <button class="btn btn-outline history-filter-btn" data-hfilter="withdraw" style="font-size:10px;padding:6px 12px;">💸 Withdraw</button>
+                                <button class="btn btn-outline history-filter-btn" data-hfilter="tournament" style="font-size:10px;padding:6px 12px;">🏆 Tournament</button>
+                                <button class="btn btn-outline history-filter-btn" data-hfilter="trade" style="font-size:10px;padding:6px 12px;">📊 Trade</button>
+                            </div>
+                            <div id="history-list-container"><p style="text-align:center;color:var(--text-secondary);padding:20px;">Loading history...</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOTE PAGE -->
+            <div id="page-vote" class="section-page">
+                <div style="background:var(--bg);min-height:100%;">
+                    <div style="display:flex;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:40;">
+                        <button class="vote-sub-tab active" data-vtab="market">Market</button>
+                        <button class="vote-sub-tab" data-vtab="trades">My Trades</button>
+                        <button class="vote-sub-tab" data-vtab="create">Create</button>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 12px;font-size:10px;font-weight:700;background:var(--surface-light);color:var(--text-secondary);"><span>Volume: <span id="vt-vol" style="color:var(--primary);">0</span></span><span>Active: <span id="vt-active" style="color:var(--cyan);">0</span></span><span>Balance: <span id="vt-bal" style="color:var(--primary);">0</span></span></div>
+                    <div style="padding:12px;">
+                        <div id="vpanel-market" class="vote-panel"><div id="vpolls-container"></div></div>
+                        <div id="vpanel-trades" class="vote-panel hidden"><div id="vtrades-container"></div></div>
+                        <div id="vpanel-create" class="vote-panel hidden">
+                            <div class="card-dark">
+                                <h4 style="font-size:15px;font-weight:900;color:var(--primary);margin-bottom:10px;">Create Trading Poll</h4>
+                                <div style="display:flex;flex-direction:column;gap:8px;"><input type="text" id="vp-title" placeholder="Poll Title" class="input-dark"><textarea id="vp-desc" rows="2" placeholder="Description..." class="input-dark"></textarea><input type="text" id="vp-location" placeholder="Location" class="input-dark" value="Global"><select id="vp-duration" class="input-dark"><option value="1">1 Day</option><option value="3">3 Days</option><option value="7">7 Days</option><option value="30">30 Days</option></select><div style="background:rgba(255,152,0,0.1);padding:8px;border-radius:8px;text-align:center;"><p style="font-size:10px;font-weight:700;color:var(--accent);">Fee: 10 Dh STAR | Min Balance: 100 Dh STAR</p></div><button id="vp-create-btn" class="btn btn-primary" style="width:100%;">Create Poll (10 Dh STAR)</button></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div id="page-shop" class="section-page">
-            <div class="shop-bg">
-                <div style="display:flex;background:rgba(255,255,255,0.05);border-radius:20px;padding:3px;margin-bottom:14px;">
-                    <button id="shop-tab-buy" style="flex:1;padding:8px;border:none;border-radius:18px;font-size:11px;font-weight:700;cursor:pointer;background:#fbbf24;color:#1e293b;">Buy Coins</button>
-                    <button id="shop-tab-withdraw" style="flex:1;padding:8px;border:none;border-radius:18px;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:#94a3b8;">Withdraw</button>
-                </div>
-                <div id="shop-buy-panel">
-                    <div style="text-align:center;margin-bottom:12px;"><h2 style="font-size:20px;font-weight:900;"><span style="color:#fbbf24;">STAR</span> SHOP</h2><p style="font-size:10px;color:#94a3b8;">Buy with LTC • Min $3 USD</p></div>
-                    <div class="card-dark"><span class="badge badge-live">LTC</span><span style="font-size:10px;color:#94a3b8;margin-left:6px;">Platform Address</span><div style="background:rgba(0,0,0,0.3);padding:8px;border-radius:8px;margin-top:6px;"><p id="plat-ltc" style="font-size:10px;font-family:monospace;color:#fbbf24;word-break:break-all;">Loading...</p></div><button id="copy-ltc" style="font-size:9px;color:#94a3b8;background:none;border:none;cursor:pointer;margin-top:4px;">Copy Address</button></div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;">
-                        <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="15" data-price="3"><p style="font-size:15px;font-weight:900;color:#fbbf24;">15 STAR</p><p style="font-size:9px;color:#94a3b8;">Min • $3</p></div>
-                        <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="100" data-price="20"><p style="font-size:15px;font-weight:900;color:#fbbf24;">100 STAR</p><p style="font-size:9px;color:#94a3b8;">$20</p></div>
-                        <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="500" data-price="100"><p style="font-size:15px;font-weight:900;color:#fbbf24;">500 STAR</p><p style="font-size:9px;color:#94a3b8;">Starter • $100</p></div>
-                        <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="2000" data-price="400"><p style="font-size:15px;font-weight:900;color:#fbbf24;">2K STAR</p><p style="font-size:9px;color:#94a3b8;">Popular • $400</p></div>
-                        <div class="card-dark pkg-card" style="cursor:pointer;" data-amt="5000" data-price="1000"><p style="font-size:15px;font-weight:900;color:#fbbf24;">5K STAR</p><p style="font-size:9px;color:#94a3b8;">Premium • $1K</p></div>
+
+            <!-- SHOP PAGE -->
+            <div id="page-shop" class="section-page">
+                <div class="shop-bg">
+                    <div style="display:flex;background:var(--surface-light);border-radius:24px;padding:4px;margin-bottom:16px;">
+                        <button id="shop-tab-buy" style="flex:1;padding:10px;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;background:var(--primary);color:white;">Buy Coins</button>
+                        <button id="shop-tab-withdraw" style="flex:1;padding:10px;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--text-secondary);">Withdraw</button>
                     </div>
-                    <div class="card-dark">
-                        <h5 style="font-size:12px;font-weight:900;margin-bottom:6px;">Cart</h5><div id="cart-items" style="min-height:20px;"></div>
-                        <div style="border-top:1px solid rgba(255,255,255,0.1);margin:6px 0;"></div>
-                        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:10px;color:#94a3b8;">Total:</span><span id="cart-total" style="font-size:16px;font-weight:900;color:#10B981;">$0.00</span></div>
-                        <input type="text" id="ltc-txid" placeholder="LTC TxID" class="input-dark" style="margin-bottom:6px;font-size:11px;">
-                        <button id="checkout-btn" class="btn btn-gold" style="width:100%;">Submit Buy Request</button>
-                        <p style="font-size:8px;color:#64748b;text-align:center;margin-top:4px;">Admin approval required</p>
-                    </div>
-                    <!-- DIRECT DEPOSIT -->
-                    <div class="direct-deposit-card" style="margin-top:16px;">
-                        <h5 style="font-size:13px;font-weight:900;margin-bottom:8px;color:#fbbf24;">💵 Direct Deposit</h5>
-                        <p style="font-size:10px;color:#94a3b8;margin-bottom:6px;">Enter any custom STAR amount (min 15 STAR = $3 USD)</p>
-                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-                            <input type="number" id="custom-star-amount" placeholder="STAR amount" class="input-dark" style="flex:2;font-size:13px;" min="15" value="15">
-                            <span style="color:#fbbf24;font-weight:900;flex:1;text-align:center;" id="custom-usd-display">$3.00</span>
+                    <div id="shop-buy-panel">
+                        <div style="text-align:center;margin-bottom:16px;"><h2 style="font-size:22px;font-weight:900;"><span style="color:var(--gold);">STAR</span> SHOP</h2><p style="font-size:11px;color:var(--text-secondary);">Buy with LTC • Min $3 USD</p></div>
+                        <div class="card-dark"><span class="badge badge-gold">LTC</span><span style="font-size:11px;color:var(--text-secondary);margin-left:6px;">Platform Address</span><div style="background:var(--surface-light);padding:10px;border-radius:10px;margin-top:6px;"><p id="plat-ltc" style="font-size:11px;font-family:monospace;color:var(--gold);word-break:break-all;">Loading...</p></div><button id="copy-ltc" style="font-size:10px;color:var(--text-secondary);background:none;border:none;cursor:pointer;margin-top:4px;">📋 Copy</button></div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;">
+                            <div class="card-dark pkg-card" style="cursor:pointer;text-align:center;" data-amt="15" data-price="3"><p style="font-size:16px;font-weight:900;color:var(--gold);">15 STAR</p><p style="font-size:10px;color:var(--text-secondary);">$3</p></div>
+                            <div class="card-dark pkg-card" style="cursor:pointer;text-align:center;" data-amt="100" data-price="20"><p style="font-size:16px;font-weight:900;color:var(--gold);">100 STAR</p><p style="font-size:10px;color:var(--text-secondary);">$20</p></div>
+                            <div class="card-dark pkg-card" style="cursor:pointer;text-align:center;" data-amt="500" data-price="100"><p style="font-size:16px;font-weight:900;color:var(--gold);">500 STAR</p><p style="font-size:10px;color:var(--text-secondary);">$100</p></div>
+                            <div class="card-dark pkg-card" style="cursor:pointer;text-align:center;" data-amt="2000" data-price="400"><p style="font-size:16px;font-weight:900;color:var(--gold);">2K STAR</p><p style="font-size:10px;color:var(--text-secondary);">$400</p></div>
                         </div>
-                        <input type="text" id="custom-ltc-txid" placeholder="LTC Transaction Hash (TxID)" class="input-dark" style="margin-bottom:8px;font-size:11px;">
-                        <button id="direct-deposit-btn" class="btn btn-cyan" style="width:100%;">Submit Direct Deposit</button>
-                        <p style="font-size:8px;color:#64748b;text-align:center;margin-top:4px;">Send exact LTC amount to platform address & paste TxID</p>
-                    </div>
-                </div>
-                <div id="shop-withdraw-panel" class="hidden">
-                    <div style="text-align:center;margin-bottom:12px;"><h2 style="font-size:20px;font-weight:900;color:white;">Withdraw</h2><p style="font-size:10px;color:#94a3b8;">Min 15 STAR (~$3 USD)</p></div>
-                    <div class="card-dark"><p style="font-size:10px;color:#94a3b8;">Your Balance</p><p id="w-bal" style="font-size:24px;font-weight:900;color:#fbbf24;">0.00</p></div>
-                    <div class="card-dark">
-                        <input type="text" id="w-ltc-addr" placeholder="Your LTC Address" class="input-dark" style="margin-bottom:6px;font-size:11px;">
-                        <input type="number" id="w-amt" placeholder="Amount (min 15 STAR)" class="input-dark" style="margin-bottom:6px;" min="15">
-                        <button id="withdraw-btn" class="btn btn-green" style="width:100%;">Submit Withdraw</button>
-                    </div>
-                    <!-- LTC Calculator -->
-                    <div class="direct-deposit-card" style="margin-top:16px;">
-                        <h5 style="font-size:13px;font-weight:900;margin-bottom:8px;color:#00d2ff;">🔄 LTC to STAR Calculator</h5>
-                        <p style="font-size:10px;color:#94a3b8;margin-bottom:6px;">Live LTC Price: $<span id="ltc-live-price">Loading...</span> USD</p>
-                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-                            <input type="number" id="calc-star-amount" placeholder="STAR amount" class="input-dark" style="flex:2;font-size:13px;" min="15" value="15" oninput="calculateLTC()">
-                            <span style="color:#fbbf24;font-weight:900;flex:1;text-align:center;" id="calc-ltc-result">0.00 LTC</span>
+                        <div class="card-dark"><h5 style="font-size:13px;font-weight:900;margin-bottom:8px;">🛒 Cart</h5><div id="cart-items" style="min-height:20px;"></div><div style="border-top:1px solid var(--border);margin:8px 0;"></div><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:11px;color:var(--text-secondary);">Total:</span><span id="cart-total" style="font-size:18px;font-weight:900;color:var(--primary);">$0.00</span></div><input type="text" id="ltc-txid" placeholder="LTC TxID" class="input-dark" style="margin-bottom:8px;font-size:12px;"><button id="checkout-btn" class="btn btn-gold" style="width:100%;">Submit Buy Request</button><p style="font-size:9px;color:var(--text-secondary);text-align:center;margin-top:6px;">Admin approval required</p></div>
+                        <!-- COIN → STAR Convert -->
+                        <div class="card-glow" style="margin-top:12px;text-align:center;">
+                            <h5 style="font-weight:900;color:var(--gold);margin-bottom:8px;">🔄 Convert COIN → STAR</h5>
+                            <p style="font-size:10px;color:var(--text-secondary);margin-bottom:8px;">100 COIN = 5 STAR (Fee inclusive)</p>
+                            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                                <i class="fas fa-coins" style="color:#FFD700;font-size:20px;"></i>
+                                <input type="number" id="convert-coin-amount" placeholder="COIN amount" class="input-dark" style="flex:2;" min="100" value="100" oninput="previewConversion()">
+                                <span style="color:var(--gold);font-weight:900;flex:1;text-align:center;" id="convert-preview">0.00 STAR</span>
+                            </div>
+                            <button id="convert-btn" class="btn btn-gold" style="width:100%;">Convert to STAR</button>
+                            <p style="font-size:9px;color:var(--text-secondary);margin-top:4px;">Min 100 COIN | Can be withdrawn after conversion</p>
                         </div>
-                        <p style="font-size:8px;color:#64748b;text-align:center;">You will receive this amount in LTC</p>
+                    </div>
+                    <div id="shop-withdraw-panel" class="hidden">
+                        <div style="text-align:center;margin-bottom:16px;"><h2 style="font-size:22px;font-weight:900;color:var(--text);">Withdraw</h2><p style="font-size:11px;color:var(--text-secondary);">Min 15 STAR (~$3 USD)</p></div>
+                        <div class="card-dark"><p style="font-size:11px;color:var(--text-secondary);">Your Balance</p><p id="w-bal" style="font-size:28px;font-weight:900;color:var(--gold);">0.00</p></div>
+                        <div class="card-dark" style="margin-top:12px;"><input type="text" id="w-ltc-addr" placeholder="Your LTC Address" class="input-dark" style="margin-bottom:8px;font-size:12px;"><input type="number" id="w-amt" placeholder="Amount (min 15 STAR)" class="input-dark" style="margin-bottom:8px;" min="15"><button id="withdraw-btn" class="btn btn-primary" style="width:100%;">Submit Withdraw</button></div>
+                        <div class="card-dark" style="margin-top:12px;">
+                            <h5 style="font-size:13px;font-weight:900;margin-bottom:8px;color:var(--cyan);">🔄 LTC to STAR Calculator</h5>
+                            <p style="font-size:10px;color:var(--text-secondary);margin-bottom:6px;">Live LTC Price: $<span id="ltc-live-price">Loading...</span></p>
+                            <div style="display:flex;gap:8px;align-items:center;"><input type="number" id="calc-star-amount" placeholder="STAR" class="input-dark" style="flex:2;" min="15" value="15" oninput="calculateLTC()"><span style="color:var(--gold);font-weight:900;flex:1;text-align:center;" id="calc-ltc-result">0.00 LTC</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- BOTTOM NAV (Tourney → Tournament) -->
+        <nav class="bottom-nav">
+            <button class="bn-item active" data-bnav="business"><i class="fas fa-home"></i><span>Home</span></button>
+            <button class="bn-item" data-bnav="trading"><i class="fas fa-chart-line"></i><span>Trading</span></button>
+            <button class="bn-item" data-bnav="vote"><i class="fas fa-chart-bar"></i><span>Vote</span></button>
+            <button class="bn-item" data-bnav="shop"><i class="fas fa-coins"></i><span>Shop</span></button>
+            <button class="bn-item" data-bnav="tournament"><i class="fas fa-trophy"></i><span>Tournament</span></button>
+            <button class="bn-item" data-bnav="history"><i class="fas fa-clock"></i><span>History</span></button>
+            <button class="bn-item" data-bnav="profile"><i class="fas fa-user"></i><span>Profile</span></button>
+            <button class="bn-item" onclick="openAboutModal()"><i class="fas fa-info-circle"></i><span>About</span></button>
+        </nav>
     </div>
-    
-    <nav class="bottom-nav">
-        <button class="bn-item active" data-bnav="business"><i class="fas fa-home"></i><span>Home</span></button>
-        <button class="bn-item" data-bnav="vote"><i class="fas fa-chart-bar"></i><span>Vote</span></button>
-        <button class="bn-item" data-bnav="shop"><i class="fas fa-coins"></i><span>Shop</span></button>
-        <button class="bn-item" data-bnav="about"><i class="fas fa-info-circle"></i><span>About</span></button>
-        <button class="bn-item" data-bnav="profile"><i class="fas fa-user"></i><span>Profile</span></button>
-    </nav>
-</div>
 
-<!-- MODALS -->
-<div id="modal-post" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 id="mpd-title" style="font-weight:900;"></h4><button class="modal-close" onclick="closeM('modal-post')">&times;</button></div><p id="mpd-body" style="font-size:12px;color:#64748b;margin-bottom:10px;"></p><div style="background:#f8fafc;padding:10px;border-radius:10px;margin-bottom:10px;"><p style="font-size:9px;color:#94a3b8;">Contact:</p><p id="mpd-wa" style="font-size:13px;font-weight:900;color:#006633;"></p></div><button id="mpd-wa-btn" class="btn btn-green" style="width:100%;"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</button></div></div>
-<div id="modal-vote" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 id="mvd-title" style="font-weight:900;"></h4><button class="modal-close" onclick="closeM('modal-vote')">&times;</button></div><p id="mvd-desc" style="font-size:11px;color:#64748b;margin-bottom:8px;"></p><div class="price-box"><span style="font-size:10px;color:#64748b;">Price:</span><span class="price-num" id="mvd-price" style="color:#fbbf24;">100.00</span><span id="mvd-change" style="font-size:11px;font-weight:700;">+0%</span></div><div class="prog-bar"><div class="prog-buy" id="mvd-buy-bar" style="width:50%;"></div><div class="prog-sell" id="mvd-sell-bar" style="width:50%;"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;font-weight:700;margin:6px 0;"><span style="color:#10B981;">Buy <span id="mvd-bp">50%</span></span><span style="color:#EF4444;">Sell <span id="mvd-sp">50%</span></span></div><div style="display:flex;gap:8px;margin-bottom:8px;"><button id="mv-buy" class="btn-buy">BUY</button><button id="mv-sell" class="btn-sell">SELL</button></div><input type="number" id="mv-amount" placeholder="Amount (Dh STAR)" class="input" style="margin-bottom:8px;font-size:13px;" min="10"><button id="mv-submit" class="btn btn-blue" style="width:100%;">Place Trade</button></div></div>
-<div id="modal-profile" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 style="font-weight:900;">Profile</h4><button class="modal-close" onclick="closeM('modal-profile')">&times;</button></div><div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><img id="prof-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:64px;height:64px;border-radius:50%;border:3px solid #e2e8f0;object-fit:cover;"><label class="btn btn-outline" style="font-size:11px;cursor:pointer;">Change Photo<input type="file" id="prof-photo" class="hidden" accept="image/*"></label><input type="text" id="prof-name" placeholder="Your Name" class="input"><textarea id="prof-bio" rows="2" placeholder="About you..." class="input"></textarea><button id="prof-save" class="btn btn-green" style="width:100%;">Save Profile</button><p id="prof-ref" style="font-size:10px;color:#64748b;text-align:center;"></p><button id="prof-logout" class="btn btn-red" style="width:100%;">Logout</button></div></div></div>
-<div id="modal-create" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 style="font-weight:900;">Create Post</h4><button class="modal-close" onclick="closeM('modal-create')">&times;</button></div><div style="display:flex;flex-direction:column;gap:8px;"><input type="text" id="cp-title" placeholder="Business Title" class="input"><input type="tel" id="cp-wa" placeholder="WhatsApp (01xxxxxxxxx)" class="input"><input type="text" id="cp-loc" placeholder="Location" class="input"><textarea id="cp-det" rows="2" placeholder="Details..." class="input"></textarea><select id="cp-dur" class="input"><option value="4">4 Hours</option><option value="12">12 Hours</option><option value="24">1 Day</option><option value="168">7 Days</option></select><button id="cp-pub" class="btn btn-green" style="width:100%;">Publish</button></div></div></div>
-<div id="modal-about" class="modal-overlay hidden"><div class="modal-box" style="max-height:85vh;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h4 style="font-weight:900;">About ASD ICON</h4><button class="modal-close" onclick="closeM('modal-about')">&times;</button></div><div style="font-size:12px;color:#334155;"><p>🚀 ASD ICON is a premium business networking and trading platform.</p><p style="margin-top:8px;">📊 Features: Business Posts, Forex Trading, LTC Payments</p><p style="margin-top:8px;">📧 Support: asdicon3@gmail.com</p></div></div></div>
+    <!-- MODALS -->
+    <div id="modal-notifications" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h4 style="font-weight:900;">🔔 Notifications</h4><button class="modal-close" onclick="closeM('modal-notifications')">&times;</button></div><div id="notifications-list" style="font-size:12px;color:var(--text-secondary);"><p style="text-align:center;padding:20px;">No new notifications</p></div></div></div>
+    <div id="modal-leaderboard" class="modal-overlay hidden"><div class="modal-box" style="max-height:85vh;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h4 style="font-weight:900;">🏆 Top Traders</h4><button class="modal-close" onclick="closeM('modal-leaderboard')">&times;</button></div><div id="leaderboard-list"></div></div></div>
+    <div id="modal-post" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 id="mpd-title" style="font-weight:900;"></h4><button class="modal-close" onclick="closeM('modal-post')">&times;</button></div><p id="mpd-body" style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;"></p><div style="background:var(--surface-light);padding:10px;border-radius:10px;margin-bottom:10px;"><p style="font-size:9px;color:var(--text-secondary);">Contact:</p><p id="mpd-wa" style="font-size:13px;font-weight:900;color:var(--primary);"></p></div><button id="mpd-wa-btn" class="btn btn-primary" style="width:100%;"><i class="fab fa-whatsapp"></i> Chat</button></div></div>
+    <div id="modal-vote" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 id="mvd-title" style="font-weight:900;"></h4><button class="modal-close" onclick="closeM('modal-vote')">&times;</button></div><p id="mvd-desc" style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;"></p><div class="mini-chart" id="mini-chart"></div><div class="prog-bar" style="margin:8px 0;"><div class="prog-buy" id="mvd-buy-bar" style="width:50%;"></div><div class="prog-sell" id="mvd-sell-bar" style="width:50%;"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;font-weight:700;margin:6px 0;"><span style="color:#4CAF50;">Buy <span id="mvd-bp">50%</span></span><span style="color:#f44336;">Sell <span id="mvd-sp">50%</span></span></div><div style="display:flex;gap:8px;margin-bottom:8px;"><button id="mv-buy" class="btn btn-primary" style="flex:1;">BUY</button><button id="mv-sell" class="btn btn-danger" style="flex:1;">SELL</button></div><input type="number" id="mv-amount" placeholder="Amount (Dh STAR)" class="input-dark" style="margin-bottom:8px;" min="10"><button id="mv-submit" class="btn btn-primary" style="width:100%;">Place Trade</button></div></div>
+    <div id="modal-tournament" class="modal-overlay hidden"><div class="modal-box" style="max-height:85vh;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 style="font-weight:900;">🏆 <span id="mt-title">Weekly Tournament</span></h4><button class="modal-close" onclick="closeM('modal-tournament')">&times;</button></div><div id="mt-content"><div class="card-glow" style="text-align:center;"><p style="font-size:28px;font-weight:900;color:var(--gold);">🏆 <span id="mt-prize">5000</span> COIN</p><p style="font-size:11px;color:var(--text-secondary);">Prize Pool</p><span class="badge badge-gold" id="mt-entry-badge" style="font-size:12px;">FREE ENTRY</span><span class="badge badge-purple" id="mt-paid-badge" style="font-size:12px;display:none;">PAID: 50 COIN</span></div><div style="text-align:center;margin:12px 0;"><p style="font-size:9px;color:var(--text-secondary);">Tournament Ends In</p><p class="countdown-timer" id="mt-countdown">--:--:--</p></div><div class="card-dark"><h5 style="font-weight:900;margin-bottom:8px;">👥 Participants (<span id="mt-pcount">0</span>)</h5><div id="mt-participants" style="max-height:120px;overflow-y:auto;"><p style="font-size:10px;color:var(--text-secondary);text-align:center;">No participants yet</p></div></div><div class="card-dark"><h5 style="font-weight:900;margin-bottom:8px;">📋 How to Win</h5><p style="font-size:10px;color:var(--text-secondary);">Trade the most volume during the tournament period. The trader with the highest total trade amount wins the prize!</p></div><div style="display:flex;gap:8px;margin-top:8px;"><button id="mt-enter-free" class="btn btn-gold" style="flex:1;">🎟️ Enter Free</button><button id="mt-enter-paid" class="btn btn-purple" style="flex:1;">💎 Enter (50 COIN)</button></div><button id="mt-go-trade" class="btn btn-primary" style="width:100%;margin-top:6px;">📊 Go Trade Now</button></div></div></div>
+    <div id="modal-profile" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 style="font-weight:900;">Profile</h4><button class="modal-close" onclick="closeM('modal-profile')">&times;</button></div><div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><img id="prof-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:72px;height:72px;border-radius:50%;border:3px solid var(--primary);"><label class="btn btn-outline" style="font-size:11px;cursor:pointer;">📷 Change Photo<input type="file" id="prof-photo" class="hidden" accept="image/*"></label><input type="text" id="prof-name" placeholder="Your Name" class="input-dark"><textarea id="prof-bio" rows="2" placeholder="About you..." class="input-dark"></textarea><button id="prof-save" class="btn btn-primary" style="width:100%;">Save Profile</button><p id="prof-ref" style="font-size:10px;color:var(--text-secondary);text-align:center;"></p><button id="prof-logout" class="btn btn-danger" style="width:100%;">Logout</button></div></div></div>
+    <div id="modal-create" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 style="font-weight:900;">Create Post</h4><button class="modal-close" onclick="closeM('modal-create')">&times;</button></div><div style="display:flex;flex-direction:column;gap:8px;"><input type="text" id="cp-title" placeholder="Business Title" class="input-dark"><input type="tel" id="cp-wa" placeholder="WhatsApp (e.g., +8801xxxxxxxxx)" class="input-dark"><input type="text" id="cp-loc" placeholder="Location (City, Country)" class="input-dark"><textarea id="cp-det" rows="2" placeholder="Details..." class="input-dark"></textarea><select id="cp-dur" class="input-dark"><option value="4">4 Hours</option><option value="12">12 Hours</option><option value="24">1 Day</option><option value="168">7 Days</option></select><button id="cp-pub" class="btn btn-primary" style="width:100%;">Publish</button></div></div></div>
+    <div id="modal-wallet" class="modal-overlay hidden"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h4 style="font-weight:900;">💳 Wallet Details</h4><button class="modal-close" onclick="closeM('modal-wallet')">&times;</button></div><div class="card-glow" style="text-align:center;"><i class="fas fa-star" style="font-size:32px;color:var(--gold);"></i><p style="font-size:28px;font-weight:900;color:var(--gold);" id="wallet-star">0.00</p><p style="font-size:10px;color:var(--text-secondary);">STAR Balance (Dh)</p></div><div class="card-dark" style="text-align:center;margin-top:8px;"><i class="fas fa-coins" style="font-size:28px;color:#FFD700;"></i><p style="font-size:22px;font-weight:900;color:#FFD700;" id="wallet-coin">0</p><p style="font-size:10px;color:var(--text-secondary);">COIN Balance (Tournament & Rewards)</p></div><p style="font-size:9px;color:var(--text-secondary);text-align:center;margin-top:8px;">⭐ STAR = Main currency | 🪙 COIN = Tournament entries & rewards | <span style="color:var(--gold);">🔄 Convert COIN → STAR from Shop</span></p></div></div>
+    <!-- About Modal -->
+    <div id="modal-about" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <h4 style="font-weight:900;">ℹ️ About ASD ICON</h4>
+                <button class="modal-close" onclick="closeM('modal-about')">&times;</button>
+            </div>
+            <div style="font-size:12px;color:var(--text-secondary);">
+                <p style="font-weight:700;color:var(--primary);">🚀 What is ASD ICON?</p>
+                <p>ASD ICON is a premium business networking and trading platform. Connect with entrepreneurs, trade in vote-based markets, earn tournament rewards, and transact with Litecoin (LTC) securely.</p>
+                <p style="font-weight:700;color:var(--primary);margin-top:12px;">📌 Features:</p>
+                <ul style="padding-left:16px;margin-top:4px;">
+                    <li>📋 Business Posts – Advertise your services globally</li>
+                    <li>📊 Vote Trading – Buy/Sell on real-time polls</li>
+                    <li>🏆 Weekly Tournaments – Win COIN prizes</li>
+                    <li>💳 LTC Payments – Deposit & Withdraw with Litecoin</li>
+                    <li>⭐ STAR & 🪙 COIN dual currency system</li>
+                    <li>🔄 Convert COIN → STAR (withdrawable)</li>
+                </ul>
+                <div style="background:rgba(244,67,54,0.1);border:1px solid #f44336;border-radius:10px;padding:10px;margin-top:14px;">
+                    <p style="font-weight:900;color:#f44336;">⚠️ Important Warning</p>
+                    <p style="color:var(--text-secondary);">This app involves real cryptocurrency transactions. Prices can be volatile. Please use the platform responsibly. ASD ICON is not liable for any financial loss due to market movements or user negligence.</p>
+                </div>
+                <p style="font-weight:700;color:var(--primary);margin-top:14px;">📧 Customer Support</p>
+                <p style="color:var(--gold);font-weight:900;">asdicon3@gmail.com</p>
+                <p style="font-size:10px;">We typically respond within 24 hours.</p>
+            </div>
+        </div>
+    </div>
 
-<script>
-    const fbConfig = {
-        apiKey: "AIzaSyB31gEKElLRlKVynHsEn3PU0F7bv1AHso8",
-        authDomain: "vote-trading.firebaseapp.com",
-        projectId: "vote-trading",
-        storageBucket: "vote-trading.firebasestorage.app",
-        messagingSenderId: "25813578973",
-        appId: "1:25813578973:web:b2297633811dd633be5734"
-    };
-    firebase.initializeApp(fbConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const storage = firebase.storage();
-    
-    let user = null, bal = 0, stars = 0, page = 'business', vtab = 'market';
-    let cart = [], tSide = null, tPollId = null;
-    
-    function toast(msg, type='success') {
-        const c = document.getElementById('toast-container');
-        const t = document.createElement('div');
-        t.className = `toast toast-${type}`; t.textContent = msg;
-        c.appendChild(t);
-        setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.4s'; setTimeout(() => t.remove(), 400); }, 2500);
-    }
-    function closeM(id) { document.getElementById(id).classList.add('hidden'); }
-    function tAgo(ts) { if(!ts) return ''; const s = Math.floor((Date.now() - ts) / 1000); if(s<60) return 'Now'; if(s<3600) return Math.floor(s/60)+'m'; if(s<86400) return Math.floor(s/3600)+'h'; return Math.floor(s/86400)+'d'; }
-    function tLeft(ts) { if(!ts) return '--'; const r = ts - Date.now(); if(r<=0) return 'Ended'; const d = Math.floor(r/86400000), h = Math.floor((r%86400000)/3600000); return d>0?`${d}d ${h}h`:`${h}h`; }
-    
-    auth.onAuthStateChanged(async (u) => {
-        if (u) {
-            const d = await db.collection('users').doc(u.uid).get();
-            if (d.exists) { user = { uid: u.uid, ...d.data() }; }
-            else {
-                user = { uid: u.uid, email: u.email, displayName: u.email.split('@')[0], photoURL: 'https://cdn-icons-png.flaticon.com/512/149/149071.png', bio: 'Member', balance: 100, stars: 0, referralCode: u.email.split('@')[0].toUpperCase()+'-'+Math.random().toString(36).substr(2,6).toUpperCase(), referralBalance:0, totalReferrals:0, role:'user' };
-                await db.collection('users').doc(u.uid).set(user);
+    <script>
+        const fbConfig = {
+            apiKey: "AIzaSyB31gEKElLRlKVynHsEn3PU0F7bv1AHso8",
+            authDomain: "vote-trading.firebaseapp.com",
+            projectId: "vote-trading",
+            storageBucket: "vote-trading.firebasestorage.app",
+            messagingSenderId: "25813578973",
+            appId: "1:25813578973:web:b2297633811dd633be5734"
+        };
+        firebase.initializeApp(fbConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        let user = null, stars = 0, coins = 0, page = 'business', vtab = 'market', ttab = 'overview';
+        let cart = [], tSide = null, tPollId = null;
+        let currentTheme = 'dark';
+        let currentTournamentId = null;
+        let tournamentInterval = null;
+        let countdownIntervals = {};
+        let historyFilter = 'all';
+        let allHistoryData = [];
+
+        function toast(msg, type='success') {
+            const c = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = `toast toast-${type}`;
+            t.textContent = msg;
+            c.appendChild(t);
+            setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 0.4s'; setTimeout(()=>t.remove(),400); },2500);
+        }
+
+        function closeM(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function tAgo(ts) {
+            if(!ts) return '';
+            const s = Math.floor((Date.now()-ts)/1000);
+            if(s<60) return 'Now';
+            if(s<3600) return Math.floor(s/60)+'m';
+            if(s<86400) return Math.floor(s/3600)+'h';
+            return Math.floor(s/86400)+'d';
+        }
+
+        function tLeft(ts) {
+            if(!ts) return '--';
+            const r = ts-Date.now();
+            if(r<=0) return 'Ended';
+            const d=Math.floor(r/86400000), h=Math.floor((r%86400000)/3600000);
+            return d>0?`${d}d ${h}h`:`${h}h`;
+        }
+
+        function formatCountdown(ts) {
+            if(!ts) return '--:--:--';
+            const r = ts-Date.now();
+            if(r<=0) return 'Ended';
+            const d=Math.floor(r/86400000);
+            const h=Math.floor((r%86400000)/3600000);
+            const m=Math.floor((r%3600000)/60000);
+            const s=Math.floor((r%60000)/1000);
+            if(d>0) return `${d}d ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            currentTheme = document.body.classList.contains('light-mode')?'light':'dark';
+            document.getElementById('theme-icon').className = currentTheme==='light'?'fas fa-sun':'fas fa-moon';
+            localStorage.setItem('asd_theme', currentTheme);
+        }
+        if(localStorage.getItem('asd_theme')==='light') {
+            document.body.classList.add('light-mode');
+            document.getElementById('theme-icon').className = 'fas fa-sun';
+        }
+
+        function openWalletDetail() {
+            document.getElementById('wallet-star').innerText = stars.toFixed(2);
+            document.getElementById('wallet-coin').innerText = (coins||0).toFixed(0);
+            document.getElementById('modal-wallet').classList.remove('hidden');
+        }
+
+        // ========== COIN → STAR CONVERSION ==========
+        function previewConversion() {
+            const coinAmt = parseInt(document.getElementById('convert-coin-amount').value) || 0;
+            const starAmt = (coinAmt * 0.05); // 100 COIN = 5 STAR
+            document.getElementById('convert-preview').innerText = starAmt.toFixed(2) + ' STAR';
+        }
+
+        document.getElementById('convert-btn').addEventListener('click', async () => {
+            const coinAmt = parseInt(document.getElementById('convert-coin-amount').value);
+            if (!coinAmt || coinAmt < 100) return toast('Minimum 100 COIN required for conversion', 'error');
+            if (coinAmt > coins) return toast('Insufficient COIN balance', 'error');
+            const starAmt = coinAmt * 0.05; // 5 STAR per 100 COIN
+            try {
+                await db.collection('users').doc(user.uid).update({
+                    coins: firebase.firestore.FieldValue.increment(-coinAmt),
+                    stars: firebase.firestore.FieldValue.increment(starAmt)
+                });
+                await db.collection('transactions').add({
+                    userId: user.uid,
+                    userEmail: user.email,
+                    type: 'convert_coin_to_star',
+                    amountStars: starAmt,
+                    amountCoins: coinAmt,
+                    status: 'completed',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                coins -= coinAmt;
+                stars += starAmt;
+                updateUI();
+                document.getElementById('convert-coin-amount').value = 100;
+                previewConversion();
+                toast(`Converted ${coinAmt} COIN → ${starAmt.toFixed(2)} STAR!`, 'success');
+            } catch (e) {
+                toast('Conversion failed: ' + e.message, 'error');
             }
-            stars = user.stars || 0;
-            bal = stars; // ✅ Main Balance = Dh STAR
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
-            updateUI(); loadPosts(); loadPolls(); loadLTC();
-        } else {
-            user = null;
-            document.getElementById('auth-screen').classList.remove('hidden');
-            document.getElementById('main-app').classList.add('hidden');
-        }
-    });
-    
-    document.getElementById('login-btn').addEventListener('click', () => { const e = document.getElementById('login-email').value.trim(), p = document.getElementById('login-password').value; if(!e||!p) return toast('Fill all fields','error'); auth.signInWithEmailAndPassword(e,p).catch(err => toast(err.message,'error')); });
-    document.getElementById('register-btn').addEventListener('click', () => { const e = document.getElementById('reg-email').value.trim(), p = document.getElementById('reg-password').value, c = document.getElementById('reg-confirm').value; if(!e||!p) return toast('Fill all fields','error'); if(p.length<6) return toast('Min 6 chars','error'); if(p!==c) return toast('Passwords mismatch','error'); auth.createUserWithEmailAndPassword(e,p).then(() => { toast('Account created!','success'); document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); }).catch(err => toast(err.message,'error')); });
-    document.getElementById('forgot-pass').addEventListener('click', () => { const e = prompt('Enter your email:'); if(e) auth.sendPasswordResetEmail(e).then(() => toast('Email sent!')).catch(err => toast(err.message,'error')); });
-    document.getElementById('show-register').addEventListener('click', () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); });
-    document.getElementById('show-login').addEventListener('click', () => { document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); });
-    
-    function updateUI() { if(!user) return; document.getElementById('hdr-balance').innerText = bal.toFixed(2); document.getElementById('hdr-avatar').src = user.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; document.getElementById('vt-bal').innerText = bal.toFixed(2); }
-    
-    function goPage(p) {
-        document.querySelectorAll('.section-page').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.top-nav-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
-        document.getElementById(`page-${p}`).classList.add('active');
-        const tn = document.querySelector(`.top-nav-btn[data-page="${p}"]`); if(tn) tn.classList.add('active');
-        const bn = document.querySelector(`.bn-item[data-bnav="${p}"]`); if(bn) bn.classList.add('active');
-        if(p==='vote') loadPolls();
-        if(p==='shop') { loadLTC(); updateWUI(); }
-        if(p==='about') document.getElementById('modal-about').classList.remove('hidden');
-        page = p;
-    }
-    document.querySelectorAll('.top-nav-btn').forEach(b => b.addEventListener('click', () => goPage(b.dataset.page)));
-    document.querySelectorAll('.bn-item').forEach(b => { b.addEventListener('click', () => { const nav = b.dataset.bnav; if(nav==='profile') openProf(); else if(nav==='about') document.getElementById('modal-about').classList.remove('hidden'); else goPage(nav); }); });
-    
-    // ========== BUSINESS ==========
-    function loadPosts() {
-        db.collection('posts').where('approved','==',true).get().then(snap => {
-            let posts = []; snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
-            posts.sort((a,b) => { const at = a.createdAt?.toMillis()||0, bt = b.createdAt?.toMillis()||0; return bt-at; });
-            const q = (document.getElementById('biz-search')?.value || '').toLowerCase();
-            if(q) posts = posts.filter(p => (p.title||'').toLowerCase().includes(q) || (p.location||'').toLowerCase().includes(q) || (p.details||'').toLowerCase().includes(q));
-            const c = document.getElementById('posts-container');
-            if(!posts.length) { c.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;"><p>No approved posts yet</p></div>'; return; }
-            c.innerHTML = posts.map(p => {
-                const ago = tAgo(p.createdAt?.toMillis()); const exp = p.expireAt?.toMillis() < Date.now();
-                return `<div class="card-white ani-in" onclick="openPD('${p.id}')" style="cursor:pointer;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:10px;font-weight:700;color:#64748b;">${p.userName||'User'}</span><span class="badge ${exp?'badge-expired':'badge-active'}">${exp?'Expired':'Active'}</span></div><h5 style="font-weight:900;font-size:13px;margin-bottom:4px;">${p.title}</h5><div style="display:flex;gap:4px;margin-bottom:4px;"><span style="font-size:8px;background:#f1f5f9;padding:2px 6px;border-radius:6px;">📍${p.location}</span><span style="font-size:8px;background:#f0fdf4;padding:2px 6px;border-radius:6px;color:#006633;">📞${p.whatsapp}</span></div><p style="font-size:11px;color:#64748b;">${(p.details||'').substr(0,90)}...</p><p style="font-size:8px;color:#94a3b8;">${ago}</p></div>`;
-            }).join('');
-        }).catch(e => { document.getElementById('posts-container').innerHTML = `<p style="color:red;text-align:center;">Error: ${e.message}</p>`; });
-    }
-    
-    window.openPD = async function(id) { const d = await db.collection('posts').doc(id).get(); if(!d.exists) return; const p = d.data(); document.getElementById('mpd-title').innerText = p.title; document.getElementById('mpd-body').innerText = p.details; document.getElementById('mpd-wa').innerText = p.whatsapp; document.getElementById('modal-post').classList.remove('hidden'); };
-    document.getElementById('mpd-wa-btn').addEventListener('click', () => { let n = (document.getElementById('mpd-wa').innerText || '').replace(/\D/g,''); if(n.startsWith('0')) n = '880' + n.substring(1); if(n) window.open('https://wa.me/'+n, '_blank'); });
-    document.getElementById('fab-create').addEventListener('click', () => document.getElementById('modal-create').classList.remove('hidden'));
-    document.getElementById('cp-pub').addEventListener('click', async () => { const t = document.getElementById('cp-title').value.trim(), w = document.getElementById('cp-wa').value.trim(), l = document.getElementById('cp-loc').value.trim() || 'Bangladesh', d = document.getElementById('cp-det').value.trim(), dur = parseInt(document.getElementById('cp-dur').value); if(!t||!w||!d) return toast('Fill all fields','error'); if(!/^01\d{9}$/.test(w)) return toast('Valid WhatsApp required','error'); await db.collection('posts').add({ userId: user.uid, userName: user.displayName, userPhoto: user.photoURL, title: t, whatsapp: w, location: l, details: d, duration: dur, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(), expireAt: new Date(Date.now() + dur * 3600000) }); toast('Post submitted!','success'); closeM('modal-create'); });
-    document.getElementById('biz-search').addEventListener('keyup', loadPosts);
-    
-    // ========== VOTE ==========
-    document.querySelectorAll('.vote-subnav button').forEach(b => { b.addEventListener('click', () => { document.querySelectorAll('.vote-panel').forEach(p => p.classList.remove('active')); document.querySelectorAll('.vote-subnav button').forEach(x => x.classList.remove('active')); document.getElementById(`vpanel-${b.dataset.vtab}`).classList.add('active'); b.classList.add('active'); vtab = b.dataset.vtab; if(vtab==='market') loadPolls(); if(vtab==='trades') loadTrades(); }); });
-    
-    function calcPr(poll) { const ba = poll.buyAmount || 0, sa = poll.sellAmount || 0, tot = ba + sa; if(tot===0) return { price: 100, chg: 0 }; const net = ba - sa; const price = 100 * (1 + net / (tot + 1)); return { price: Math.max(1, price), chg: ((price - 100) / 100) * 100 }; }
-    
-    function loadPolls() {
-        db.collection('votePolls').where('status','==','active').get().then(snap => {
-            const polls = []; snap.forEach(d => polls.push({ id: d.id, ...d.data() }));
-            document.getElementById('vt-active').innerText = polls.length; let tv = 0; polls.forEach(p => tv += (p.buyAmount||0) + (p.sellAmount||0));
-            document.getElementById('vt-vol').innerText = tv.toFixed(0); const c = document.getElementById('vpolls-container');
-            if(!polls.length) { c.innerHTML = '<div style="text-align:center;padding:30px;color:#94a3b8;">No active polls</div>'; return; }
-            c.innerHTML = polls.map(p => {
-                const pr = calcPr(p); const tot = (p.buyAmount||0) + (p.sellAmount||0); const bp = tot > 0 ? Math.round((p.buyAmount||0)/tot*100) : 50; const isUp = pr.chg >= 0;
-                return `<div class="vt-card ani-in" onclick="openVD('${p.id}')" style="cursor:pointer;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><h5 style="font-weight:900;font-size:12px;">${p.title}</h5><span class="badge badge-live">Live</span></div><p style="font-size:9px;color:#94a3b8;">${p.location||'Global'} • ${tLeft(p.expireAt?.toMillis())}</p><div style="display:flex;justify-content:space-between;align-items:center;background:#f8fafc;padding:8px;border-radius:8px;margin:6px 0;"><span style="font-size:9px;color:#94a3b8;">Price:</span><span style="font-size:18px;font-weight:900;color:${isUp?'#10B981':'#EF4444'};">${pr.price.toFixed(2)}</span><span style="font-size:10px;font-weight:700;color:${isUp?'#10B981':'#EF4444'};">${isUp?'+':''}${pr.chg.toFixed(1)}%</span></div><div class="prog-bar"><div class="prog-buy" style="width:${bp}%;"></div><div class="prog-sell" style="width:${100-bp}%;"></div></div><div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700;margin-top:4px;"><span style="color:#10B981;">Buy ${bp}%</span><span style="color:#EF4444;">Sell ${100-bp}%</span><span style="color:#94a3b8;">Vol: ${tot.toFixed(0)}</span></div></div>`;
-            }).join('');
         });
-    }
-    
-    window.openVD = async function(id) { tPollId = id; const d = await db.collection('votePolls').doc(id).get(); if(!d.exists) return; const p = d.data(); const pr = calcPr(p); const tot = (p.buyAmount||0)+(p.sellAmount||0); const bp = tot > 0 ? Math.round((p.buyAmount||0)/tot*100) : 50; document.getElementById('mvd-title').innerText = p.title; document.getElementById('mvd-desc').innerText = p.description || ''; document.getElementById('mvd-price').innerText = pr.price.toFixed(2); document.getElementById('mvd-price').style.color = pr.chg >= 0 ? '#10B981' : '#EF4444'; document.getElementById('mvd-change').innerText = (pr.chg >= 0 ? '+' : '') + pr.chg.toFixed(1) + '%'; document.getElementById('mvd-change').style.color = pr.chg >= 0 ? '#10B981' : '#EF4444'; document.getElementById('mvd-buy-bar').style.width = bp + '%'; document.getElementById('mvd-sell-bar').style.width = (100-bp) + '%'; document.getElementById('mvd-bp').innerText = bp + '%'; document.getElementById('mvd-sp').innerText = (100-bp) + '%'; tSide = null; document.getElementById('mv-amount').value = ''; document.getElementById('modal-vote').classList.remove('hidden'); };
-    document.getElementById('mv-buy').addEventListener('click', function() { tSide = 'buy'; this.style.opacity = '0.6'; document.getElementById('mv-sell').style.opacity = '1'; });
-    document.getElementById('mv-sell').addEventListener('click', function() { tSide = 'sell'; this.style.opacity = '0.6'; document.getElementById('mv-buy').style.opacity = '1'; });
-    document.getElementById('mv-submit').addEventListener('click', async () => {
-        if(!tSide) return toast('Select BUY or SELL','error');
-        const amt = parseFloat(document.getElementById('mv-amount').value);
-        if(!amt || amt < 10) return toast('Min 10 Dh STAR','error');
-        if(amt > bal) return toast('Insufficient Dh STAR','error');
-        const ref = db.collection('votePolls').doc(tPollId);
-        const doc = await ref.get();
-        if(!doc.exists || doc.data().status !== 'active') return toast('Poll ended','error');
-        const com = amt * 0.07, net = amt - com;
-        // ✅ Deduct from stars (main balance)
-        await db.collection('users').doc(user.uid).update({ stars: firebase.firestore.FieldValue.increment(-amt) });
-        const fld = tSide === 'buy' ? 'buyAmount' : 'sellAmount', vf = tSide === 'buy' ? 'buyVoters' : 'sellVoters';
-        await ref.update({ [fld]: firebase.firestore.FieldValue.increment(net), [vf]: firebase.firestore.FieldValue.arrayUnion(user.uid), totalCommission: firebase.firestore.FieldValue.increment(com) });
-        // ✅ Credit creator commission to stars
-        if(doc.data().creatorId && doc.data().creatorId !== user.uid) {
-            const creatorCut = amt * 0.02;
-            await db.collection('users').doc(doc.data().creatorId).update({ stars: firebase.firestore.FieldValue.increment(creatorCut) });
+
+        async function openNotifications() {
+            document.getElementById('modal-notifications').classList.remove('hidden');
+            await loadNotifications();
         }
-        await db.collection('trades').add({ pollId: tPollId, userId: user.uid, side: tSide, amount: amt, netAmount: net, commission: com, entryPrice: calcPr(doc.data()).price, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        stars -= amt; bal = stars; updateUI(); closeM('modal-vote'); toast(`${tSide.toUpperCase()} placed! (7% fee)`,'success'); loadPolls();
-    });
-    
-    async function loadTrades() {
-        const c = document.getElementById('vtrades-container'); c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">Loading...</p>';
-        try {
-            const snap = await db.collection('trades').where('userId','==',user.uid).get();
-            const trades = []; snap.forEach(d => trades.push({ id: d.id, ...d.data() }));
-            trades.sort((a,b) => { const aTime = a.createdAt?.toMillis()||0; const bTime = b.createdAt?.toMillis()||0; return bTime - aTime; });
-            if(!trades.length) { c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">No trades yet</p>'; return; }
-            const pIds = [...new Set(trades.map(t => t.pollId))]; const pDocs = await Promise.all(pIds.map(id => db.collection('votePolls').doc(id).get()));
-            const polls = {}; pDocs.forEach(d => { if(d.exists) polls[d.id] = d.data(); });
-            c.innerHTML = trades.map(t => {
-                const p = polls[t.pollId] || {}; const pr = calcPr(p);
-                const prof = t.side === 'buy' ? (pr.price - t.entryPrice) * (t.netAmount / t.entryPrice) : (t.entryPrice - pr.price) * (t.netAmount / t.entryPrice);
-                const isProf = prof > 0; const sideDisplay = (t.side||'').toUpperCase();
-                return `<div class="vt-card ani-in"><div style="display:flex;justify-content:space-between;"><span style="font-size:11px;font-weight:700;">${p.title||'Unknown'}</span><span style="font-size:9px;font-weight:900;color:${t.side==='buy'?'#10B981':'#EF4444'};">${sideDisplay}</span></div><div style="display:flex;justify-content:space-between;font-size:9px;margin-top:4px;color:#64748b;"><span>Entry: ${t.entryPrice?.toFixed(2)}</span><span>Now: ${pr.price.toFixed(2)}</span><span style="font-weight:700;color:${isProf?'#10B981':'#EF4444'};">${isProf?'+':''}${prof.toFixed(2)}</span></div></div>`;
+        async function loadNotifications() {
+            if(!user) return;
+            const snap = await db.collection('notifications').where('userId','==',user.uid).orderBy('createdAt','desc').limit(20).get();
+            const list = document.getElementById('notifications-list');
+            if(snap.empty) { list.innerHTML='<p style="text-align:center;padding:20px;">No new notifications</p>'; return; }
+            list.innerHTML='';
+            snap.forEach(d=>{
+                const n=d.data();
+                const div=document.createElement('div');
+                div.style.cssText='padding:10px;border-bottom:1px solid var(--border);font-size:11px;cursor:pointer;';
+                div.innerHTML=`<p style="font-weight:700;">${n.title||'Notification'}</p><p style="color:var(--text-secondary);">${n.message||''}</p><p style="font-size:8px;color:var(--text-secondary);">${tAgo(n.createdAt?.toMillis())}</p>`;
+                div.onclick=async ()=>{ if(!d.data().read) await db.collection('notifications').doc(d.id).update({read:true}); };
+                list.appendChild(div);
+            });
+            await updateNotifBadge();
+        }
+        async function updateNotifBadge() {
+            if(!user) return;
+            const snap = await db.collection('notifications').where('userId','==',user.uid).where('read','==',false).get();
+            const badge = document.getElementById('notif-badge');
+            const count = snap.size;
+            if(count>0) { badge.style.display='flex'; badge.innerText=count; } else { badge.style.display='none'; }
+        }
+
+        async function openLeaderboard() {
+            document.getElementById('modal-leaderboard').classList.remove('hidden');
+            const snap = await db.collection('users').orderBy('stars','desc').limit(10).get();
+            const list = document.getElementById('leaderboard-list');
+            let html='';
+            let rank=1;
+            snap.forEach(doc=>{
+                const u=doc.data();
+                const rc = rank===1?'rank-1':rank===2?'rank-2':rank===3?'rank-3':'rank-other';
+                html+=`<div class="leaderboard-item"><div class="rank-badge ${rc}">${rank}</div><div style="flex:1;"><p style="font-weight:700;">${u.displayName||u.email||'User'}</p><p style="font-size:10px;color:var(--text-secondary);">${(u.stars||0).toFixed(0)} STAR | ${(u.coins||0)} COIN</p></div></div>`;
+                rank++;
+            });
+            list.innerHTML = html || '<p style="text-align:center;">No traders yet</p>';
+        }
+
+        function renderMiniChart(buyPct) {
+            const chart = document.getElementById('mini-chart');
+            if(!chart) return;
+            let bars='';
+            for(let i=0;i<20;i++) {
+                const h = Math.floor(Math.random()*60+20);
+                bars += `<div class="chart-bar" style="height:${h}px;background:${i<buyPct/5?'#4CAF50':'#f44336'};"></div>`;
+            }
+            chart.innerHTML=bars;
+        }
+
+        function getWeekNumber() {
+            const now=new Date();
+            const start=new Date(now.getFullYear(),0,1);
+            const diff=now-start;
+            return Math.ceil((diff/86400000+start.getDay()+1)/7);
+        }
+
+        async function ensureWeeklyTournament() {
+            if(!user) return;
+            try{
+                const weekNum=getWeekNumber();
+                const year=new Date().getFullYear();
+                const snap=await db.collection('tournaments').where('weekNumber','==',weekNum).where('year','==',year).where('status','in',['active','upcoming']).limit(1).get();
+                if(snap.empty) {
+                    const now=new Date();
+                    const endDate=new Date(now);
+                    const daysUntilSunday=7-now.getDay();
+                    endDate.setDate(now.getDate()+(daysUntilSunday===0?7:daysUntilSunday));
+                    endDate.setHours(23,59,59,999);
+                    const ref=await db.collection('tournaments').add({
+                        title:`Weekly Tournament Week #${weekNum}`,
+                        prize:5000,
+                        entryFeeFree:true,
+                        entryFeePaid:50,
+                        entryFeeCurrency:'COIN',
+                        status:'active',
+                        weekNumber:weekNum,
+                        year:year,
+                        startDate:firebase.firestore.Timestamp.fromDate(now),
+                        endDate:firebase.firestore.Timestamp.fromDate(endDate),
+                        participants:[],
+                        paidParticipants:[],
+                        totalTrades:0,
+                        winner:null,
+                        createdAt:firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    currentTournamentId=ref.id;
+                } else {
+                    currentTournamentId=snap.docs[0].id;
+                }
+                await loadTournamentBanner();
+                updateAllCountdowns();
+            } catch(e) { console.log('Tournament init error:',e.message); }
+        }
+
+        async function loadTournamentBanner() {
+            if(!currentTournamentId) return;
+            try{
+                const doc=await db.collection('tournaments').doc(currentTournamentId).get();
+                if(!doc.exists) { document.getElementById('tournament-banner').style.display='none'; return; }
+                const t=doc.data();
+                document.getElementById('tournament-banner').style.display='block';
+                document.getElementById('t-banner-title').innerText=t.title;
+                document.getElementById('t-banner-prize').innerText=t.prize;
+                document.getElementById('t-banner-entry').innerText=t.entryFeeFree?'FREE ENTRY':'PAID ENTRY';
+                if(t.entryFeePaid>0 && t.entryFeeFree) document.getElementById('t-banner-entry').innerText='FREE & PAID';
+                startCountdown('t-banner-countdown', t.endDate?.toMillis());
+            } catch(e) { console.log('Banner error:',e.message); }
+        }
+
+        async function openTournamentDetail() {
+            if(!currentTournamentId) { toast('No active tournament','error'); return; }
+            const doc=await db.collection('tournaments').doc(currentTournamentId).get();
+            if(!doc.exists) { toast('Tournament not found','error'); return; }
+            const t=doc.data();
+            document.getElementById('mt-title').innerText=t.title;
+            document.getElementById('mt-prize').innerText=t.prize;
+            document.getElementById('mt-entry-badge').style.display=t.entryFeeFree?'inline-block':'none';
+            document.getElementById('mt-paid-badge').style.display=(t.entryFeePaid>0 && !t.entryFeeFree)?'inline-block':'none';
+            if(t.entryFeePaid>0) document.getElementById('mt-paid-badge').innerText=`PAID: ${t.entryFeePaid} COIN`;
+            document.getElementById('mt-pcount').innerText=(t.participants||[]).length;
+            startCountdown('mt-countdown', t.endDate?.toMillis());
+            const pList=document.getElementById('mt-participants');
+            if(t.participants && t.participants.length>0) {
+                const userDocs=await Promise.all(t.participants.map(uid=>db.collection('users').doc(uid).get()));
+                pList.innerHTML=userDocs.map(u=>{
+                    const ud=u.exists?u.data():{};
+                    return `<span class="participant-chip">👤 ${ud.displayName||ud.email||'User'}</span>`;
+                }).join('');
+            } else { pList.innerHTML='<p style="font-size:10px;color:var(--text-secondary);text-align:center;">No participants yet</p>'; }
+            document.getElementById('modal-tournament').classList.remove('hidden');
+            document.getElementById('mt-enter-free').onclick=()=>enterTournament('free');
+            document.getElementById('mt-enter-paid').onclick=()=>enterTournament('paid');
+            document.getElementById('mt-go-trade').onclick=()=>{ closeM('modal-tournament'); goPage('vote'); setTimeout(()=>{ const mb=document.querySelector('[data-vtab="market"]'); if(mb) mb.click(); },300); };
+            document.getElementById('mt-enter-free').style.display=t.entryFeeFree?'block':'none';
+            document.getElementById('mt-enter-paid').style.display=(t.entryFeePaid>0)?'block':'none';
+        }
+
+        async function enterTournament(type) {
+            if(!user || !currentTournamentId) return;
+            const doc=await db.collection('tournaments').doc(currentTournamentId).get();
+            if(!doc.exists) return toast('Tournament not found','error');
+            const t=doc.data();
+            if(t.status!=='active') return toast('Tournament has ended','error');
+            if((t.participants||[]).includes(user.uid)) return toast('Already entered!','info');
+            if(type==='paid') {
+                if((coins||0)<(t.entryFeePaid||50)) return toast('Insufficient COIN balance','error');
+                await db.collection('users').doc(user.uid).update({coins:firebase.firestore.FieldValue.increment(-(t.entryFeePaid||50))});
+                coins-=(t.entryFeePaid||50);
+                await db.collection('tournaments').doc(currentTournamentId).update({
+                    participants:firebase.firestore.FieldValue.arrayUnion(user.uid),
+                    paidParticipants:firebase.firestore.FieldValue.arrayUnion(user.uid),
+                    prize:firebase.firestore.FieldValue.increment(Math.floor((t.entryFeePaid||50)*0.8))
+                });
+                await db.collection('tournamentHistory').add({
+                    userId:user.uid,tournamentId:currentTournamentId,title:t.title,type:'entry_paid',
+                    amount:t.entryFeePaid||50,currency:'COIN',createdAt:firebase.firestore.FieldValue.serverTimestamp()
+                });
+                toast(`Entered with ${t.entryFeePaid} COIN!`,'success');
+            } else {
+                await db.collection('tournaments').doc(currentTournamentId).update({participants:firebase.firestore.FieldValue.arrayUnion(user.uid)});
+                await db.collection('tournamentHistory').add({
+                    userId:user.uid,tournamentId:currentTournamentId,title:t.title,type:'entry_free',
+                    amount:0,currency:'FREE',createdAt:firebase.firestore.FieldValue.serverTimestamp()
+                });
+                toast('Entered for free! 🎉','success');
+            }
+            updateUI();
+            openTournamentDetail();
+        }
+
+        function startCountdown(elementId, endMillis) {
+            if(!endMillis) return;
+            const el=document.getElementById(elementId);
+            if(!el) return;
+            if(countdownIntervals[elementId]) clearInterval(countdownIntervals[elementId]);
+            const update=()=>{
+                const remaining=endMillis-Date.now();
+                if(remaining<=0) { el.innerText='Ended'; if(countdownIntervals[elementId]) clearInterval(countdownIntervals[elementId]); return; }
+                el.innerText=formatCountdown(endMillis);
+            };
+            update();
+            countdownIntervals[elementId]=setInterval(update,1000);
+        }
+
+        function updateAllCountdowns() {
+            if(!currentTournamentId) return;
+            db.collection('tournaments').doc(currentTournamentId).get().then(doc=>{
+                if(doc.exists) {
+                    const em=doc.data().endDate?.toMillis();
+                    if(em) { startCountdown('t-banner-countdown',em); startCountdown('mt-countdown',em); }
+                }
+            }).catch(()=>{});
+        }
+
+        async function resolveEndedTournaments() {
+            if(!user) return;
+            const now=Date.now();
+            const snap=await db.collection('tournaments').where('status','==','active').where('endDate','<=',new Date(now)).get();
+            for(const doc of snap.docs) {
+                const t=doc.data();
+                const participants=t.participants||[];
+                if(participants.length>0) {
+                    const winnerId=participants[Math.floor(Math.random()*participants.length)];
+                    await db.collection('tournaments').doc(doc.id).update({status:'ended',winner:winnerId});
+                    await db.collection('users').doc(winnerId).update({coins:firebase.firestore.FieldValue.increment(t.prize||5000)});
+                    await db.collection('notifications').add({
+                        userId:winnerId,title:'🏆 You Won!',message:`Congratulations! You won ${t.prize||5000} COIN from ${t.title}!`,
+                        read:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    await db.collection('tournamentHistory').add({
+                        userId:winnerId,tournamentId:doc.id,title:t.title,type:'winner',
+                        amount:t.prize||5000,currency:'COIN',createdAt:firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    for(const pid of participants) {
+                        if(pid!==winnerId) {
+                            await db.collection('notifications').add({
+                                userId:pid,title:'🏆 Tournament Ended',message:`${t.title} has ended. Winner received ${t.prize||5000} COIN.`,
+                                read:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        }
+                    }
+                } else { await db.collection('tournaments').doc(doc.id).update({status:'ended'}); }
+            }
+        }
+
+        async function loadTournamentsList() {
+            const container = document.getElementById('tournaments-list-container');
+            if(!container) return;
+            container.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:20px;">Loading...</p>';
+            try {
+                const snap = await db.collection('tournaments').where('status','==','active').orderBy('endDate','asc').get();
+                if(snap.empty) {
+                    container.innerHTML = '<div style="text-align:center;padding:30px;"><p style="color:var(--text-secondary);">No active tournaments</p><p style="font-size:10px;color:var(--text-secondary);">Check back soon!</p></div>';
+                    return;
+                }
+                container.innerHTML = '';
+                snap.forEach(doc => {
+                    const t = doc.data();
+                    const isParticipant = (t.participants||[]).includes(user?.uid);
+                    const card = document.createElement('div');
+                    card.className = isParticipant ? 'card-glow ani-in' : 'card-dark ani-in';
+                    card.style.cursor = 'pointer';
+                    card.innerHTML = `
+                    <div style="display:flex;justify-content:space-between;align-items:center;"><h5 style="font-weight:900;font-size:13px;">🏆 ${t.title}</h5><span class="badge ${isParticipant?'badge-primary':'badge-gold'}">${isParticipant?'ENTERED':'OPEN'}</span></div>
+                    <div style="display:flex;justify-content:space-between;margin-top:6px;"><span style="font-size:18px;font-weight:900;color:var(--gold);">${t.prize} COIN</span><span style="font-size:10px;color:var(--text-secondary);">${(t.participants||[]).length} participants</span></div>
+                    <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:var(--text-secondary);"><span>Ends: ${formatCountdown(t.endDate?.toMillis())}</span><span>${t.entryFeeFree?'🆓 Free':'💰 Paid'}</span></div>`;
+                    card.onclick = () => { currentTournamentId = doc.id; openTournamentDetail(); };
+                    container.appendChild(card);
+                });
+            } catch(e) {
+                console.error('Tournament load error:', e);
+                container.innerHTML = `<p style="text-align:center;color:var(--danger);padding:20px;">Error loading tournaments: ${e.message}. Make sure Firestore indexes are set (status + endDate).</p>`;
+            }
+        }
+
+        async function loadAllHistory() {
+            if(!user) return;
+            allHistoryData = [];
+            const container = document.getElementById('history-list-container');
+            container.innerHTML = '<p style="text-align:center;color:var(--text-secondary);">Loading history...</p>';
+            try {
+                const [buySnap,withdrawSnap,tourneySnap,tradeSnap] = await Promise.all([
+                    db.collection('buyRequests').where('userId','==',user.uid).orderBy('createdAt','desc').limit(30).get(),
+                    db.collection('transactions').where('userId','==',user.uid).where('type','==','withdraw').orderBy('createdAt','desc').limit(30).get(),
+                    db.collection('tournamentHistory').where('userId','==',user.uid).orderBy('createdAt','desc').limit(30).get(),
+                    db.collection('trades').where('userId','==',user.uid).orderBy('createdAt','desc').limit(30).get()
+                ]);
+                buySnap.forEach(d=>{ const dt=d.data(); allHistoryData.push({id:d.id,category:'deposit',title:'DP: Buy Request',detail:`${dt.amountStars||0} STAR ($${dt.amountUSD||0})`,status:dt.status||'pending',time:dt.createdAt?.toMillis(),icon:'fa-arrow-down',iconClass:'hist-deposit'}); });
+                withdrawSnap.forEach(d=>{ const dt=d.data(); allHistoryData.push({id:d.id,category:'withdraw',title:'Withdraw',detail:`${dt.amountStars||0} STAR → LTC`,status:dt.status||'pending',time:dt.createdAt?.toMillis(),icon:'fa-arrow-up',iconClass:'hist-withdraw'}); });
+                tourneySnap.forEach(d=>{ const dt=d.data(); allHistoryData.push({id:d.id,category:'tournament',title:`🏆 ${dt.title||'Tournament'}`,detail:dt.type==='winner'?`Won ${dt.amount||0} ${dt.currency||'COIN'}`:`Entry: ${dt.amount||'Free'} ${dt.currency||''}`,status:'completed',time:dt.createdAt?.toMillis(),icon:'fa-trophy',iconClass:'hist-tournament'}); });
+                tradeSnap.forEach(d=>{ const dt=d.data(); allHistoryData.push({id:d.id,category:'trade',title:`${(dt.side||'').toUpperCase()} Trade`,detail:`${dt.amount||0} STAR | Net: ${dt.netAmount||0}`,status:'executed',time:dt.createdAt?.toMillis(),icon:'fa-chart-line',iconClass:'hist-trade'}); });
+                allHistoryData.sort((a,b)=>(b.time||0)-(a.time||0));
+                renderHistoryList();
+            } catch(e) {
+                console.error('History load error:', e);
+                container.innerHTML = `<p style="text-align:center;color:var(--danger);">Error loading history: ${e.message}. Check Firestore indexes for userId+createdAt etc.</p>`;
+            }
+        }
+
+        function renderHistoryList() {
+            const container = document.getElementById('history-list-container');
+            if(!container) return;
+            const filtered = historyFilter==='all'?allHistoryData:allHistoryData.filter(h=>h.category===historyFilter);
+            if(!filtered.length) {
+                container.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:20px;">No history found</p>';
+                return;
+            }
+            container.innerHTML = filtered.map(h=>`
+                <div class="history-item ani-in">
+                    <div class="history-icon ${h.iconClass}"><i class="fas ${h.icon}"></i></div>
+                    <div style="flex:1;"><p style="font-weight:700;font-size:11px;">${h.title}</p><p style="color:var(--text-secondary);font-size:9px;">${h.detail}</p></div>
+                    <div style="text-align:right;"><span class="badge ${h.status==='completed'||h.status==='executed'?'badge-primary':h.status==='pending'?'badge-gold':'badge-danger'}">${h.status}</span><p style="font-size:8px;color:var(--text-secondary);margin-top:2px;">${tAgo(h.time)}</p></div>
+                </div>`).join('');
+        }
+
+        async function loadTradingOverview() {
+            try{
+                const snap = await db.collection('votePolls').where('status','==','active').get();
+                let totalBuy=0,totalSell=0;
+                snap.forEach(d=>{ totalBuy+=(d.data().buyAmount||0); totalSell+=(d.data().sellAmount||0); });
+                const total = totalBuy+totalSell;
+                const buyPct = total>0?Math.round((totalBuy/total)*100):50;
+                document.getElementById('bullish-pct').innerText=buyPct+'%';
+                document.getElementById('bearish-pct').innerText=(100-buyPct)+'%';
+                document.getElementById('t-overview-buy-bar').style.width=buyPct+'%';
+                document.getElementById('t-overview-sell-bar').style.width=(100-buyPct)+'%';
+                const tSnap = await db.collection('tournaments').where('status','==','active').limit(3).get();
+                const summary = document.getElementById('t-active-tournaments-summary');
+                if(tSnap.empty) { summary.innerHTML='<p style="font-size:10px;color:var(--text-secondary);">No active tournaments</p>'; } else {
+                    summary.innerHTML='';
+                    tSnap.forEach(d=>{ const t=d.data(); summary.innerHTML+=`<p style="font-size:10px;color:var(--gold);">🏆 ${t.title} - ${t.prize} COIN (${(t.participants||[]).length} joined)</p>`; });
+                }
+            } catch(e) { console.log('Overview error:',e.message); }
+        }
+
+        function switchTradingTab(tabName) {
+            ttab=tabName;
+            document.querySelectorAll('.trading-sub-tab').forEach(b=>b.classList.remove('active'));
+            document.querySelectorAll('.trading-panel').forEach(p=>p.classList.add('hidden'));
+            const targetBtn = document.querySelector(`.trading-sub-tab[data-ttab="${tabName}"]`);
+            if(targetBtn) targetBtn.classList.add('active');
+            const targetPanel = document.getElementById(`tpanel-${tabName}`);
+            if(targetPanel) targetPanel.classList.remove('hidden');
+            if(tabName==='overview') loadTradingOverview();
+            if(tabName==='tournaments') loadTournamentsList();
+            if(tabName==='history') loadAllHistory();
+        }
+
+        auth.onAuthStateChanged(async (u)=>{
+            if(u) {
+                const d = await db.collection('users').doc(u.uid).get();
+                if(d.exists) { user={uid:u.uid,...d.data()}; } else {
+                    user = {
+                        uid:u.uid, email:u.email, displayName:u.email.split('@')[0],
+                        photoURL:'https://cdn-icons-png.flaticon.com/512/149/149071.png', bio:'Member',
+                        balance:100, stars:50, coins:100,
+                        referralCode: u.email.split('@')[0].toUpperCase()+'-'+Math.random().toString(36).substr(2,6).toUpperCase(),
+                        referralBalance:0, totalReferrals:0, role:'user'
+                    };
+                    await db.collection('users').doc(u.uid).set(user);
+                }
+                stars = user.stars||0;
+                coins = user.coins||0;
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                updateUI();
+                loadPosts(); loadPolls(); loadLTC();
+                await resolveEndedTournaments();
+                await ensureWeeklyTournament();
+                await updateNotifBadge();
+                if(tournamentInterval) clearInterval(tournamentInterval);
+                tournamentInterval = setInterval(async ()=>{
+                    await resolveEndedTournaments();
+                    await ensureWeeklyTournament();
+                    updateAllCountdowns();
+                }, 60000);
+            } else {
+                user=null;
+                if(tournamentInterval) clearInterval(tournamentInterval);
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('main-app').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('login-btn').addEventListener('click',()=>{
+            const e=document.getElementById('login-email').value.trim(), p=document.getElementById('login-password').value;
+            if(!e||!p) return toast('Fill all fields','error');
+            auth.signInWithEmailAndPassword(e,p).catch(err=>toast(err.message,'error'));
+        });
+        document.getElementById('register-btn').addEventListener('click',()=>{
+            const e=document.getElementById('reg-email').value.trim(), p=document.getElementById('reg-password').value, c=document.getElementById('reg-confirm').value;
+            if(!e||!p) return toast('Fill all fields','error');
+            if(p.length<6) return toast('Min 6 chars','error');
+            if(p!==c) return toast('Passwords mismatch','error');
+            auth.createUserWithEmailAndPassword(e,p).then(()=>{ toast('Account created!','success'); document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); }).catch(err=>toast(err.message,'error'));
+        });
+        document.getElementById('forgot-pass').addEventListener('click',()=>{
+            const e=prompt('Enter your email:');
+            if(e) auth.sendPasswordResetEmail(e).then(()=>toast('Email sent!')).catch(err=>toast(err.message,'error'));
+        });
+        document.getElementById('tab-register').addEventListener('click',()=>{ document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); });
+        document.getElementById('tab-login2').addEventListener('click',()=>{ document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); });
+        document.getElementById('tab-register2').addEventListener('click',()=>{ document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); });
+        document.getElementById('tab-login').addEventListener('click',()=>{ document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); });
+
+        function updateUI() {
+            if(!user) return;
+            document.getElementById('hdr-balance-icon').innerText = stars.toFixed(2);
+            document.getElementById('hdr-coin-icon').innerText = (coins||0).toFixed(0);
+            document.getElementById('vt-bal').innerText = stars.toFixed(2);
+        }
+
+        function goPage(p) {
+            if(!p) return;
+            document.querySelectorAll('.section-page').forEach(s=>s.classList.remove('active'));
+            document.querySelectorAll('#main-top-nav .top-nav-btn').forEach(b=>b.classList.remove('active'));
+            document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('active'));
+            const pageEl = document.getElementById(`page-${p}`);
+            if(pageEl) pageEl.classList.add('active');
+            const tn = document.querySelector(`#main-top-nav .top-nav-btn[data-page="${p}"]`);
+            if(tn) tn.classList.add('active');
+            const bn = document.querySelector(`.bn-item[data-bnav="${p}"]`);
+            if(bn) bn.classList.add('active');
+            if(p==='vote') loadPolls();
+            if(p==='trading') { loadTradingOverview(); loadTournamentsList(); }
+            if(p==='shop') { loadLTC(); updateWUI(); previewConversion(); }
+            if(p==='business') loadPosts();
+            page=p;
+        }
+
+        document.querySelectorAll('#main-top-nav .top-nav-btn').forEach(b=>{
+            b.addEventListener('click',()=>{ const pg=b.dataset.page; if(pg) goPage(pg); });
+        });
+
+        document.querySelectorAll('.bn-item').forEach(b=>{
+            b.addEventListener('click',()=>{
+                const nav=b.dataset.bnav;
+                if(nav==='profile') openProf();
+                else if(nav==='leaderboard') openLeaderboard();
+                else if(nav==='tournament') {
+                    goPage('trading'); setTimeout(()=>switchTradingTab('tournaments'),350);
+                } else if(nav==='history') {
+                    goPage('trading'); setTimeout(()=>switchTradingTab('history'),350);
+                } else goPage(nav);
+            });
+        });
+
+        document.querySelectorAll('.trading-sub-tab').forEach(b=>{
+            b.addEventListener('click',()=>{ switchTradingTab(b.dataset.ttab); });
+        });
+
+        document.querySelectorAll('.history-filter-btn').forEach(b=>{
+            b.addEventListener('click',function(){
+                document.querySelectorAll('.history-filter-btn').forEach(x=>x.classList.remove('active'));
+                this.classList.add('active');
+                historyFilter=this.dataset.hfilter;
+                renderHistoryList();
+            });
+        });
+
+        function loadPosts() {
+            db.collection('posts').where('approved','==',true).get().then(snap=>{
+                let posts=[];
+                snap.forEach(d=>posts.push({id:d.id,...d.data()}));
+                posts.sort((a,b)=>{ const at=a.createdAt?.toMillis()||0, bt=b.createdAt?.toMillis()||0; return bt-at; });
+                const c=document.getElementById('posts-container');
+                if(!posts.length) { c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-secondary);"><p>No approved posts yet</p></div>'; return; }
+                c.innerHTML=posts.map(p=>{
+                    const ago=tAgo(p.createdAt?.toMillis());
+                    const exp=p.expireAt?.toMillis()<Date.now();
+                    return `<div class="card ani-in" onclick="openPD('${p.id}')" style="cursor:pointer;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:10px;font-weight:700;color:var(--text-secondary);">${p.userName||'User'}</span><span class="badge ${exp?'badge-danger':'badge-primary'}">${exp?'Expired':'Active'}</span></div><h5 style="font-weight:900;font-size:13px;margin-bottom:4px;color:var(--text);">${p.title}</h5><div style="display:flex;gap:4px;margin-bottom:4px;"><span style="font-size:8px;background:var(--surface-light);padding:2px 6px;border-radius:6px;color:var(--text-secondary);">📍${p.location}</span><span style="font-size:8px;background:rgba(76,175,80,0.1);padding:2px 6px;border-radius:6px;color:var(--primary);">📞${p.whatsapp}</span></div><p style="font-size:11px;color:var(--text-secondary);">${(p.details||'').substr(0,90)}...</p><p style="font-size:8px;color:var(--text-secondary);">${ago}</p></div>`;
+                }).join('');
+            }).catch(e=>{ document.getElementById('posts-container').innerHTML=`<p style="color:red;text-align:center;">Error: ${e.message}</p>`; });
+        }
+
+        window.openPD = async function(id){
+            const d=await db.collection('posts').doc(id).get();
+            if(!d.exists) return;
+            const p=d.data();
+            document.getElementById('mpd-title').innerText=p.title;
+            document.getElementById('mpd-body').innerText=p.details;
+            document.getElementById('mpd-wa').innerText=p.whatsapp;
+            document.getElementById('modal-post').classList.remove('hidden');
+        };
+
+        document.getElementById('mpd-wa-btn').addEventListener('click',()=>{
+            let raw = (document.getElementById('mpd-wa').innerText||'').trim();
+            let n = raw.replace(/[^\d+]/g,'');
+            if(n.startsWith('00')) n = '+' + n.substring(2);
+            if(n.length===11 && n.startsWith('01')) n = '+880' + n.substring(1);
+            if(n) window.open('https://wa.me/'+n,'_blank');
+        });
+
+        document.getElementById('fab-create').addEventListener('click',()=>document.getElementById('modal-create').classList.remove('hidden'));
+        document.getElementById('cp-pub').addEventListener('click',async ()=>{
+            const t=document.getElementById('cp-title').value.trim(),
+                  w=document.getElementById('cp-wa').value.trim(),
+                  l=document.getElementById('cp-loc').value.trim()||'Global',
+                  d=document.getElementById('cp-det').value.trim(),
+                  dur=parseInt(document.getElementById('cp-dur').value);
+            if(!t||!w||!d) return toast('Fill all fields','error');
+            if(!/^\+?\d{7,15}$/.test(w)) return toast('Valid international WhatsApp no. required (e.g., +8801... or +1...)','error');
+            await db.collection('posts').add({
+                userId:user.uid,userName:user.displayName,userPhoto:user.photoURL,
+                title:t,whatsapp:w,location:l,details:d,duration:dur,approved:false,
+                createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+                expireAt:new Date(Date.now()+dur*3600000)
+            });
+            toast('Post submitted!','success');
+            closeM('modal-create');
+        });
+        document.getElementById('biz-search').addEventListener('keyup',loadPosts);
+
+        document.querySelectorAll('.vote-sub-tab').forEach(b=>{
+            b.addEventListener('click',function(){
+                const vtVal=this.dataset.vtab;
+                if(!vtVal) return;
+                document.querySelectorAll('.vote-sub-tab').forEach(x=>x.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.vote-panel').forEach(p=>p.classList.add('hidden'));
+                const panel=document.getElementById(`vpanel-${vtVal}`);
+                if(panel) panel.classList.remove('hidden');
+                vtab=vtVal;
+                if(vtab==='market') loadPolls();
+                if(vtab==='trades') loadTrades();
+            });
+        });
+
+        function calcPr(poll){ const ba=poll.buyAmount||0,sa=poll.sellAmount||0,tot=ba+sa; if(tot===0) return {price:100,chg:0}; const net=ba-sa; const price=100*(1+net/(tot+1)); return {price:Math.max(1,price),chg:((price-100)/100)*100}; }
+
+        function loadPolls(){
+            db.collection('votePolls').where('status','==','active').get().then(snap=>{
+                const polls=[]; snap.forEach(d=>polls.push({id:d.id,...d.data()}));
+                document.getElementById('vt-active').innerText=polls.length;
+                let tv=0; polls.forEach(p=>tv+=(p.buyAmount||0)+(p.sellAmount||0));
+                document.getElementById('vt-vol').innerText=tv.toFixed(0);
+                const c=document.getElementById('vpolls-container');
+                if(!polls.length){ c.innerHTML='<div style="text-align:center;padding:30px;color:var(--text-secondary);">No active polls</div>'; return; }
+                c.innerHTML=polls.map(p=>{
+                    const pr=calcPr(p); const tot=(p.buyAmount||0)+(p.sellAmount||0);
+                    const bp=tot>0?Math.round((p.buyAmount||0)/tot*100):50;
+                    return `<div class="vt-card ani-in" onclick="openVD('${p.id}')" style="cursor:pointer;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><h5 style="font-weight:900;font-size:12px;color:var(--text);">${p.title}</h5><span class="badge badge-primary">Live</span></div><p style="font-size:9px;color:var(--text-secondary);">${p.location||'Global'} • ${tLeft(p.expireAt?.toMillis())}</p><div style="display:flex;justify-content:space-between;align-items:center;background:var(--surface-light);padding:8px;border-radius:8px;margin:6px 0;"><span style="font-size:9px;">Price:</span><span style="font-size:18px;font-weight:900;color:${pr.chg>=0?'#4CAF50':'#f44336'};">${pr.price.toFixed(2)}</span><span style="font-size:10px;font-weight:700;color:${pr.chg>=0?'#4CAF50':'#f44336'};">${pr.chg>=0?'+':''}${pr.chg.toFixed(1)}%</span></div><div class="prog-bar"><div class="prog-buy" style="width:${bp}%;"></div><div class="prog-sell" style="width:${100-bp}%;"></div></div><div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700;margin-top:4px;"><span style="color:#4CAF50;">Buy ${bp}%</span><span style="color:#f44336;">Sell ${100-bp}%</span><span>Vol: ${tot.toFixed(0)}</span></div></div>`;
+                }).join('');
+            });
+        }
+
+        window.openVD = async function(id){
+            tPollId=id;
+            const d=await db.collection('votePolls').doc(id).get();
+            if(!d.exists) return;
+            const p=d.data();
+            const pr=calcPr(p); const tot=(p.buyAmount||0)+(p.sellAmount||0);
+            const bp=tot>0?Math.round((p.buyAmount||0)/tot*100):50;
+            document.getElementById('mvd-title').innerText=p.title;
+            document.getElementById('mvd-desc').innerText=p.description||'';
+            document.getElementById('mvd-buy-bar').style.width=bp+'%';
+            document.getElementById('mvd-sell-bar').style.width=(100-bp)+'%';
+            document.getElementById('mvd-bp').innerText=bp+'%';
+            document.getElementById('mvd-sp').innerText=(100-bp)+'%';
+            renderMiniChart(bp);
+            tSide=null; document.getElementById('mv-amount').value='';
+            document.getElementById('modal-vote').classList.remove('hidden');
+        };
+
+        document.getElementById('mv-buy').addEventListener('click',function(){ tSide='buy'; this.style.opacity='0.7'; document.getElementById('mv-sell').style.opacity='1'; });
+        document.getElementById('mv-sell').addEventListener('click',function(){ tSide='sell'; this.style.opacity='0.7'; document.getElementById('mv-buy').style.opacity='1'; });
+        document.getElementById('mv-submit').addEventListener('click',async ()=>{
+            if(!tSide) return toast('Select BUY or SELL','error');
+            const amt=parseFloat(document.getElementById('mv-amount').value);
+            if(!amt||amt<10) return toast('Min 10 Dh STAR','error');
+            if(amt>stars) return toast('Insufficient Dh STAR','error');
+            const ref=db.collection('votePolls').doc(tPollId);
+            const doc=await ref.get();
+            if(!doc.exists||doc.data().status!=='active') return toast('Poll ended','error');
+            const com=amt*0.07, net=amt-com;
+            await db.collection('users').doc(user.uid).update({stars:firebase.firestore.FieldValue.increment(-amt)});
+            const fld=tSide==='buy'?'buyAmount':'sellAmount', vf=tSide==='buy'?'buyVoters':'sellVoters';
+            await ref.update({[fld]:firebase.firestore.FieldValue.increment(net),[vf]:firebase.firestore.FieldValue.arrayUnion(user.uid),totalCommission:firebase.firestore.FieldValue.increment(com)});
+            if(doc.data().creatorId && doc.data().creatorId!==user.uid){
+                const creatorCut=amt*0.02;
+                await db.collection('users').doc(doc.data().creatorId).update({stars:firebase.firestore.FieldValue.increment(creatorCut)});
+            }
+            await db.collection('trades').add({pollId:tPollId,userId:user.uid,side:tSide,amount:amt,netAmount:net,commission:com,entryPrice:calcPr(doc.data()).price,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+            const coinReward=Math.floor(amt/10);
+            if(coinReward>0){ await db.collection('users').doc(user.uid).update({coins:firebase.firestore.FieldValue.increment(coinReward)}); coins+=coinReward; }
+            if(currentTournamentId){ await db.collection('tournaments').doc(currentTournamentId).update({totalTrades:firebase.firestore.FieldValue.increment(amt)}); }
+            stars-=amt; updateUI(); closeM('modal-vote');
+            toast(`${tSide.toUpperCase()} placed! (+${coinReward} COIN earned)`,'success');
+            loadPolls();
+        });
+
+        async function loadTrades(){
+            const c=document.getElementById('vtrades-container');
+            c.innerHTML='<p style="text-align:center;color:var(--text-secondary);padding:20px;">Loading...</p>';
+            const snap=await db.collection('trades').where('userId','==',user.uid).get();
+            const trades=[]; snap.forEach(d=>trades.push({id:d.id,...d.data()}));
+            trades.sort((a,b)=>{ const at=a.createdAt?.toMillis()||0, bt=b.createdAt?.toMillis()||0; return bt-at; });
+            if(!trades.length){ c.innerHTML='<p style="text-align:center;color:var(--text-secondary);padding:20px;">No trades yet</p>'; return; }
+            const pIds=[...new Set(trades.map(t=>t.pollId))];
+            const pDocs=await Promise.all(pIds.map(id=>db.collection('votePolls').doc(id).get()));
+            const polls={}; pDocs.forEach(d=>{ if(d.exists) polls[d.id]=d.data(); });
+            c.innerHTML=trades.map(t=>{
+                const p=polls[t.pollId]||{}; const pr=calcPr(p);
+                const prof=t.side==='buy'?(pr.price-t.entryPrice)*(t.netAmount/t.entryPrice):(t.entryPrice-pr.price)*(t.netAmount/t.entryPrice);
+                return `<div class="vt-card ani-in"><div style="display:flex;justify-content:space-between;"><span style="font-size:11px;font-weight:700;color:var(--text);">${p.title||'Unknown'}</span><span style="font-size:9px;font-weight:900;color:${t.side==='buy'?'#4CAF50':'#f44336'};">${(t.side||'').toUpperCase()}</span></div><div style="display:flex;justify-content:space-between;font-size:9px;margin-top:4px;color:var(--text-secondary);"><span>Entry: ${t.entryPrice?.toFixed(2)}</span><span>Now: ${pr.price.toFixed(2)}</span><span style="font-weight:700;color:${prof>=0?'#4CAF50':'#f44336'};">${prof>=0?'+':''}${prof.toFixed(2)}</span></div></div>`;
             }).join('');
-        } catch(e) { c.innerHTML = `<p style="color:red;text-align:center;">Error: ${e.message}</p>`; console.error(e); }
-    }
-    
-    document.getElementById('vp-create-btn').addEventListener('click', async () => {
-        const t = document.getElementById('vp-title').value.trim(), d = document.getElementById('vp-desc').value.trim(), l = document.getElementById('vp-location').value.trim() || 'Global', dur = parseInt(document.getElementById('vp-duration').value);
-        if(!t) return toast('Enter title','error');
-        if(stars < 110) return toast('Need 110 Dh STAR','error');
-        // ✅ Deduct fee from stars
-        await db.collection('users').doc(user.uid).update({ stars: firebase.firestore.FieldValue.increment(-10) });
-        await db.collection('votePolls').add({ title: t, description: d, location: l, duration: dur, creatorId: user.uid, creatorName: user.displayName, buyAmount: 0, sellAmount: 0, buyVoters: [], sellVoters: [], totalCommission: 0, status: 'active', createdAt: firebase.firestore.FieldValue.serverTimestamp(), expireAt: new Date(Date.now() + dur * 86400000) });
-        stars -= 10; bal = stars; updateUI(); toast('Poll created!','success'); document.querySelector('.vote-subnav button[data-vtab="market"]').click(); ['vp-title','vp-desc','vp-location'].forEach(id => document.getElementById(id).value = '');
-    });
-    
-    // ========== SHOP ==========
-    document.getElementById('shop-tab-buy').addEventListener('click', () => { document.getElementById('shop-buy-panel').classList.remove('hidden'); document.getElementById('shop-withdraw-panel').classList.add('hidden'); document.getElementById('shop-tab-buy').style.background='#fbbf24'; document.getElementById('shop-tab-buy').style.color='#1e293b'; document.getElementById('shop-tab-withdraw').style.background='transparent'; document.getElementById('shop-tab-withdraw').style.color='#94a3b8'; });
-    document.getElementById('shop-tab-withdraw').addEventListener('click', () => { document.getElementById('shop-buy-panel').classList.add('hidden'); document.getElementById('shop-withdraw-panel').classList.remove('hidden'); document.getElementById('shop-tab-withdraw').style.background='#fbbf24'; document.getElementById('shop-tab-withdraw').style.color='#1e293b'; document.getElementById('shop-tab-buy').style.background='transparent'; document.getElementById('shop-tab-buy').style.color='#94a3b8'; updateWUI(); });
-    async function loadLTC() { const d = await db.collection('adminSettings').doc('ltc_wallet').get(); if(d.exists) document.getElementById('plat-ltc').innerText = d.data().address || 'Not configured'; }
-    document.getElementById('copy-ltc').addEventListener('click', () => { navigator.clipboard?.writeText(document.getElementById('plat-ltc').innerText); toast('Copied!'); });
-    document.querySelectorAll('.pkg-card').forEach(el => { el.addEventListener('click', function() { const a = parseInt(this.dataset.amt), p = parseFloat(this.dataset.price); const ex = cart.find(i => i.amt === a); if(ex) ex.qty++; else cart.push({ amt: a, price: p, qty: 1 }); rCart(); toast(`${a} STAR added!`); }); });
-    function rCart() { const c = document.getElementById('cart-items'); if(!cart.length) { c.innerHTML = '<p style="font-size:10px;color:#94a3b8;text-align:center;padding:8px;">Empty</p>'; document.getElementById('cart-total').innerText = '$0.00'; return; } let total = 0; c.innerHTML = cart.map((i, idx) => { const st = i.amt * i.qty * (i.price / i.amt); total += st; return `<div style="display:flex;justify-content:space-between;font-size:10px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span>${i.amt}STAR x${i.qty}</span><span style="color:#fbbf24;">$${st.toFixed(2)}</span><button onclick="rmCart(${idx})" style="background:none;border:none;color:#EF4444;cursor:pointer;">x</button></div>`; }).join(''); document.getElementById('cart-total').innerText = '$' + total.toFixed(2); }
-    window.rmCart = function(i) { cart.splice(i, 1); rCart(); };
-    document.getElementById('checkout-btn').addEventListener('click', async () => { if(!cart.length) return toast('Cart empty','error'); const tx = document.getElementById('ltc-txid').value.trim(); if(!tx) return toast('Enter TxID','error'); let ts=0, tu=0; cart.forEach(i => { ts += i.amt * i.qty; tu += i.amt * i.qty * (i.price / i.amt); }); if(tu < 3) return toast('Min $3 USD','error'); await db.collection('buyRequests').add({ userId: user.uid, userEmail: user.email, amountStars: ts, amountUSD: tu, amountLTC: (tu/65).toFixed(6), txHash: tx, status:'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() }); toast('Submitted!','success'); cart = []; document.getElementById('ltc-txid').value = ''; rCart(); });
-    
-    // DIRECT DEPOSIT
-    document.getElementById('custom-star-amount').addEventListener('input', function() { const amt = parseInt(this.value) || 0; document.getElementById('custom-usd-display').textContent = `$${(amt*0.20).toFixed(2)}`; });
-    document.getElementById('direct-deposit-btn').addEventListener('click', async () => {
-        const starAmt = parseInt(document.getElementById('custom-star-amount').value);
-        const tx = document.getElementById('custom-ltc-txid').value.trim();
-        if(!starAmt || starAmt < 15) return toast('Min 15 STAR (~$3 USD)','error');
-        if(!tx) return toast('Enter LTC TxID','error');
-        const usd = starAmt * 0.20;
-        await db.collection('buyRequests').add({ userId: user.uid, userEmail: user.email, amountStars: starAmt, amountUSD: usd, amountLTC: (usd/65).toFixed(6), txHash: tx, status:'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        toast('Deposit request submitted!','success');
-        document.getElementById('custom-star-amount').value = '15'; document.getElementById('custom-ltc-txid').value = ''; document.getElementById('custom-usd-display').textContent = '$3.00';
-    });
-    
-    // LTC Calculator
-    let currentLtcPrice = 65;
-    async function fetchLtcPrice() { try { const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=litecoin&vs_currencies=usd'); const data = await res.json(); if(data && data.litecoin && data.litecoin.usd) { currentLtcPrice = data.litecoin.usd; document.getElementById('ltc-live-price').innerText = currentLtcPrice.toFixed(2); calculateLTC(); } } catch(e) { document.getElementById('ltc-live-price').innerText = '65.00'; } }
-    function calculateLTC() { const starAmt = parseFloat(document.getElementById('calc-star-amount').value) || 0; const usdValue = starAmt * 0.20; document.getElementById('calc-ltc-result').innerText = (usdValue / currentLtcPrice).toFixed(6); }
-    fetchLtcPrice();
-    
-    // Withdraw (fresh balance)
-    async function updateWUI() { if(!user) return; try { const freshDoc = await db.collection('users').doc(user.uid).get(); if(freshDoc.exists) { stars = freshDoc.data().stars || 0; bal = stars; user.stars = stars; } } catch(e) {} document.getElementById('w-bal').innerText = stars.toFixed(2); }
-    document.getElementById('withdraw-btn').addEventListener('click', async () => {
-        const addr = document.getElementById('w-ltc-addr').value.trim();
-        const amt = parseInt(document.getElementById('w-amt').value);
-        if(!addr) return toast('Enter LTC address','error');
-        if(!amt || amt < 15) return toast('Min 15 STAR (~$3 USD)','error');
-        const freshDoc = await db.collection('users').doc(user.uid).get();
-        const currentStars = freshDoc.exists ? (freshDoc.data().stars || 0) : 0;
-        if(amt > currentStars) return toast('Insufficient stars','error');
-        await db.collection('users').doc(user.uid).update({ stars: firebase.firestore.FieldValue.increment(-amt) });
-        await db.collection('transactions').add({ userId: user.uid, userEmail: user.email, type:'withdraw', amountStars: amt, ltcAddress: addr, status:'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        stars = currentStars - amt; bal = stars; toast('Withdraw request submitted!','success');
-        updateWUI(); document.getElementById('w-amt').value = ''; document.getElementById('w-ltc-addr').value = '';
-    });
-    
-    // ========== PROFILE ==========
-    function openProf() { document.getElementById('prof-name').value = user?.displayName || ''; document.getElementById('prof-bio').value = user?.bio || ''; document.getElementById('prof-img').src = user?.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; document.getElementById('prof-ref').innerText = 'Referral: ' + (user?.referralCode || 'N/A'); document.getElementById('modal-profile').classList.remove('hidden'); }
-    document.getElementById('prof-save').addEventListener('click', async () => { const name = document.getElementById('prof-name').value.trim(); if(!name) return toast('Name required','error'); const upd = { displayName: name, bio: document.getElementById('prof-bio').value.trim() }; const file = document.getElementById('prof-photo').files[0]; if(file) { const ref = storage.ref(`avatars/${user.uid}`); await ref.put(file); upd.photoURL = await ref.getDownloadURL(); } await db.collection('users').doc(user.uid).update(upd); user.displayName = name; if(upd.photoURL) user.photoURL = upd.photoURL; updateUI(); closeM('modal-profile'); toast('Profile updated!'); });
-    document.getElementById('prof-photo').addEventListener('change', function(e) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = ev => document.getElementById('prof-img').src = ev.target.result; r.readAsDataURL(f); } });
-    document.getElementById('prof-logout').addEventListener('click', () => { auth.signOut(); closeM('modal-profile'); });
-    
-    document.addEventListener('keydown', e => { if(e.key === 'Escape') { ['modal-post','modal-vote','modal-profile','modal-create','modal-about'].forEach(id => closeM(id)); } });
-</script>
+        }
+
+        document.getElementById('vp-create-btn').addEventListener('click',async ()=>{
+            const t=document.getElementById('vp-title').value.trim(), d=document.getElementById('vp-desc').value.trim(), l=document.getElementById('vp-location').value.trim()||'Global', dur=parseInt(document.getElementById('vp-duration').value);
+            if(!t) return toast('Enter title','error');
+            if(stars<110) return toast('Need 110 Dh STAR','error');
+            await db.collection('users').doc(user.uid).update({stars:firebase.firestore.FieldValue.increment(-10)});
+            await db.collection('votePolls').add({title:t,description:d,location:l,duration:dur,creatorId:user.uid,creatorName:user.displayName,buyAmount:0,sellAmount:0,buyVoters:[],sellVoters:[],totalCommission:0,status:'active',createdAt:firebase.firestore.FieldValue.serverTimestamp(),expireAt:new Date(Date.now()+dur*86400000)});
+            stars-=10; updateUI(); toast('Poll created!','success');
+            const mb=document.querySelector('[data-vtab="market"]'); if(mb) mb.click();
+            ['vp-title','vp-desc','vp-location'].forEach(id=>document.getElementById(id).value='');
+        });
+
+        document.getElementById('shop-tab-buy').addEventListener('click',()=>{
+            document.getElementById('shop-buy-panel').classList.remove('hidden');
+            document.getElementById('shop-withdraw-panel').classList.add('hidden');
+            document.getElementById('shop-tab-buy').style.background='var(--primary)'; document.getElementById('shop-tab-buy').style.color='white';
+            document.getElementById('shop-tab-withdraw').style.background='transparent'; document.getElementById('shop-tab-withdraw').style.color='var(--text-secondary)';
+        });
+        document.getElementById('shop-tab-withdraw').addEventListener('click',()=>{
+            document.getElementById('shop-buy-panel').classList.add('hidden');
+            document.getElementById('shop-withdraw-panel').classList.remove('hidden');
+            document.getElementById('shop-tab-withdraw').style.background='var(--primary)'; document.getElementById('shop-tab-withdraw').style.color='white';
+            document.getElementById('shop-tab-buy').style.background='transparent'; document.getElementById('shop-tab-buy').style.color='var(--text-secondary)';
+            updateWUI();
+        });
+        async function loadLTC(){ const d=await db.collection('adminSettings').doc('ltc_wallet').get(); if(d.exists) document.getElementById('plat-ltc').innerText=d.data().address||'Not configured'; }
+        document.getElementById('copy-ltc').addEventListener('click',()=>{ navigator.clipboard?.writeText(document.getElementById('plat-ltc').innerText); toast('Copied!'); });
+        document.querySelectorAll('.pkg-card').forEach(el=>{ el.addEventListener('click',function(){ const a=parseInt(this.dataset.amt), p=parseFloat(this.dataset.price); const ex=cart.find(i=>i.amt===a); if(ex) ex.qty++; else cart.push({amt:a,price:p,qty:1}); rCart(); toast(`${a} STAR added!`); }); });
+
+        function rCart(){ const c=document.getElementById('cart-items'); if(!cart.length){ c.innerHTML='<p style="font-size:10px;color:var(--text-secondary);text-align:center;padding:8px;">Empty</p>'; document.getElementById('cart-total').innerText='$0.00'; return; } let total=0; c.innerHTML=cart.map((i,idx)=>{ const st=i.amt*i.qty*(i.price/i.amt); total+=st; return `<div style="display:flex;justify-content:space-between;font-size:10px;padding:4px 0;border-bottom:1px solid var(--border);"><span>${i.amt}STAR x${i.qty}</span><span style="color:var(--gold);">$${st.toFixed(2)}</span><button onclick="rmCart(${idx})" style="background:none;border:none;color:var(--danger);cursor:pointer;">x</button></div>`; }).join(''); document.getElementById('cart-total').innerText='$'+total.toFixed(2); }
+        window.rmCart=function(i){ cart.splice(i,1); rCart(); };
+        document.getElementById('checkout-btn').addEventListener('click',async ()=>{ if(!cart.length) return toast('Cart empty','error'); const tx=document.getElementById('ltc-txid').value.trim(); if(!tx) return toast('Enter TxID','error'); let ts=0,tu=0; cart.forEach(i=>{ ts+=i.amt*i.qty; tu+=i.amt*i.qty*(i.price/i.amt); }); if(tu<3) return toast('Min $3 USD','error'); await db.collection('buyRequests').add({userId:user.uid,userEmail:user.email,amountStars:ts,amountUSD:tu,amountLTC:(tu/65).toFixed(6),txHash:tx,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()}); toast('Deposit request submitted!','success'); cart=[]; document.getElementById('ltc-txid').value=''; rCart(); });
+
+        let currentLtcPrice=65;
+        async function fetchLtcPrice(){ try{ const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=litecoin&vs_currencies=usd'); const data=await res.json(); if(data&&data.litecoin&&data.litecoin.usd){ currentLtcPrice=data.litecoin.usd; document.getElementById('ltc-live-price').innerText=currentLtcPrice.toFixed(2); calculateLTC(); } } catch(e){} }
+        function calculateLTC(){ const amt=parseFloat(document.getElementById('calc-star-amount').value)||0; document.getElementById('calc-ltc-result').innerText=((amt*0.20)/currentLtcPrice).toFixed(6); }
+        fetchLtcPrice();
+
+        async function updateWUI(){ const d=await db.collection('users').doc(user.uid).get(); if(d.exists){ stars=d.data().stars||0; coins=d.data().coins||0; document.getElementById('w-bal').innerText=stars.toFixed(2); } }
+        document.getElementById('withdraw-btn').addEventListener('click',async ()=>{
+            const addr=document.getElementById('w-ltc-addr').value.trim(); const amt=parseInt(document.getElementById('w-amt').value);
+            if(!addr) return toast('Enter LTC address','error'); if(!amt||amt<15) return toast('Min 15 STAR','error');
+            const d=await db.collection('users').doc(user.uid).get(); const cs=d.exists?(d.data().stars||0):0; if(amt>cs) return toast('Insufficient stars','error');
+            await db.collection('users').doc(user.uid).update({stars:firebase.firestore.FieldValue.increment(-amt)});
+            await db.collection('transactions').add({userId:user.uid,userEmail:user.email,type:'withdraw',amountStars:amt,ltcAddress:addr,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+            stars=cs-amt; toast('Withdraw submitted!','success'); updateWUI();
+        });
+
+        function openProf(){
+            document.getElementById('prof-name').value=user?.displayName||'';
+            document.getElementById('prof-bio').value=user?.bio||'';
+            document.getElementById('prof-img').src=user?.photoURL||'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            document.getElementById('prof-ref').innerText='Referral: '+(user?.referralCode||'N/A')+' | COIN: '+(coins||0);
+            document.getElementById('modal-profile').classList.remove('hidden');
+        }
+        document.getElementById('prof-save').addEventListener('click',async ()=>{
+            const name=document.getElementById('prof-name').value.trim(); if(!name) return toast('Name required','error');
+            const upd={displayName:name,bio:document.getElementById('prof-bio').value.trim()};
+            const file=document.getElementById('prof-photo').files[0]; if(file){ const ref=storage.ref(`avatars/${user.uid}`); await ref.put(file); upd.photoURL=await ref.getDownloadURL(); }
+            await db.collection('users').doc(user.uid).update(upd); user.displayName=name; if(upd.photoURL) user.photoURL=upd.photoURL;
+            updateUI(); closeM('modal-profile'); toast('Profile updated!');
+        });
+        document.getElementById('prof-logout').addEventListener('click',()=>{ auth.signOut(); closeM('modal-profile'); });
+
+        function openAboutModal() {
+            document.getElementById('modal-about').classList.remove('hidden');
+        }
+
+        document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ ['modal-post','modal-vote','modal-profile','modal-create','modal-about','modal-notifications','modal-leaderboard','modal-tournament','modal-wallet'].forEach(id=>closeM(id)); } });
+        console.log('🚀 ASD ICON v5.0 - COIN→STAR Convert + Tournament Fix');
+    </script>
 </body>
 </html>
