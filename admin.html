@@ -177,9 +177,9 @@
 <body>
     <div id="adm-toast"></div>
     
-    <!-- ==================== LOGIN ==================== -->
+    <!-- LOGIN -->
     <div id="adm-login" class="admin-wrap" style="align-items: center; justify-content: center;">
-        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 28px; width: 90%; max-width: 360px; animation: fadeIn 0.5s ease-out;">
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 28px; width: 90%; max-width: 360px;">
             <div style="text-align: center; margin-bottom: 20px;">
                 <div class="adm-logo-icon" style="margin: 0 auto 10px; width: 50px; height: 50px; font-size: 22px;">A</div>
                 <h1 style="font-size: 20px; font-weight: 900;">Admin Panel</h1>
@@ -193,9 +193,8 @@
         </div>
     </div>
     
-    <!-- ==================== DASHBOARD ==================== -->
+    <!-- DASHBOARD -->
     <div id="adm-dashboard" class="admin-wrap hidden">
-        <!-- HEADER -->
         <header class="adm-header">
             <div class="adm-logo">
                 <div class="adm-logo-icon">A</div>
@@ -205,19 +204,12 @@
                 </div>
             </div>
             <div class="adm-header-right">
-                <div class="adm-stat-mini">
-                    <span>Total Users</span>
-                    <p id="adm-total-users">0</p>
-                </div>
-                <div class="adm-stat-mini">
-                    <span>Revenue</span>
-                    <p id="adm-revenue">0</p>
-                </div>
+                <div class="adm-stat-mini"><span>Total Users</span><p id="adm-total-users">0</p></div>
+                <div class="adm-stat-mini"><span>Revenue</span><p id="adm-revenue">0</p></div>
                 <button id="adm-logout-btn" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
         
-        <!-- TABS -->
         <nav class="adm-tabs" id="adm-tabs">
             <button class="adm-tab active" data-panel="overview">📊 Overview</button>
             <button class="adm-tab" data-panel="posts">📝 Posts</button>
@@ -225,31 +217,24 @@
             <button class="adm-tab" data-panel="users">👥 Users</button>
             <button class="adm-tab" data-panel="deposits">💰 Deposits</button>
             <button class="adm-tab" data-panel="withdrawals">💸 Withdrawals</button>
+            <button class="adm-tab" data-panel="tournaments">🏆 Tournaments</button>
+            <button class="adm-tab" data-panel="conversions">🔄 Conversions</button>
+            <button class="adm-tab" data-panel="notifications">🔔 Notify</button>
             <button class="adm-tab" data-panel="settings">⚙️ Settings</button>
         </nav>
         
-        <!-- CONTENT -->
         <div class="adm-content" id="adm-content">
             <!-- OVERVIEW -->
             <div id="panel-overview" class="adm-panel active">
                 <div class="adm-stats" id="overview-stats"></div>
-                <div class="adm-card">
-                    <h3 class="adm-card-title">📋 Recent Posts</h3>
-                    <div class="adm-table-wrap" id="overview-posts"></div>
-                </div>
-                <div class="adm-card">
-                    <h3 class="adm-card-title">📈 Recent Trades</h3>
-                    <div class="adm-table-wrap" id="overview-trades"></div>
-                </div>
+                <div class="adm-card"><h3 class="adm-card-title">📋 Recent Posts</h3><div class="adm-table-wrap" id="overview-posts"></div></div>
+                <div class="adm-card"><h3 class="adm-card-title">📈 Recent Trades</h3><div class="adm-table-wrap" id="overview-trades"></div></div>
             </div>
             
             <!-- POSTS -->
             <div id="panel-posts" class="adm-panel">
                 <div class="adm-card">
-                    <div class="adm-card-header">
-                        <h3 class="adm-card-title">📝 All Posts</h3>
-                        <button id="refresh-posts" class="btn btn-outline btn-sm"><i class="fas fa-sync-alt"></i> Refresh</button>
-                    </div>
+                    <div class="adm-card-header"><h3 class="adm-card-title">📝 All Posts</h3><button id="refresh-posts" class="btn btn-outline btn-sm"><i class="fas fa-sync-alt"></i> Refresh</button></div>
                     <div class="adm-table-wrap" id="posts-table"></div>
                 </div>
             </div>
@@ -257,13 +242,9 @@
             <!-- POLLS -->
             <div id="panel-polls" class="adm-panel">
                 <div class="adm-card">
-                    <div class="adm-card-header">
-                        <h3 class="adm-card-title">📈 All Polls</h3>
-                        <button id="create-poll-btn" class="btn btn-blue btn-sm"><i class="fas fa-plus"></i> Create Poll</button>
-                    </div>
+                    <div class="adm-card-header"><h3 class="adm-card-title">📈 All Polls</h3><button id="create-poll-btn" class="btn btn-blue btn-sm"><i class="fas fa-plus"></i> Create Poll</button></div>
                     <div class="adm-table-wrap" id="polls-table"></div>
                 </div>
-                <!-- Create Poll Modal -->
                 <div id="poll-modal" class="adm-modal-overlay hidden">
                     <div class="adm-modal">
                         <h3 style="font-weight:900; margin-bottom:12px;">Create New Poll</h3>
@@ -279,41 +260,20 @@
                         </div>
                     </div>
                 </div>
-                <!-- Edit Poll Modal -->
-                <div id="edit-poll-modal" class="adm-modal-overlay hidden">
-                    <div class="adm-modal">
-                        <h3 style="font-weight:900; margin-bottom:12px;">Edit Poll</h3>
-                        <input type="hidden" id="edit-poll-id">
-                        <div style="display:flex;flex-direction:column;gap:10px;">
-                            <input type="text" id="edit-poll-title" placeholder="Poll Title" class="adm-input">
-                            <textarea id="edit-poll-desc" placeholder="Description" class="adm-input"></textarea>
-                            <select id="edit-poll-status" class="adm-select">
-                                <option value="active">Active</option><option value="settled">Settled</option>
-                            </select>
-                            <button id="update-poll" class="btn btn-blue" style="width:100%;">Update Poll</button>
-                            <button onclick="closeEditPollModal()" class="btn btn-outline" style="width:100%;">Cancel</button>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <!-- USERS -->
             <div id="panel-users" class="adm-panel">
-                <div class="adm-card">
-                    <h3 class="adm-card-title">👥 All Users</h3>
-                    <div class="adm-table-wrap" id="users-table"></div>
-                </div>
-                <!-- Edit User Modal -->
+                <div class="adm-card"><h3 class="adm-card-title">👥 All Users</h3><div class="adm-table-wrap" id="users-table"></div></div>
                 <div id="user-modal" class="adm-modal-overlay hidden">
                     <div class="adm-modal">
                         <h3 style="font-weight:900; margin-bottom:12px;">Edit User</h3>
                         <input type="hidden" id="edit-user-id">
                         <div style="display:flex;flex-direction:column;gap:10px;">
                             <input type="text" id="edit-user-name" placeholder="Display Name" class="adm-input">
-                            <input type="number" id="edit-user-stars" placeholder="Dh STAR Balance" class="adm-input" step="0.01">
-                            <select id="edit-user-role" class="adm-select">
-                                <option value="user">User</option><option value="admin">Admin</option>
-                            </select>
+                            <input type="number" id="edit-user-stars" placeholder="STAR Balance" class="adm-input" step="0.01">
+                            <input type="number" id="edit-user-coins" placeholder="COIN Balance" class="adm-input" step="0.01">
+                            <select id="edit-user-role" class="adm-select"><option value="user">User</option><option value="admin">Admin</option></select>
                             <button id="update-user" class="btn btn-blue" style="width:100%;">Update User</button>
                             <button onclick="closeUserModal()" class="btn btn-outline" style="width:100%;">Cancel</button>
                         </div>
@@ -323,43 +283,71 @@
             
             <!-- DEPOSITS -->
             <div id="panel-deposits" class="adm-panel">
-                <div class="adm-card">
-                    <h3 class="adm-card-title">💰 Buy Requests</h3>
-                    <div class="adm-table-wrap" id="deposits-table"></div>
-                </div>
+                <div class="adm-card"><h3 class="adm-card-title">💰 Buy Requests</h3><div class="adm-table-wrap" id="deposits-table"></div></div>
             </div>
             
             <!-- WITHDRAWALS -->
             <div id="panel-withdrawals" class="adm-panel">
-                <div class="adm-card">
-                    <h3 class="adm-card-title">💸 Withdraw Requests</h3>
-                    <div class="adm-table-wrap" id="withdrawals-table"></div>
-                </div>
+                <div class="adm-card"><h3 class="adm-card-title">💸 Withdraw Requests</h3><div class="adm-table-wrap" id="withdrawals-table"></div></div>
             </div>
             
+            <!-- TOURNAMENTS (FIXED) -->
+            <div id="panel-tournaments" class="adm-panel">
+                <div class="adm-card">
+                    <div class="adm-card-header">
+                        <h3 class="adm-card-title">🏆 All Tournaments</h3>
+                        <button id="create-tournament-btn" class="btn btn-blue btn-sm"><i class="fas fa-plus"></i> Create</button>
+                    </div>
+                    <div class="adm-table-wrap" id="tournaments-table"></div>
+                </div>
+                <div id="tournament-modal" class="adm-modal-overlay hidden">
+                    <div class="adm-modal">
+                        <h3 style="font-weight:900; margin-bottom:12px;" id="t-modal-title">Create Tournament</h3>
+                        <input type="hidden" id="edit-tournament-id">
+                        <div style="display:flex;flex-direction:column;gap:10px;">
+                            <input type="text" id="t-title" placeholder="Tournament Title" class="adm-input">
+                            <input type="number" id="t-prize" placeholder="Prize (COIN)" class="adm-input" value="5000">
+                            <select id="t-status" class="adm-select">
+                                <option value="active">Active</option><option value="ended">Ended</option>
+                            </select>
+                            <input type="datetime-local" id="t-end-date" class="adm-input">
+                            <button id="save-tournament" class="btn btn-gold" style="width:100%;">Save Tournament</button>
+                            <button onclick="closeTournamentModal()" class="btn btn-outline" style="width:100%;">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONVERSIONS -->
+            <div id="panel-conversions" class="adm-panel">
+                <div class="adm-card"><h3 class="adm-card-title">🔄 COIN → STAR Conversions</h3><div class="adm-table-wrap" id="conversions-table"></div></div>
+            </div>
+
+            <!-- NOTIFICATIONS -->
+            <div id="panel-notifications" class="adm-panel">
+                <div class="adm-card">
+                    <h3 class="adm-card-title">🔔 Send Notification</h3>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <select id="notif-target" class="adm-select"><option value="all">All Users</option><option value="single">Single User</option></select>
+                        <input type="text" id="notif-user-email" placeholder="User Email (if single)" class="adm-input" style="display:none;">
+                        <input type="text" id="notif-title" placeholder="Notification Title" class="adm-input">
+                        <textarea id="notif-message" placeholder="Message" class="adm-input"></textarea>
+                        <button id="send-notif" class="btn btn-blue" style="width:100%;">Send Notification</button>
+                    </div>
+                </div>
+                <div class="adm-card" style="margin-top:12px;"><h3 class="adm-card-title">📋 Recent Notifications</h3><div class="adm-table-wrap" id="recent-notifs"></div></div>
+            </div>
+
             <!-- SETTINGS -->
             <div id="panel-settings" class="adm-panel">
                 <div class="adm-card">
                     <h3 class="adm-card-title">⚙️ Platform Settings</h3>
                     <div style="display:flex;flex-direction:column;gap:12px;">
-                        <div>
-                            <label style="font-size:10px;color:var(--sub);font-weight:700;">LTC Wallet Address</label>
-                            <input type="text" id="set-ltc" placeholder="LTC Address" class="adm-input">
-                        </div>
-                        <div>
-                            <label style="font-size:10px;color:var(--sub);font-weight:700;">Coin Price (USD per STAR)</label>
-                            <input type="number" id="set-price" placeholder="0.20" class="adm-input" step="0.01" value="0.20">
-                        </div>
-                        <div>
-                            <label style="font-size:10px;color:var(--sub);font-weight:700;">Auto Approve Posts</label>
-                            <select id="set-auto-approve" class="adm-select">
-                                <option value="false">No (Manual)</option><option value="true">Yes (Auto)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="font-size:10px;color:var(--sub);font-weight:700;">Admin Email</label>
-                            <input type="email" id="set-admin-email" placeholder="dhrubo1200@gmail.com" class="adm-input" value="dhrubo1200@gmail.com">
-                        </div>
+                        <div><label style="font-size:10px;color:var(--sub);font-weight:700;">LTC Wallet Address</label><input type="text" id="set-ltc" placeholder="LTC Address" class="adm-input"></div>
+                        <div><label style="font-size:10px;color:var(--sub);font-weight:700;">Coin Price (USD per STAR)</label><input type="number" id="set-price" placeholder="0.20" class="adm-input" step="0.01" value="0.20"></div>
+                        <div><label style="font-size:10px;color:var(--sub);font-weight:700;">Conversion Rate (COIN → STAR)</label><input type="number" id="set-conv-rate" placeholder="100 COIN = ? STAR" class="adm-input" step="0.1" value="5"></div>
+                        <div><label style="font-size:10px;color:var(--sub);font-weight:700;">Auto Approve Posts</label><select id="set-auto-approve" class="adm-select"><option value="false">No (Manual)</option><option value="true">Yes (Auto)</option></select></div>
+                        <div><label style="font-size:10px;color:var(--sub);font-weight:700;">Admin Email</label><input type="email" id="set-admin-email" placeholder="admin@asdicon.com" class="adm-input"></div>
                         <button id="save-settings" class="btn btn-gold" style="width:100%;">Save Settings</button>
                     </div>
                 </div>
@@ -368,7 +356,6 @@
     </div>
 
     <script>
-        // ========== FIREBASE ==========
         const fbConfig = {
             apiKey: "AIzaSyB31gEKElLRlKVynHsEn3PU0F7bv1AHso8",
             authDomain: "vote-trading.firebaseapp.com",
@@ -392,11 +379,11 @@
             setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 2500);
         }
         
-        // ========== AUTH ==========
+        // AUTH
         auth.onAuthStateChanged(async (u) => {
             if (u) {
                 const d = await db.collection('users').doc(u.uid).get();
-                if (d.exists && (d.data().role === 'admin' || d.data().email === 'admin@asdicon.com')) {
+                if (d.exists && (d.data().role === 'admin' || d.data().email === 'admin@asdicon.com' || d.data().email === 'asdicon3@gmail.com' || d.data().email === 'dhrubo1200@gmail.com')) {
                     document.getElementById('adm-login').classList.add('hidden');
                     document.getElementById('adm-dashboard').classList.remove('hidden');
                     loadAll();
@@ -421,7 +408,7 @@
         
         document.getElementById('adm-logout-btn').addEventListener('click', () => auth.signOut());
         
-        // ========== TAB NAVIGATION ==========
+        // TAB NAVIGATION
         document.querySelectorAll('.adm-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('active'));
@@ -441,6 +428,9 @@
                 case 'users': loadUsers(); break;
                 case 'deposits': loadDeposits(); break;
                 case 'withdrawals': loadWithdrawals(); break;
+                case 'tournaments': loadTournaments(); break;
+                case 'conversions': loadConversions(); break;
+                case 'notifications': loadNotifPanel(); break;
                 case 'settings': loadSettings(); break;
             }
         }
@@ -460,14 +450,11 @@
                 db.collection('buyRequests').where('status','==','pending').get(),
                 db.collection('transactions').where('status','==','pending').get()
             ]);
-            
             const totalUsers = usersSnap.size;
             let totalVolume = 0;
             pollsSnap.forEach(d => totalVolume += (d.data().buyAmount||0)+(d.data().sellAmount||0));
-            
             document.getElementById('adm-total-users').innerText = totalUsers;
             document.getElementById('adm-revenue').innerText = totalVolume.toFixed(0);
-            
             document.getElementById('overview-stats').innerHTML = `
                 <div class="adm-stat-card"><p class="adm-stat-value">${totalUsers}</p><p class="adm-stat-label">Total Users</p></div>
                 <div class="adm-stat-card"><p class="adm-stat-value">${postsSnap.size}</p><p class="adm-stat-label">Total Posts</p></div>
@@ -476,14 +463,19 @@
                 <div class="adm-stat-card"><p class="adm-stat-value">${depositsSnap.size}</p><p class="adm-stat-label">Pending Deposits</p></div>
                 <div class="adm-stat-card"><p class="adm-stat-value">${withdrawalsSnap.size}</p><p class="adm-stat-label">Pending Withdrawals</p></div>
             `;
-            
             document.getElementById('overview-posts').innerHTML = `
                 <table class="adm-table"><thead><tr><th>Title</th><th>User</th><th>Status</th><th>Action</th></tr></thead><tbody>
                 ${postsSnap.docs.map(d => {
                     const p = d.data();
-                    return `<tr><td>${(p.title||'').substr(0,25)}</td><td>${p.userName||''}</td>
-                    <td><span class="badge ${p.approved?'badge-success':'badge-warning'}">${p.approved?'Approved':'Pending'}</span></td>
-                    <td><button class="btn btn-sm ${p.approved?'btn-red':'btn-green'}" onclick="togglePost('${d.id}',${!p.approved})">${p.approved?'Reject':'Approve'}</button></td></tr>`;
+                    return `<tr><td>${(p.title||'').substr(0,25)}</td><td>${p.userName||''}</td><td><span class="badge ${p.approved?'badge-success':'badge-warning'}">${p.approved?'Approved':'Pending'}</span></td><td><button class="btn btn-sm ${p.approved?'btn-red':'btn-green'}" onclick="togglePost('${d.id}',${!p.approved})">${p.approved?'Reject':'Approve'}</button></td></tr>`;
+                }).join('')}
+                </tbody></table>`;
+            document.getElementById('overview-trades').innerHTML = `
+                <table class="adm-table"><thead><tr><th>User</th><th>Amount</th><th>Side</th><th>Time</th></tr></thead><tbody>
+                ${tradesSnap.docs.slice(0,10).map(d => {
+                    const t = d.data();
+                    const time = t.createdAt ? new Date(t.createdAt.toMillis()).toLocaleString() : '';
+                    return `<tr><td>${t.userId||''}</td><td>${t.amount||0}</td><td style="color:${t.side==='buy'?'#10B981':'#EF4444'};">${t.side||''}</td><td>${time}</td></tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
@@ -495,26 +487,15 @@
                 <table class="adm-table"><thead><tr><th>Title</th><th>User</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead><tbody>
                 ${snap.docs.map(d => {
                     const p = d.data();
-                    return `<tr>
-                        <td>${(p.title||'').substr(0,25)}</td>
-                        <td>${p.userName||''}</td>
-                        <td>${p.location||''}</td>
-                        <td><span class="badge ${p.approved?'badge-success':'badge-warning'}">${p.approved?'Approved':'Pending'}</span></td>
-                        <td>
-                            <button class="btn btn-sm ${p.approved?'btn-red':'btn-green'}" onclick="togglePost('${d.id}',${!p.approved})">${p.approved?'Reject':'Approve'}</button>
-                            <button class="btn btn-sm btn-red" onclick="deletePost('${d.id}')"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>`;
+                    return `<tr><td>${(p.title||'').substr(0,25)}</td><td>${p.userName||''}</td><td>${p.location||''}</td><td><span class="badge ${p.approved?'badge-success':'badge-warning'}">${p.approved?'Approved':'Pending'}</span></td><td><button class="btn btn-sm ${p.approved?'btn-red':'btn-green'}" onclick="togglePost('${d.id}',${!p.approved})">${p.approved?'Reject':'Approve'}</button><button class="btn btn-sm btn-red" onclick="deletePost('${d.id}')"><i class="fas fa-trash"></i></button></td></tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
-        
         window.togglePost = async function(id, approve) {
             await db.collection('posts').doc(id).update({ approved: approve });
             toast(`Post ${approve?'approved':'rejected'}!`);
             loadPanel(currentPanel);
         };
-        
         window.deletePost = async function(id) {
             if (confirm('Delete this post?')) {
                 await db.collection('posts').doc(id).delete();
@@ -522,7 +503,6 @@
                 loadPanel(currentPanel);
             }
         };
-        
         document.getElementById('refresh-posts').addEventListener('click', loadPosts);
         
         // ========== POLLS ==========
@@ -532,27 +512,12 @@
                 <table class="adm-table"><thead><tr><th>Title</th><th>Creator</th><th>Status</th><th>Buy</th><th>Sell</th><th>Actions</th></tr></thead><tbody>
                 ${snap.docs.map(d => {
                     const p = d.data();
-                    return `<tr>
-                        <td>${(p.title||'').substr(0,25)}</td>
-                        <td>${p.creatorName||''}</td>
-                        <td><span class="badge ${p.status==='active'?'badge-success':'badge-info'}">${p.status}</span></td>
-                        <td style="color:#10B981;">${(p.buyAmount||0).toFixed(0)}</td>
-                        <td style="color:#EF4444;">${(p.sellAmount||0).toFixed(0)}</td>
-                        <td>
-                            <button class="btn btn-sm btn-blue" onclick="editPoll('${d.id}')"><i class="fas fa-edit"></i></button>
-                            ${p.status==='active'?`<button class="btn btn-sm btn-gold" onclick="settlePoll('${d.id}')">Settle</button>`:''}
-                            <button class="btn btn-sm btn-red" onclick="deletePoll('${d.id}')"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>`;
+                    return `<tr><td>${(p.title||'').substr(0,25)}</td><td>${p.creatorName||''}</td><td><span class="badge ${p.status==='active'?'badge-success':'badge-info'}">${p.status}</span></td><td style="color:#10B981;">${(p.buyAmount||0).toFixed(0)}</td><td style="color:#EF4444;">${(p.sellAmount||0).toFixed(0)}</td><td><button class="btn btn-sm btn-blue" onclick="editPoll('${d.id}')"><i class="fas fa-edit"></i></button>${p.status==='active'?`<button class="btn btn-sm btn-gold" onclick="settlePoll('${d.id}')">Settle</button>`:''}<button class="btn btn-sm btn-red" onclick="deletePoll('${d.id}')"><i class="fas fa-trash"></i></button></td></tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
-        
         document.getElementById('create-poll-btn').addEventListener('click', () => document.getElementById('poll-modal').classList.remove('hidden'));
         function closePollModal() { document.getElementById('poll-modal').classList.add('hidden'); }
-        function closeEditPollModal() { document.getElementById('edit-poll-modal').classList.add('hidden'); }
-        function closeUserModal() { document.getElementById('user-modal').classList.add('hidden'); }
-        
         document.getElementById('submit-poll').addEventListener('click', async () => {
             const title = document.getElementById('new-poll-title').value.trim();
             if (!title) return toast('Title required', 'error');
@@ -562,39 +527,18 @@
                 duration: parseInt(document.getElementById('new-poll-duration').value),
                 creatorId: auth.currentUser.uid, creatorName: 'Admin',
                 buyAmount: 0, sellAmount: 0, buyVoters: [], sellVoters: [],
-                totalCommission: 0, creatorEarnings: 0, status: 'active',
+                totalCommission: 0, status: 'active',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 expireAt: new Date(Date.now() + parseInt(document.getElementById('new-poll-duration').value) * 86400000)
             });
             toast('Poll created!'); closePollModal(); loadPolls();
         });
-        
-        window.editPoll = async function(id) {
-            const d = await db.collection('votePolls').doc(id).get();
-            const p = d.data();
-            document.getElementById('edit-poll-id').value = id;
-            document.getElementById('edit-poll-title').value = p.title || '';
-            document.getElementById('edit-poll-desc').value = p.description || '';
-            document.getElementById('edit-poll-status').value = p.status || 'active';
-            document.getElementById('edit-poll-modal').classList.remove('hidden');
-        };
-        
-        document.getElementById('update-poll').addEventListener('click', async () => {
-            await db.collection('votePolls').doc(document.getElementById('edit-poll-id').value).update({
-                title: document.getElementById('edit-poll-title').value,
-                description: document.getElementById('edit-poll-desc').value,
-                status: document.getElementById('edit-poll-status').value
-            });
-            toast('Poll updated!'); closeEditPollModal(); loadPolls();
-        });
-        
         window.settlePoll = async function(id) {
             if (confirm('Settle this poll?')) {
                 await db.collection('votePolls').doc(id).update({ status: 'settled' });
                 toast('Poll settled!'); loadPolls();
             }
         };
-        
         window.deletePoll = async function(id) {
             if (confirm('Delete this poll?')) {
                 await db.collection('votePolls').doc(id).delete();
@@ -606,73 +550,53 @@
         async function loadUsers() {
             const snap = await db.collection('users').get();
             document.getElementById('users-table').innerHTML = `
-                <table class="adm-table"><thead><tr><th>User</th><th>Stars</th><th>Role</th><th>Actions</th></tr></thead><tbody>
+                <table class="adm-table"><thead><tr><th>User</th><th>Stars</th><th>Coins</th><th>Role</th><th>Actions</th></tr></thead><tbody>
                 ${snap.docs.map(d => {
                     const u = d.data();
-                    return `<tr>
-                        <td>${u.displayName||u.email||''}</td>
-                        <td>${(u.stars||0).toFixed(2)}</td>
-                        <td><span class="badge ${u.role==='admin'?'badge-info':'badge-success'}">${u.role||'user'}</span></td>
-                        <td><button class="btn btn-sm btn-blue" onclick="editUser('${d.id}')"><i class="fas fa-edit"></i></button></td>
-                    </tr>`;
+                    return `<tr><td>${u.displayName||u.email||''}</td><td>${(u.stars||0).toFixed(2)}</td><td>${(u.coins||0).toFixed(0)}</td><td><span class="badge ${u.role==='admin'?'badge-info':'badge-success'}">${u.role||'user'}</span></td><td><button class="btn btn-sm btn-blue" onclick="editUser('${d.id}')"><i class="fas fa-edit"></i></button></td></tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
-        
         window.editUser = async function(id) {
             const d = await db.collection('users').doc(id).get();
             const u = d.data();
             document.getElementById('edit-user-id').value = id;
             document.getElementById('edit-user-name').value = u.displayName || '';
             document.getElementById('edit-user-stars').value = u.stars || 0;
+            document.getElementById('edit-user-coins').value = u.coins || 0;
             document.getElementById('edit-user-role').value = u.role || 'user';
             document.getElementById('user-modal').classList.remove('hidden');
         };
-        
+        function closeUserModal() { document.getElementById('user-modal').classList.add('hidden'); }
         document.getElementById('update-user').addEventListener('click', async () => {
             await db.collection('users').doc(document.getElementById('edit-user-id').value).update({
                 displayName: document.getElementById('edit-user-name').value,
                 stars: parseFloat(document.getElementById('edit-user-stars').value),
+                coins: parseFloat(document.getElementById('edit-user-coins').value),
                 role: document.getElementById('edit-user-role').value
             });
             toast('User updated!'); closeUserModal(); loadUsers();
         });
         
-        // ========== DEPOSITS (APPROVE ADDS STARS) ==========
+        // ========== DEPOSITS ==========
         async function loadDeposits() {
             const snap = await db.collection('buyRequests').orderBy('createdAt','desc').get();
             document.getElementById('deposits-table').innerHTML = `
                 <table class="adm-table"><thead><tr><th>User</th><th>Stars</th><th>USD</th><th>TxID</th><th>Status</th><th>Action</th></tr></thead><tbody>
                 ${snap.docs.map(d => {
                     const r = d.data();
-                    return `<tr>
-                        <td>${r.userEmail||''}</td>
-                        <td>${r.amountStars}</td>
-                        <td>$${(r.amountUSD||0).toFixed(2)}</td>
-                        <td style="font-size:9px;">${(r.txHash||'').substr(0,15)}...</td>
-                        <td><span class="badge ${r.status==='approved'?'badge-success':r.status==='rejected'?'badge-danger':'badge-warning'}">${r.status}</span></td>
-                        <td>
-                            ${r.status==='pending'?`
-                                <button class="btn btn-sm btn-green" onclick="approveDeposit('${d.id}','${r.userId}',${r.amountStars})">Approve</button>
-                                <button class="btn btn-sm btn-red" onclick="rejectDeposit('${d.id}')">Reject</button>
-                            `:''}
-                        </td>
-                    </tr>`;
+                    return `<tr><td>${r.userEmail||''}</td><td>${r.amountStars}</td><td>$${(r.amountUSD||0).toFixed(2)}</td><td style="font-size:9px;">${(r.txHash||'').substr(0,15)}...</td><td><span class="badge ${r.status==='approved'?'badge-success':r.status==='rejected'?'badge-danger':'badge-warning'}">${r.status}</span></td><td>${r.status==='pending'?`<button class="btn btn-sm btn-green" onclick="approveDeposit('${d.id}','${r.userId}',${r.amountStars})">Approve</button><button class="btn btn-sm btn-red" onclick="rejectDeposit('${d.id}')">Reject</button>`:''}</td></tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
-        
         window.approveDeposit = async function(id, uid, starsAmount) {
             await db.collection('buyRequests').doc(id).update({ status: 'approved' });
             await db.collection('users').doc(uid).update({ stars: firebase.firestore.FieldValue.increment(starsAmount) });
-            toast('Deposit approved! Stars added to user.');
-            loadDeposits();
+            toast('Deposit approved! Stars added.'); loadDeposits();
         };
-        
         window.rejectDeposit = async function(id) {
             await db.collection('buyRequests').doc(id).update({ status: 'rejected' });
-            toast('Deposit rejected.');
-            loadDeposits();
+            toast('Deposit rejected.'); loadDeposits();
         };
         
         // ========== WITHDRAWALS ==========
@@ -682,40 +606,190 @@
                 <table class="adm-table"><thead><tr><th>User</th><th>Stars</th><th>LTC Address</th><th>Status</th><th>Action</th></tr></thead><tbody>
                 ${snap.docs.map(d => {
                     const r = d.data();
-                    return `<tr>
-                        <td>${r.userEmail||''}</td>
-                        <td>${r.amountStars}</td>
-                        <td style="font-size:9px;">${(r.ltcAddress||'').substr(0,20)}...</td>
-                        <td><span class="badge ${r.status==='completed'?'badge-success':r.status==='rejected'?'badge-danger':'badge-warning'}">${r.status}</span></td>
-                        <td>
-                            ${r.status==='pending'?`
-                                <button class="btn btn-sm btn-green" onclick="completeWithdrawal('${d.id}')">Complete</button>
-                                <button class="btn btn-sm btn-red" onclick="rejectWithdrawal('${d.id}')">Reject</button>
-                            `:''}
-                        </td>
-                    </tr>`;
+                    return `<tr><td>${r.userEmail||''}</td><td>${r.amountStars}</td><td style="font-size:9px;">${(r.ltcAddress||'').substr(0,20)}...</td><td><span class="badge ${r.status==='completed'?'badge-success':r.status==='rejected'?'badge-danger':'badge-warning'}">${r.status}</span></td><td>${r.status==='pending'?`<button class="btn btn-sm btn-green" onclick="completeWithdrawal('${d.id}')">Complete</button><button class="btn btn-sm btn-red" onclick="rejectWithdrawal('${d.id}')">Reject</button>`:''}</td></tr>`;
                 }).join('')}
                 </tbody></table>`;
         }
-        
         window.completeWithdrawal = async function(id) {
             await db.collection('transactions').doc(id).update({ status: 'completed' });
-            toast('Withdrawal completed!');
-            loadWithdrawals();
+            toast('Withdrawal completed!'); loadWithdrawals();
         };
-        
         window.rejectWithdrawal = async function(id) {
             const doc = await db.collection('transactions').doc(id).get();
             if (doc.exists) {
                 const data = doc.data();
-                await db.collection('users').doc(data.userId).update({
-                    stars: firebase.firestore.FieldValue.increment(data.amountStars)
-                });
+                await db.collection('users').doc(data.userId).update({ stars: firebase.firestore.FieldValue.increment(data.amountStars) });
             }
             await db.collection('transactions').doc(id).update({ status: 'rejected' });
-            toast('Withdrawal rejected. Stars refunded.');
-            loadWithdrawals();
+            toast('Withdrawal rejected. Stars refunded.'); loadWithdrawals();
         };
+        
+        // ========== TOURNAMENTS (FIXED & FULLY WORKING) ==========
+        async function loadTournaments() {
+            const snap = await db.collection('tournaments').orderBy('endDate','desc').get();
+            document.getElementById('tournaments-table').innerHTML = `
+                <table class="adm-table"><thead><tr><th>Title</th><th>Prize</th><th>Status</th><th>Participants</th><th>Actions</th></tr></thead><tbody>
+                ${snap.docs.map(d => {
+                    const t = d.data();
+                    return `<tr><td>${t.title||''}</td><td>${t.prize||0} COIN</td><td><span class="badge ${t.status==='active'?'badge-success':'badge-info'}">${t.status}</span></td><td>${(t.participants||[]).length}</td><td><button class="btn btn-sm btn-blue" onclick="editTournament('${d.id}')"><i class="fas fa-edit"></i></button>${t.status==='active'?`<button class="btn btn-sm btn-gold" onclick="endTournament('${d.id}')">End</button>`:''}<button class="btn btn-sm btn-red" onclick="deleteTournament('${d.id}')"><i class="fas fa-trash"></i></button></td></tr>`;
+                }).join('')}
+                </tbody></table>`;
+        }
+        
+        document.getElementById('create-tournament-btn').addEventListener('click', () => {
+            document.getElementById('edit-tournament-id').value = '';
+            document.getElementById('t-modal-title').innerText = 'Create Tournament';
+            document.getElementById('t-title').value = '';
+            document.getElementById('t-prize').value = '5000';
+            document.getElementById('t-status').value = 'active';
+            // Default end date = 7 days from now
+            const defaultEnd = new Date(Date.now() + 7 * 86400000);
+            document.getElementById('t-end-date').value = defaultEnd.toISOString().slice(0,16);
+            document.getElementById('tournament-modal').classList.remove('hidden');
+        });
+        
+        function closeTournamentModal() { document.getElementById('tournament-modal').classList.add('hidden'); }
+        
+        window.editTournament = async function(id) {
+            const d = await db.collection('tournaments').doc(id).get();
+            const t = d.data();
+            document.getElementById('edit-tournament-id').value = id;
+            document.getElementById('t-modal-title').innerText = 'Edit Tournament';
+            document.getElementById('t-title').value = t.title || '';
+            document.getElementById('t-prize').value = t.prize || 5000;
+            document.getElementById('t-status').value = t.status || 'active';
+            const endDate = t.endDate ? new Date(t.endDate.toMillis()) : new Date(Date.now() + 7 * 86400000);
+            document.getElementById('t-end-date').value = endDate.toISOString().slice(0,16);
+            document.getElementById('tournament-modal').classList.remove('hidden');
+        };
+        
+        document.getElementById('save-tournament').addEventListener('click', async () => {
+            try {
+                const id = document.getElementById('edit-tournament-id').value;
+                const title = document.getElementById('t-title').value.trim();
+                if (!title) return toast('Title is required', 'error');
+                
+                const prize = parseInt(document.getElementById('t-prize').value) || 5000;
+                const status = document.getElementById('t-status').value;
+                const endDateStr = document.getElementById('t-end-date').value;
+                let endDate;
+                if (endDateStr) {
+                    endDate = new Date(endDateStr);
+                } else {
+                    endDate = new Date(Date.now() + 7 * 86400000);
+                }
+                const data = {
+                    title,
+                    prize,
+                    status,
+                    endDate: firebase.firestore.Timestamp.fromDate(endDate)
+                };
+                
+                if (id) {
+                    await db.collection('tournaments').doc(id).update(data);
+                } else {
+                    data.participants = [];
+                    data.weekNumber = 0;
+                    data.year = 2025;
+                    data.entryFeeFree = true;
+                    data.entryFeePaid = 50;
+                    data.startDate = firebase.firestore.Timestamp.fromDate(new Date());
+                    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('tournaments').add(data);
+                }
+                toast('Tournament saved!');
+                closeTournamentModal();
+                loadTournaments();
+            } catch(e) {
+                toast('Error: ' + e.message, 'error');
+            }
+        });
+        
+        window.endTournament = async function(id) {
+            if (confirm('End this tournament? It will pick a random winner.')) {
+                const doc = await db.collection('tournaments').doc(id).get();
+                const t = doc.data();
+                const participants = t.participants || [];
+                if (participants.length > 0) {
+                    const winner = participants[Math.floor(Math.random() * participants.length)];
+                    await db.collection('tournaments').doc(id).update({ status: 'ended', winner });
+                    await db.collection('users').doc(winner).update({ coins: firebase.firestore.FieldValue.increment(t.prize||5000) });
+                } else {
+                    await db.collection('tournaments').doc(id).update({ status: 'ended' });
+                }
+                toast('Tournament ended!');
+                loadTournaments();
+            }
+        };
+        
+        window.deleteTournament = async function(id) {
+            if (confirm('Delete tournament?')) {
+                await db.collection('tournaments').doc(id).delete();
+                toast('Deleted!');
+                loadTournaments();
+            }
+        };
+        
+        // ========== CONVERSIONS ==========
+        async function loadConversions() {
+            const snap = await db.collection('transactions').where('type','==','convert_coin_to_star').orderBy('createdAt','desc').limit(50).get();
+            document.getElementById('conversions-table').innerHTML = `
+                <table class="adm-table"><thead><tr><th>User</th><th>COIN</th><th>STAR</th><th>Time</th></tr></thead><tbody>
+                ${snap.docs.map(d => {
+                    const c = d.data();
+                    const time = c.createdAt ? new Date(c.createdAt.toMillis()).toLocaleString() : '';
+                    return `<tr><td>${c.userEmail||c.userId}</td><td>${c.amountCoins||0}</td><td>${(c.amountStars||0).toFixed(2)}</td><td>${time}</td></tr>`;
+                }).join('') || '<tr><td colspan="4">No conversions</td></tr>'}
+                </tbody></table>`;
+        }
+        
+        // ========== NOTIFICATIONS ==========
+        function loadNotifPanel() {
+            db.collection('notifications').orderBy('createdAt','desc').limit(20).get().then(snap => {
+                document.getElementById('recent-notifs').innerHTML = `
+                    <table class="adm-table"><thead><tr><th>User</th><th>Title</th><th>Time</th></tr></thead><tbody>
+                    ${snap.docs.map(d => {
+                        const n = d.data();
+                        const time = n.createdAt ? new Date(n.createdAt.toMillis()).toLocaleString() : '';
+                        return `<tr><td>${n.userId}</td><td>${n.title||''}</td><td>${time}</td></tr>`;
+                    }).join('') || '<tr><td colspan="3">No notifications</td></tr>'}
+                    </tbody></table>`;
+            });
+        }
+        document.getElementById('notif-target').addEventListener('change', function() {
+            document.getElementById('notif-user-email').style.display = this.value === 'single' ? 'block' : 'none';
+        });
+        document.getElementById('send-notif').addEventListener('click', async () => {
+            const title = document.getElementById('notif-title').value.trim();
+            const message = document.getElementById('notif-message').value.trim();
+            if (!title || !message) return toast('Title & message required', 'error');
+            const target = document.getElementById('notif-target').value;
+            if (target === 'all') {
+                const users = await db.collection('users').get();
+                const batch = db.batch();
+                users.forEach(doc => {
+                    batch.set(db.collection('notifications').doc(), {
+                        userId: doc.id, title, message, read: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                await batch.commit();
+            } else {
+                const email = document.getElementById('notif-user-email').value.trim();
+                if (!email) return toast('Enter user email', 'error');
+                const snap = await db.collection('users').where('email','==',email).get();
+                if (snap.empty) return toast('User not found', 'error');
+                const uid = snap.docs[0].id;
+                await db.collection('notifications').add({
+                    userId: uid, title, message, read: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+            toast('Notification sent!');
+            document.getElementById('notif-title').value = '';
+            document.getElementById('notif-message').value = '';
+            loadNotifPanel();
+        });
         
         // ========== SETTINGS ==========
         async function loadSettings() {
@@ -724,17 +798,18 @@
             const platDoc = await db.collection('adminSettings').doc('platform').get();
             if (platDoc.exists) {
                 document.getElementById('set-price').value = platDoc.data().coinPrice || 0.20;
+                document.getElementById('set-conv-rate').value = platDoc.data().convRate || 5;
                 document.getElementById('set-auto-approve').value = String(platDoc.data().autoApprove || false);
-                document.getElementById('set-admin-email').value = platDoc.data().adminEmail || 'dhrubo1200@gmail.com';
+                document.getElementById('set-admin-email').value = platDoc.data().adminEmail || '';
             }
         }
-        
         document.getElementById('save-settings').addEventListener('click', async () => {
             await db.collection('adminSettings').doc('ltc_wallet').set({
                 address: document.getElementById('set-ltc').value.trim()
             });
             await db.collection('adminSettings').doc('platform').set({
                 coinPrice: parseFloat(document.getElementById('set-price').value),
+                convRate: parseFloat(document.getElementById('set-conv-rate').value),
                 autoApprove: document.getElementById('set-auto-approve').value === 'true',
                 adminEmail: document.getElementById('set-admin-email').value.trim()
             });
